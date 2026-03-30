@@ -1,0 +1,36 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+
+  auth-service:
+    build: ./services/auth-service
+    #ports:
+    #  - "8081:8081"
+
+  core-service:
+    build: ./services/core-service
+    # ports:
+    #   - "8082:8082"
+
+  user-management-service:
+    build: ./services/user-management-service
+    #ports:
+    #  - "8083:8083"
+
+  report-service:
+    build: ./services/report-service
+    #ports:
+    #  - "8084:8084"
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - auth-service
+      - core-service
+      - user-management-service
+      - report-service
