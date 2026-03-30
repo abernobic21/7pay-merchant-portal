@@ -1,4 +1,4 @@
-package com._pay.merchantportal.core_service;
+package com.sevenpay.merchantportal.core_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
