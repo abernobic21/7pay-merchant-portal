@@ -1,0 +1,13 @@
+{
+  "title": "Trgovci",
+  "loading": "Učitavanje trgovaca...",
+  "error": "Greška pri učitavanju trgovaca",
+  "fields": {
+    "shortName": "Kratki naziv",
+    "fullName": "Puni naziv",
+    "oib": "OIB",
+    "city": "Grad",
+    "status": "Status",
+    "address": "Adresa"
+  }
+}

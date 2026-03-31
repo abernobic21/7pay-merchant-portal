@@ -1,0 +1,13 @@
+{
+  "title": "Merchants",
+  "loading": "Loading merchants...",
+  "error": "Error loading merchants",
+  "fields": {
+    "shortName": "Short Name",
+    "fullName": "Full Name",
+    "oib": "OIB",
+    "city": "City",
+    "status": "Status",
+    "address": "Address"
+  }
+}
