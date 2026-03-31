@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MerchantService {
 
-    private final MerchantApiClient merchantClient;
+    private final MerchantApiClient merchantApiClient;
 
     public ApiResponse<MerchantDto> getMerchants(){
 
-        ApiResponse<RawMerchantDto> rawResponse = merchantClient.fetchMerchants();
+        ApiResponse<RawMerchantDto> rawResponse = merchantApiClient.fetchMerchants();
 
         List<MerchantDto> merchants = rawResponse.getContent()
                 .stream()
