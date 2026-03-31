@@ -26,9 +26,9 @@ export const MerchantTable = ({ merchants }: MerchantTableProps) => {
             <td>{merchant.oib}</td>
             <td>
               {merchant.address.streetAddressNumber +
-                " " +
-                merchant.address.city +
                 ", " +
+                merchant.address.city +
+                " " +
                 merchant.address.zipCode +
                 ", " +
                 merchant.address.country}

@@ -1,0 +1,12 @@
+{
+  "title": "Prodajna mjesta",
+  "loading": "Učitavanje prodajnih mjesta...",
+  "error": "Greška pri učitavanju prodajnih mjesta",
+  "fields": {
+    "name": "Naziv",
+    "mid": "MID",
+    "merchantOib": "OIB trgovca",
+    "address": "Adresa",
+    "status": "Status"
+  }
+}

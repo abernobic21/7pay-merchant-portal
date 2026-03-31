@@ -1,0 +1,12 @@
+{
+  "title": "Sale Points",
+  "loading": "Loading sale points...",
+  "error": "Error loading sale points",
+  "fields": {
+    "name": "Name",
+    "mid": "MID",
+    "merchantOib": "Merchant OIB",
+    "address": "Address",
+    "status": "Status"
+  }
+}
