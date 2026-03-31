@@ -15,7 +15,7 @@ public class RestClientConfig {
     private String merchantApiKey;
 
     @Bean
-    public RestClient merchantApiClient() {
+    public RestClient merchantApiRestClient() {
         return RestClient.builder()
                 .baseUrl(merchantApiBaseUrl)
                 .defaultHeader("Content-Type", "application/json")

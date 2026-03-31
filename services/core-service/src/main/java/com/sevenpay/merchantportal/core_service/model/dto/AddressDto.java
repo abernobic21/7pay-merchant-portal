@@ -13,5 +13,5 @@ public class AddressDto {
     private String country;
     private String city;
     private String zipCode;
-    private String streetAddress;
+    private String streetAddressNumber;
 }

@@ -1,6 +1,6 @@
 package com.sevenpay.merchantportal.core_service.service;
 
-import com.sevenpay.merchantportal.core_service.client.MerchantClient;
+import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.MerchantDto;
 import com.sevenpay.merchantportal.core_service.model.dto.RawMerchantDto;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MerchantService {
 
-    private final MerchantClient merchantClient;
+    private final MerchantApiClient merchantClient;
 
     public ApiResponse<MerchantDto> getMerchants(){
 
