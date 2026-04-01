@@ -4,6 +4,7 @@ import com.sevenpay.merchantportal.core_service.exception.MerchantApiException;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.RawMerchantDto;
 import com.sevenpay.merchantportal.core_service.model.dto.RawSalepointDto;
+import com.sevenpay.merchantportal.core_service.model.dto.RawTerminalDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,20 @@ public class MerchantApiClient {
                     .body(new ParameterizedTypeReference<>() {
                     });
         } catch (RestClientException e) {
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
+    public ApiResponse<RawTerminalDto> fetchTerminals() {
+
+        try {
+            return merchantApiRestClient.get()
+                    .uri("/terminals")
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<>() {
+                    });
+        } catch (RestClientException e) {
+            System.out.println(e.getMessage());
             throw new MerchantApiException("External service unavailable");
         }
     }
