@@ -3,13 +3,14 @@ package com.sevenpay.merchantportal.core_service.model.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 public class RawTransactionDto {
     private String transactionId;
     private String transactionType;
-    private String amount;
+    private BigDecimal amount;
     private String currency;
     private String validity;
     private String authorizationState;

@@ -3,6 +3,7 @@ package com.sevenpay.merchantportal.core_service.service;
 import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.exception.ValidationException;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
+import com.sevenpay.merchantportal.core_service.model.dto.RawTransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.RawTransactionDto;
 import com.sevenpay.merchantportal.core_service.model.dto.TransactionDto;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,14 @@ public class TransactionService {
 
         ApiResponse<RawTransactionDto> rawResponse = merchantApiClient.fetchTransactions(merchantOib, formattedTimeFrom, formattedTimeUntil);
 
-        List<TransactionDto> transactions = rawResponse.getContent()
-                .stream()
-                .map(this::toTransactionDto)
+        List<RawTransactionDto> rawTransactions = rawResponse.getContent();
+
+        List<TransactionDto> transactions = rawTransactions.parallelStream()
+                .map(t -> {
+                    RawTransactionDetailDto detail = merchantApiClient.fetchTransactionById(t.getTransactionId());
+                    System.out.println(detail);
+                    return toTransactionDto(detail);
+                })
                 .collect(Collectors.toList());
 
         ApiResponse<TransactionDto> response = new ApiResponse<>();
@@ -56,7 +62,7 @@ public class TransactionService {
         }
     }
 
-    private TransactionDto toTransactionDto(RawTransactionDto rawTransactionDto) {
+    private TransactionDto toTransactionDto(RawTransactionDetailDto rawTransactionDto) {
         return TransactionDto.builder()
                 .transactionId(rawTransactionDto.getTransactionId())
                 .transactionType(rawTransactionDto.getTransactionType())
@@ -64,7 +70,7 @@ public class TransactionService {
                 .currency(rawTransactionDto.getCurrency())
                 .authorizationState(rawTransactionDto.getAuthorizationState())
                 .validity(rawTransactionDto.getValidity())
-    //            .cardBrand(rawTransactionDto.getCardBrand())
+                .cardBrand(rawTransactionDto.getCardBrand())
                 .acquirerHost(rawTransactionDto.getAcquirerHost())
                 .authNumber(rawTransactionDto.getAuthNumber())
                 .timestamp(rawTransactionDto.getTimestamp())

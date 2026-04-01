@@ -2,10 +2,7 @@ package com.sevenpay.merchantportal.core_service.client;
 
 import com.sevenpay.merchantportal.core_service.exception.MerchantApiException;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.core_service.model.dto.RawMerchantDto;
-import com.sevenpay.merchantportal.core_service.model.dto.RawSalepointDto;
-import com.sevenpay.merchantportal.core_service.model.dto.RawTerminalDto;
-import com.sevenpay.merchantportal.core_service.model.dto.RawTransactionDto;
+import com.sevenpay.merchantportal.core_service.model.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -69,6 +66,21 @@ public class MerchantApiClient {
                             .build())
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {});
+        } catch (RestClientException e) {
+            System.out.println(e.getMessage());
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
+    public RawTransactionDetailDto fetchTransactionById(String transactionId) {
+
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/transactions/{transactionId}/details")
+                            .build(transactionId))
+                    .retrieve()
+                    .body(RawTransactionDetailDto.class);
         } catch (RestClientException e) {
             System.out.println(e.getMessage());
             throw new MerchantApiException("External service unavailable");
