@@ -17,7 +17,7 @@ public class TerminalController {
 
     private final TerminalService terminalService;
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<ApiResponse<TerminalDto>> getTerminals() {
         return ResponseEntity.status(HttpStatus.OK).body(terminalService.getTerminals());
     }

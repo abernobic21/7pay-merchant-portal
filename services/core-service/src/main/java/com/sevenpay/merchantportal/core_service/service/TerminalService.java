@@ -20,8 +20,6 @@ public class TerminalService {
 
         ApiResponse<RawTerminalDto> rawResponse = merchantApiClient.fetchTerminals();
 
-        System.out.println(rawResponse.toString());
-
         List<TerminalDto> terminals = rawResponse.getContent()
                 .stream()
                 .map(this::toTerminalDto)
