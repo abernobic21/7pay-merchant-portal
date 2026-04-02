@@ -24,7 +24,9 @@ public class TransactionController {
     public ResponseEntity<ApiResponse<TransactionDto>> getTransactions(
             @RequestParam String merchantOib,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeFrom,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeUntil) {
-        return ResponseEntity.ok(transactionService.getTransactions(merchantOib, timeFrom, timeUntil));
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeUntil,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(transactionService.getTransactions(merchantOib, timeFrom, timeUntil, page, size));
     }
 }

@@ -9,11 +9,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.util.concurrent.Semaphore;
+
 @Component
 @RequiredArgsConstructor
 public class MerchantApiClient {
 
     private final RestClient merchantApiRestClient;
+
+    private final Semaphore concurrentRequestSemaphore = new Semaphore(50);
 
     public ApiResponse<RawMerchantDto> fetchMerchants() {
 
@@ -54,7 +58,7 @@ public class MerchantApiClient {
         }
     }
 
-    public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil) {
+    public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil, int page, int size) {
 
         try {
             return merchantApiRestClient.get()
@@ -63,9 +67,12 @@ public class MerchantApiClient {
                             .queryParam("merchantOib", merchantOib)
                             .queryParam("timeFrom", timeFrom)
                             .queryParam("timeUntil", timeUntil)
+                            .queryParam("page", page)
+                            .queryParam("size", size)
                             .build())
                     .retrieve()
-                    .body(new ParameterizedTypeReference<>() {});
+                    .body(new ParameterizedTypeReference<>() {
+                    });
         } catch (RestClientException e) {
             System.out.println(e.getMessage());
             throw new MerchantApiException("External service unavailable");
@@ -73,14 +80,21 @@ public class MerchantApiClient {
     }
 
     public RawTransactionDetailDto fetchTransactionById(String transactionId) {
-
         try {
-            return merchantApiRestClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/transactions/{transactionId}/details")
-                            .build(transactionId))
-                    .retrieve()
-                    .body(RawTransactionDetailDto.class);
+            concurrentRequestSemaphore.acquire();
+            try {
+                return merchantApiRestClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/transactions/{transactionId}/details")
+                                .build(transactionId))
+                        .retrieve()
+                        .body(RawTransactionDetailDto.class);
+            } finally {
+                concurrentRequestSemaphore.release();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new MerchantApiException("Interrupted while waiting to send request");
         } catch (RestClientException e) {
             System.out.println(e.getMessage());
             throw new MerchantApiException("External service unavailable");
