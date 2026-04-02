@@ -1,7 +1,7 @@
 package com.sevenpay.merchantportal.core_service.controller;
 
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.core_service.model.dto.TransactionDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDto;
 import com.sevenpay.merchantportal.core_service.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,4 +1,4 @@
-package com.sevenpay.merchantportal.core_service.model.dto;
+package com.sevenpay.merchantportal.core_service.model.dto.response;
 
 import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;

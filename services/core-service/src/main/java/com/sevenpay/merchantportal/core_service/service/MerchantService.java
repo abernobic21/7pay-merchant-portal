@@ -2,8 +2,8 @@ package com.sevenpay.merchantportal.core_service.service;
 
 import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.core_service.model.dto.MerchantDto;
-import com.sevenpay.merchantportal.core_service.model.dto.RawMerchantDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.MerchantDto;
+import com.sevenpay.merchantportal.core_service.model.dto.external.RawMerchantDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

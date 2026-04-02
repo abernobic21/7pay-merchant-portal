@@ -1,4 +1,4 @@
-package com.sevenpay.merchantportal.core_service.model.dto;
+package com.sevenpay.merchantportal.core_service.model.dto.external;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

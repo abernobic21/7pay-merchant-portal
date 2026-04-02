@@ -2,7 +2,7 @@ package com.sevenpay.merchantportal.core_service.client;
 
 import com.sevenpay.merchantportal.core_service.exception.MerchantApiException;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.core_service.model.dto.*;
+import com.sevenpay.merchantportal.core_service.model.dto.external.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;

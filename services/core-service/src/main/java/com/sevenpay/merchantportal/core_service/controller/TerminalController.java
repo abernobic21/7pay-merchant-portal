@@ -1,7 +1,7 @@
 package com.sevenpay.merchantportal.core_service.controller;
 
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.core_service.model.dto.TerminalDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDto;
 import com.sevenpay.merchantportal.core_service.service.TerminalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

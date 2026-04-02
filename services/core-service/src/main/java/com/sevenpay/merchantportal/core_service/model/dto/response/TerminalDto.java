@@ -1,4 +1,4 @@
-package com.sevenpay.merchantportal.core_service.model.dto;
+package com.sevenpay.merchantportal.core_service.model.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

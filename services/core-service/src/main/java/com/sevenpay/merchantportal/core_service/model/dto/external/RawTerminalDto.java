@@ -1,5 +1,6 @@
-package com.sevenpay.merchantportal.core_service.model.dto;
+package com.sevenpay.merchantportal.core_service.model.dto.external;
 
+import com.sevenpay.merchantportal.core_service.model.dto.common.AcquirerTerminalDataDto;
 import lombok.Data;
 
 import java.util.List;
