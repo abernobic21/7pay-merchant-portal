@@ -25,21 +25,20 @@ public class TransactionService {
 
     private final MerchantApiClient merchantApiClient;
 
-    public ApiResponse<TransactionDto> getTransactions(String merchantOib, LocalDateTime  timeFrom, LocalDateTime  timeUntil) {
+    public ApiResponse<TransactionDto> getTransactions(String merchantOib, LocalDateTime  timeFrom, LocalDateTime  timeUntil, int page, int size) {
 
         validateTimeRange(timeFrom, timeUntil);
 
         String formattedTimeFrom = timeFrom.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String formattedTimeUntil = timeUntil.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        ApiResponse<RawTransactionDto> rawResponse = merchantApiClient.fetchTransactions(merchantOib, formattedTimeFrom, formattedTimeUntil);
+        ApiResponse<RawTransactionDto> rawResponse = merchantApiClient.fetchTransactions(merchantOib, formattedTimeFrom, formattedTimeUntil, page, size);
 
         List<RawTransactionDto> rawTransactions = rawResponse.getContent();
 
         List<TransactionDto> transactions = rawTransactions.parallelStream()
                 .map(t -> {
                     RawTransactionDetailDto detail = merchantApiClient.fetchTransactionById(t.getTransactionId());
-                    System.out.println(detail);
                     return toTransactionDto(detail);
                 })
                 .collect(Collectors.toList());

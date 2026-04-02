@@ -54,7 +54,7 @@ public class MerchantApiClient {
         }
     }
 
-    public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil) {
+    public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil, int page, int size) {
 
         try {
             return merchantApiRestClient.get()
@@ -63,6 +63,8 @@ public class MerchantApiClient {
                             .queryParam("merchantOib", merchantOib)
                             .queryParam("timeFrom", timeFrom)
                             .queryParam("timeUntil", timeUntil)
+                            .queryParam("page", page)
+                            .queryParam("size", size)
                             .build())
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {});
