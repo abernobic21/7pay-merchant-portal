@@ -6,6 +6,10 @@ import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.RawTransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.RawTransactionDto;
 import com.sevenpay.merchantportal.core_service.model.dto.TransactionDto;
+import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionValidity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,18 +66,18 @@ public class TransactionService {
         }
     }
 
-    private TransactionDto toTransactionDto(RawTransactionDetailDto rawTransactionDto) {
+    private TransactionDto toTransactionDto(RawTransactionDetailDto rawDto) {
         return TransactionDto.builder()
-                .transactionId(rawTransactionDto.getTransactionId())
-                .transactionType(rawTransactionDto.getTransactionType())
-                .amount(rawTransactionDto.getAmount())
-                .currency(rawTransactionDto.getCurrency())
-                .authorizationState(rawTransactionDto.getAuthorizationState())
-                .validity(rawTransactionDto.getValidity())
-                .cardBrand(rawTransactionDto.getCardBrand())
-                .acquirerHost(rawTransactionDto.getAcquirerHost())
-                .authNumber(rawTransactionDto.getAuthNumber())
-                .timestamp(rawTransactionDto.getTimestamp())
+                .transactionId(rawDto.getTransactionId())
+                .transactionType(TransactionType.getByName(rawDto.getTransactionType()))
+                .amount(rawDto.getAmount())
+                .currency(rawDto.getCurrency())
+                .authorizationState(TransactionAuthorizationState.getByName(rawDto.getAuthorizationState()))
+                .validity(TransactionValidity.getByName(rawDto.getValidity()))
+                .cardBrand(CardBrand.getByName(rawDto.getCardBrand()))
+                .acquirerHost(rawDto.getAcquirerHost())
+                .authNumber(rawDto.getAuthNumber())
+                .timestamp(rawDto.getTimestamp())
                 .build();
     }
 }

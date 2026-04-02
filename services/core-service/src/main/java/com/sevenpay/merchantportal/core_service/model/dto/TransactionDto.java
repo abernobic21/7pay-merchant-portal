@@ -1,5 +1,9 @@
 package com.sevenpay.merchantportal.core_service.model.dto;
 
+import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionValidity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,12 +14,12 @@ import java.time.LocalDateTime;
 @Builder
 public class TransactionDto {
     private String transactionId;
-    private String transactionType;
+    private TransactionType transactionType;
     private BigDecimal amount;
     private String currency;
-    private String authorizationState;
-    private String validity;
-    private String cardBrand;
+    private TransactionAuthorizationState authorizationState;
+    private TransactionValidity validity;
+    private CardBrand cardBrand;
     private String acquirerHost;
     private String authNumber;
     private LocalDateTime timestamp;
