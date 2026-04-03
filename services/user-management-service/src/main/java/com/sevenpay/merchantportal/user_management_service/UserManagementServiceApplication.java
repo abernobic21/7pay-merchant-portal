@@ -1,4 +1,4 @@
-package com._pay.merchantportal.user_management_service;
+package com.sevenpay.merchantportal.user_management_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
