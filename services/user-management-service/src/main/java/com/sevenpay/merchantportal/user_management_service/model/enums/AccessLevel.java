@@ -1,5 +1,12 @@
 package com.sevenpay.merchantportal.user_management_service.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum AccessLevel {
-    MERCHANT, BRANCH
+    MERCHANT, BRANCH;
+
+    @JsonValue
+    public String toLowerCase() {
+        return name().toLowerCase();
+    }
 }

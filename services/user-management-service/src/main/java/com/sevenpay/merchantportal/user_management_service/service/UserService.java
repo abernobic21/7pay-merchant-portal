@@ -1,5 +1,6 @@
 package com.sevenpay.merchantportal.user_management_service.service;
 
+import com.sevenpay.merchantportal.user_management_service.exception.NotFoundException;
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -22,14 +25,19 @@ public class UserService {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
 
-        System.out.println(userPage.getContent());
-        
         List<UserDto> userDtos = userPage.getContent()
                 .stream()
                 .map(this::toUserDto)
                 .toList();
 
         return buildResponse(userDtos, userPage);
+    }
+
+    public UserDto getUserById(UUID id) {
+
+       User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
+
+       return toUserDto(user);
     }
 
     private UserDto toUserDto(User user) {

@@ -5,10 +5,9 @@ import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
 import com.sevenpay.merchantportal.user_management_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 
 @RestController
@@ -23,7 +22,12 @@ public class UserController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        System.out.println("Controller");
         return ResponseEntity.ok(userService.getUsers(page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserById(
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 }
