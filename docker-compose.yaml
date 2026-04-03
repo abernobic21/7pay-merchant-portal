@@ -20,8 +20,21 @@ services:
 
   user-management-service:
     build: ./services/user-management-service
+    env_file:
+      - ./database/.env
+    depends_on:
+      - user-database
+    restart: on-failure
     #ports:
     #  - "8083:8083"
+
+  user-database:
+    image: postgres:16-alpine
+    env_file:
+      - ./database/.env
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   report-service:
     build: ./services/report-service
@@ -38,3 +51,6 @@ services:
       - core-service
       - user-management-service
       - report-service
+
+volumes:
+  user_db_data:
