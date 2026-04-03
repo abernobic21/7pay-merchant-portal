@@ -1,7 +1,7 @@
 -- Enums
 CREATE TYPE user_role AS ENUM ('ADMIN', 'USER');
 CREATE TYPE user_access_level AS ENUM ('MERCHANT', 'BRANCH');
-CREATE TYPE user_status AS ENUM ('ACTIVATED', 'DEACTIVATED');
+CREATE TYPE user_status AS ENUM ('ACTIVE', 'DEACTIVATED');
 
 -- Users table
 CREATE TABLE users (
