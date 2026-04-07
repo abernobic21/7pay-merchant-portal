@@ -5,6 +5,7 @@ import com.sevenpay.merchantportal.user_management_service.exception.NotFoundExc
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
 import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
+import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
 import com.sevenpay.merchantportal.user_management_service.model.entity.User;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
@@ -43,7 +44,7 @@ public class UserService {
         return toUserDto(user);
     }
 
-    public void createUser(CreateUserRequest request) {
+    public UserDto createUser(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email already exists");
         }
@@ -60,7 +61,22 @@ public class UserService {
                 .firstLoginFlag(true)
                 .build();
 
-        userRepository.save(user);
+        return toUserDto(userRepository.save(user));
+    }
+
+    public UserDto updateUser(UUID id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
+
+        if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) user.setLastName(request.getLastName());
+        if (request.getEmail() != null) user.setEmail(request.getEmail());
+        if (request.getPhone() != null) user.setPhone(request.getPhone());
+        if (request.getRole() != null) user.setRole(request.getRole());
+        if (request.getAccessLevel() != null) user.setAccessLevel(request.getAccessLevel());
+        if (request.getMerchantId() != null) user.setMerchantId(request.getMerchantId());
+
+        return toUserDto(userRepository.save(user));
     }
 
     private UserDto toUserDto(User user) {

@@ -2,6 +2,7 @@ package com.sevenpay.merchantportal.user_management_service.controller;
 
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
+import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
 import com.sevenpay.merchantportal.user_management_service.service.UserService;
 import jakarta.validation.Valid;
@@ -30,13 +31,19 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserRequest request) {
-        userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(
             @PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable UUID id,
+            @RequestBody UpdateUserRequest request){
+        return ResponseEntity.ok().body(userService.updateUser(id, request));
     }
 }
