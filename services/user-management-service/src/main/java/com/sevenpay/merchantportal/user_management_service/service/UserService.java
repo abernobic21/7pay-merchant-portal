@@ -4,10 +4,7 @@ import com.sevenpay.merchantportal.user_management_service.exception.ConflictExc
 import com.sevenpay.merchantportal.user_management_service.exception.NotFoundException;
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
-import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
-import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserRequest;
-import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserStatusRequest;
-import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
+import com.sevenpay.merchantportal.user_management_service.model.dto.*;
 import com.sevenpay.merchantportal.user_management_service.model.entity.User;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
 import com.sevenpay.merchantportal.user_management_service.repository.UserRepository;
@@ -95,6 +92,12 @@ public class UserService {
         return toUserDto(userRepository.save(user));
     }
 
+    public UserProfileDto getUserProfile(UUID id){
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
+
+        return toUserProfileDto(user);
+    }
+
     private UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
@@ -111,7 +114,20 @@ public class UserService {
                 .build();
     }
 
-    private <T> ApiResponse<T> buildResponse(List<T> content, org.springframework.data.domain.Page<?> userPage) {
+    private UserProfileDto toUserProfileDto(User user) {
+        return UserProfileDto.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole())
+                .accessLevel(user.getAccessLevel())
+                .merchantId(user.getMerchantId())
+                .status(user.getStatus())
+                .build();
+    }
+
+    private <T> ApiResponse<T> buildResponse(List<T> content, Page<?> userPage) {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setTotalPages(userPage.getTotalPages());
         pageInfo.setTotalElements((int) userPage.getTotalElements());

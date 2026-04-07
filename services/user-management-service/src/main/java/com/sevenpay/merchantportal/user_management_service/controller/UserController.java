@@ -1,10 +1,7 @@
 package com.sevenpay.merchantportal.user_management_service.controller;
 
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
-import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserRequest;
-import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserStatusRequest;
-import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
+import com.sevenpay.merchantportal.user_management_service.model.dto.*;
 import com.sevenpay.merchantportal.user_management_service.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -46,19 +43,26 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable UUID id,
-            @RequestBody UpdateUserRequest request){
+            @RequestBody UpdateUserRequest request) {
         return ResponseEntity.ok().body(userService.updateUser(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String,String>> deleteUser(
+    public ResponseEntity<Map<String, String>> deleteUser(
             @PathVariable UUID id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok(Map.of("message","User deleted successfully"));
+        return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<UserDto> updateUserStatus(@PathVariable UUID id, @RequestBody @NotNull UpdateUserStatusRequest request){
+    public ResponseEntity<UserDto> updateUserStatus(@PathVariable UUID id, @RequestBody @NotNull UpdateUserStatusRequest request) {
         return ResponseEntity.ok(userService.updateUserStatus(id, request));
+    }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileDto> getUserProfile() {
+        UUID hardcodedId = UUID.fromString("db0c535d-aee8-4ca9-bb13-052795c04e07");
+        return ResponseEntity.ok(userService.getUserProfile(hardcodedId));
     }
 }
