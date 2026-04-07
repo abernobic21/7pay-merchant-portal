@@ -79,6 +79,13 @@ public class UserService {
         return toUserDto(userRepository.save(user));
     }
 
+    public void deleteUser(UUID id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
+
+        userRepository.delete(user);
+    }
+
     private UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())

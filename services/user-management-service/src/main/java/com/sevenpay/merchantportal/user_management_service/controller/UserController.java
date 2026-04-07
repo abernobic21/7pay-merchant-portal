@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 import java.util.UUID;
 
@@ -45,5 +46,12 @@ public class UserController {
             @PathVariable UUID id,
             @RequestBody UpdateUserRequest request){
         return ResponseEntity.ok().body(userService.updateUser(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String,String>> deleteUser(
+            @PathVariable UUID id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(Map.of("message","User deleted successfully"));
     }
 }
