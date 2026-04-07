@@ -22,5 +22,6 @@ public class TransactionDto {
     private CardBrand cardBrand;
     private String acquirerHost;
     private String authNumber;
+    private String rrn;
     private LocalDateTime timestamp;
 }

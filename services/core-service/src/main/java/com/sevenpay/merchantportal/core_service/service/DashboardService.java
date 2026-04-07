@@ -23,8 +23,8 @@ public class DashboardService {
 
     private final TransactionService transactionService;
 
-    public DashboardStatsDto getStats(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil) {
-        List<TransactionDto> transactions = transactionService.getAllTransactions(merchantOib, timeFrom, timeUntil);
+    public DashboardStatsDto getStats(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
+        List<TransactionDto> transactions = transactionService.getAllTransactions(merchantOib, timeFrom, timeUntil, mid, tid);
 
         DashboardStatsDto stats = calculateStats(transactions);
 

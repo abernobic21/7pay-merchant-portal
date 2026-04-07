@@ -5,10 +5,13 @@ import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriBuilder;
 
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
 @Component
@@ -58,18 +61,31 @@ public class MerchantApiClient {
         }
     }
 
-    public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil, int page, int size) {
+    public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil, String mid, String tid, int page, int size, Sort sort) {
 
         try {
+
             return merchantApiRestClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/transactions/search")
-                            .queryParam("merchantOib", merchantOib)
-                            .queryParam("timeFrom", timeFrom)
-                            .queryParam("timeUntil", timeUntil)
-                            .queryParam("page", page)
-                            .queryParam("size", size)
-                            .build())
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/transactions/search")
+                                .queryParam("merchantOib", merchantOib)
+                                .queryParam("timeFrom", timeFrom)
+                                .queryParam("timeUntil", timeUntil)
+                                .queryParamIfPresent("mid", Optional.ofNullable(mid))
+                                .queryParamIfPresent("tid", Optional.ofNullable(tid))
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if (sort != null && !sort.isEmpty()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+
+                        return builder.build();
+                    })
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {
                     });

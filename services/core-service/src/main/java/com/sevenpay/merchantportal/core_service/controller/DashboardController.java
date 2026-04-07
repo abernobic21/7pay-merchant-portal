@@ -23,7 +23,10 @@ public class DashboardController {
     public ResponseEntity<DashboardStatsDto> getStats(
             @RequestParam String merchantOib,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeFrom,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeUntil) {
-        return ResponseEntity.ok(dashboardServiceService.getStats(merchantOib, timeFrom, timeUntil));
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeUntil,
+            @RequestParam(required = false) String mid,
+            @RequestParam(required = false) String tid
+            ) {
+        return ResponseEntity.ok(dashboardServiceService.getStats(merchantOib, timeFrom, timeUntil, mid, tid));
     }
 }
