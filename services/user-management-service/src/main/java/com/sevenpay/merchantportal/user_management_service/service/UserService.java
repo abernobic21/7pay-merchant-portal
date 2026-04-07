@@ -6,14 +6,17 @@ import com.sevenpay.merchantportal.user_management_service.model.common.ApiRespo
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
 import com.sevenpay.merchantportal.user_management_service.model.dto.*;
 import com.sevenpay.merchantportal.user_management_service.model.entity.User;
+import com.sevenpay.merchantportal.user_management_service.model.enums.Role;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
 import com.sevenpay.merchantportal.user_management_service.repository.UserRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,9 +26,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public ApiResponse<UserDto> getUsers(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userRepository.findAll(pageable);
+    public ApiResponse<UserDto> getUsers(Pageable pageable, Status status, Role role){
+        Page<User> userPage = userRepository.findAll(buildSpec(status, role), pageable);
 
         List<UserDto> userDtos = userPage.getContent()
                 .stream()
@@ -77,14 +79,14 @@ public class UserService {
         return toUserDto(userRepository.save(user));
     }
 
-    public void deleteUser(UUID id){
+    public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException());
 
         userRepository.delete(user);
     }
 
-    public UserDto updateUserStatus(UUID id, UpdateUserStatusRequest request){
+    public UserDto updateUserStatus(UUID id, UpdateUserStatusRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException());
 
@@ -92,7 +94,7 @@ public class UserService {
         return toUserDto(userRepository.save(user));
     }
 
-    public UserProfileDto getUserProfile(UUID id){
+    public UserProfileDto getUserProfile(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
         return toUserProfileDto(user);
@@ -125,6 +127,15 @@ public class UserService {
                 .merchantId(user.getMerchantId())
                 .status(user.getStatus())
                 .build();
+    }
+
+    private Specification<User> buildSpec(Status status, Role role) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (status != null) predicates.add(cb.equal(root.get("status"), status));
+            if (role != null) predicates.add(cb.equal(root.get("role"), role));
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
     }
 
     private <T> ApiResponse<T> buildResponse(List<T> content, Page<?> userPage) {

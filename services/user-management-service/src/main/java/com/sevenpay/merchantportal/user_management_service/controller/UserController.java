@@ -2,10 +2,14 @@ package com.sevenpay.merchantportal.user_management_service.controller;
 
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.dto.*;
+import com.sevenpay.merchantportal.user_management_service.model.enums.Role;
+import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
 import com.sevenpay.merchantportal.user_management_service.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +27,11 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<ApiResponse<UserDto>> getUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(userService.getUsers(page, size));
+            @PageableDefault() Pageable pageable,
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) Role role
+    ){
+        return ResponseEntity.ok(userService.getUsers(pageable, status, role));
     }
 
     @PostMapping
