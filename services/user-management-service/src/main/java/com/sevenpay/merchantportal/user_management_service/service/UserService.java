@@ -1,10 +1,13 @@
 package com.sevenpay.merchantportal.user_management_service.service;
 
+import com.sevenpay.merchantportal.user_management_service.exception.ConflictException;
 import com.sevenpay.merchantportal.user_management_service.exception.NotFoundException;
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
+import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
 import com.sevenpay.merchantportal.user_management_service.model.entity.User;
+import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
 import com.sevenpay.merchantportal.user_management_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,9 +38,29 @@ public class UserService {
 
     public UserDto getUserById(UUID id) {
 
-       User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
-       return toUserDto(user);
+        return toUserDto(user);
+    }
+
+    public void createUser(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ConflictException("Email already exists");
+        }
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .passwordHash(null)
+                .role(request.getRole())
+                .accessLevel(request.getAccessLevel())
+                .merchantId(request.getMerchantId())
+                .status(Status.ACTIVE)
+                .firstLoginFlag(true)
+                .build();
+
+        userRepository.save(user);
     }
 
     private UserDto toUserDto(User user) {

@@ -10,7 +10,7 @@ CREATE TABLE users (
     last_name           VARCHAR(100) NOT NULL,
     email               VARCHAR(255) NOT NULL UNIQUE,
     phone               VARCHAR(20),
-    password_hash       VARCHAR(255) NOT NULL,
+    password_hash       VARCHAR(255),
     role                user_role NOT NULL,
     access_level        user_access_level NOT NULL,
     merchant_id         VARCHAR(100),
