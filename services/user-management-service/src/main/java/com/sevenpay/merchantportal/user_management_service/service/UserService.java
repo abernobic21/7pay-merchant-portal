@@ -6,6 +6,7 @@ import com.sevenpay.merchantportal.user_management_service.model.common.ApiRespo
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
 import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserRequest;
+import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserStatusRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
 import com.sevenpay.merchantportal.user_management_service.model.entity.User;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
@@ -84,6 +85,14 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException());
 
         userRepository.delete(user);
+    }
+
+    public UserDto updateUserStatus(UUID id, UpdateUserStatusRequest request){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
+
+        user.setStatus(request.getStatus());
+        return toUserDto(userRepository.save(user));
     }
 
     private UserDto toUserDto(User user) {

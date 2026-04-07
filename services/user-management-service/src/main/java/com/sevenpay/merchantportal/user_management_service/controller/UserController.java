@@ -3,15 +3,17 @@ package com.sevenpay.merchantportal.user_management_service.controller;
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.dto.CreateUserRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserRequest;
+import com.sevenpay.merchantportal.user_management_service.model.dto.UpdateUserStatusRequest;
 import com.sevenpay.merchantportal.user_management_service.model.dto.UserDto;
 import com.sevenpay.merchantportal.user_management_service.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -53,5 +55,10 @@ public class UserController {
             @PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(Map.of("message","User deleted successfully"));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<UserDto> updateUserStatus(@PathVariable UUID id, @RequestBody @NotNull UpdateUserStatusRequest request){
+        return ResponseEntity.ok(userService.updateUserStatus(id, request));
     }
 }
