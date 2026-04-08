@@ -3,6 +3,7 @@ package com.sevenpay.merchantportal.core_service.client;
 import com.sevenpay.merchantportal.core_service.exception.MerchantApiException;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.*;
+import com.sevenpay.merchantportal.core_service.model.enums.MerchantStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Sort;
@@ -29,6 +30,34 @@ public class MerchantApiClient {
                     .uri(uriBuilder -> {
                         UriBuilder builder = uriBuilder
                                 .path("/merchants")
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if (sort.isSorted()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+
+                        return builder.build();
+                    })
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<>() {
+                    });
+        } catch (RestClientException e) {
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
+    public ApiResponse<RawMerchantDto> fetchMerchantsByStatus(MerchantStatus status, int page, int size, Sort sort) {
+
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/merchants/search")
+                                .queryParam("status", status)
                                 .queryParam("page", page)
                                 .queryParam("size", size);
 
