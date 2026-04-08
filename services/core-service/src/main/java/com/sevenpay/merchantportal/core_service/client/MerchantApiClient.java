@@ -215,6 +215,19 @@ public class MerchantApiClient {
         }
     }
 
+    public RawTerminalDto fetchTerminalByTid(String tid) {
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/terminals/{tid}")
+                            .build(tid))
+                    .retrieve()
+                    .body(RawTerminalDto.class);
+        } catch (RestClientException e) {
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
     public ApiResponse<RawTransactionDto> fetchTransactions(String merchantOib, String timeFrom, String timeUntil, String mid, String tid, int page, int size, Sort sort) {
 
         try {

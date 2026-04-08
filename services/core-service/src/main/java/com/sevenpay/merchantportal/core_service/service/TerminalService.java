@@ -3,7 +3,9 @@ package com.sevenpay.merchantportal.core_service.service;
 import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTerminalDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDto;
+import com.sevenpay.merchantportal.core_service.model.enums.TerminalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,12 @@ public class TerminalService {
         return response;
     }
 
+    public TerminalDetailDto getTerminalByTid(String tid) {
+        RawTerminalDto rawTerminal = merchantApiClient.fetchTerminalByTid(tid);
+
+        return toTerminalDetailDto(rawTerminal);
+    }
+
     private TerminalDto toTerminalDto(RawTerminalDto rawTerminalDto) {
         return TerminalDto.builder()
                 .tid(rawTerminalDto.getTid())
@@ -46,6 +54,24 @@ public class TerminalService {
                 .midReference(rawTerminalDto.getMidReference())
                 .merchantCategoryCode(rawTerminalDto.getMerchantCategoryCode())
                 .currency(rawTerminalDto.getCurrency())
+                .build();
+    }
+
+    private TerminalDetailDto toTerminalDetailDto(RawTerminalDto rawTerminalDto) {
+        return TerminalDetailDto.builder()
+                .tid(rawTerminalDto.getTid())
+                .terminalType(rawTerminalDto.getTerminalType())
+                .status(TerminalStatus.getByName(rawTerminalDto.getStatus()))
+                .midReference(rawTerminalDto.getMidReference())
+                .phoneNumber(rawTerminalDto.getPhoneNumber())
+                .emailContact(rawTerminalDto.getEmailContact())
+                .currency(rawTerminalDto.getCurrency())
+                .merchantCategoryCode(rawTerminalDto.getMerchantCategoryCode())
+                .authenticationMode(rawTerminalDto.getAuthenticationMode())
+                .softPosId(rawTerminalDto.getSoftPosId())
+                .softPosStatus(rawTerminalDto.getSoftPosStatus())
+                .acquirerTerminalData(rawTerminalDto.getAcquirerTerminalData())
+                .tipEnabled(rawTerminalDto.getTipEnabled())
                 .build();
     }
 }
