@@ -22,11 +22,25 @@ public class MerchantApiClient {
 
     private final Semaphore concurrentRequestSemaphore = new Semaphore(50);
 
-    public ApiResponse<RawMerchantDto> fetchMerchants() {
+    public ApiResponse<RawMerchantDto> fetchMerchants(int page, int size, Sort sort) {
 
         try {
             return merchantApiRestClient.get()
-                    .uri("/merchants")
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/merchants")
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if (sort.isSorted()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+
+                        return builder.build();
+                    })
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {
                     });
@@ -77,7 +91,7 @@ public class MerchantApiClient {
                                 .queryParam("page", page)
                                 .queryParam("size", size);
 
-                        if (sort != null && !sort.isEmpty()) {
+                        if (sort.isSorted()) {
                             sort.forEach(order -> builder.queryParam(
                                     "sort",
                                     order.getProperty() + "," + order.getDirection().name().toLowerCase()
@@ -90,7 +104,6 @@ public class MerchantApiClient {
                     .body(new ParameterizedTypeReference<>() {
                     });
         } catch (RestClientException e) {
-            System.out.println(e.getMessage());
             throw new MerchantApiException("External service unavailable");
         }
     }
@@ -112,7 +125,6 @@ public class MerchantApiClient {
             Thread.currentThread().interrupt();
             throw new MerchantApiException("Interrupted while waiting to send request");
         } catch (RestClientException e) {
-            System.out.println(e.getMessage());
             throw new MerchantApiException("External service unavailable");
         }
     }

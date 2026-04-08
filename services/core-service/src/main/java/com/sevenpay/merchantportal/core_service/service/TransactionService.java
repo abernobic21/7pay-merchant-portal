@@ -184,7 +184,7 @@ public class TransactionService {
         List<TransactionDto> pageTransactions = transactions.subList(start, end);
 
         Page page = Page.builder()
-                .totalPages(transactions.size() / pageable.getPageSize())
+                .totalPages((int) Math.ceil((double) transactions.size() / pageable.getPageSize()))
                 .totalElements(transactions.size())
                 .size(pageable.getPageSize())
                 .number(pageable.getPageNumber())

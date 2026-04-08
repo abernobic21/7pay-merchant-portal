@@ -1,6 +1,7 @@
 package com.sevenpay.merchantportal.core_service.model.dto.response;
 
 import com.sevenpay.merchantportal.core_service.model.dto.common.AddressDto;
+import com.sevenpay.merchantportal.core_service.model.enums.MerchantStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +11,6 @@ public class MerchantDto {
     private String shortName;
     private String fullName;
     private String oib;
-    private String status;
+    private MerchantStatus status;
     private AddressDto address;
 }
