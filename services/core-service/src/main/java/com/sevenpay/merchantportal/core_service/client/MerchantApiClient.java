@@ -190,14 +190,10 @@ public class MerchantApiClient {
                     .uri(uriBuilder -> {
                         UriBuilder builder = uriBuilder
                                 .path("/terminals/search")
+                                .queryParamIfPresent("mid", Optional.ofNullable(mid))
+                                .queryParamIfPresent("merchantOib", Optional.ofNullable(merchantOib))
                                 .queryParam("page", page)
                                 .queryParam("size", size);
-
-                        if(merchantOib != null && !merchantOib.isEmpty())
-                            builder.queryParam("merchantOib", merchantOib);
-
-                        if(mid != null && !mid.isEmpty())
-                            builder.queryParam("mid", mid);
 
                         if (sort != null && sort.isSorted()) {
                             sort.forEach(order -> builder.queryParam(
