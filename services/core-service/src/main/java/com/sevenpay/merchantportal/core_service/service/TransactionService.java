@@ -70,9 +70,17 @@ public class TransactionService {
 
     public ApiResponse<TransactionDto> getTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, TransactionAuthorizationState status, TransactionType transactionType, CardBrand cardBrand, String authNumber, String rnn, Pageable pageable) {
 
+        if(!requiresLocalFiltering(status, transactionType, cardBrand, authNumber, rnn)){
+            ApiResponse<TransactionDto> transactionResponse = fetchTransactions(merchantOib, timeFrom, timeUntil, mid, tid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+
+            List<TransactionDto> sortedTransactions = applySorting(transactionResponse.getContent(), pageable.getSort());
+
+            return buildResponse(sortedTransactions, pageable);
+        }
+
         List<TransactionDto> allTransactions = getAllTransactions(merchantOib, timeFrom, timeUntil, mid, tid);
 
-        List<TransactionDto> filtered = allTransactions.stream()
+        List<TransactionDto> filteredTransactions = allTransactions.stream()
                 .filter(t -> status == null || t.getAuthorizationState() == status)
                 .filter(t -> transactionType == null || t.getTransactionType() == transactionType)
                 .filter(t -> cardBrand == null || t.getCardBrand() == cardBrand)
@@ -80,9 +88,9 @@ public class TransactionService {
                 .filter(t -> rnn == null || rnn.equals(t.getRrn()))
                 .toList();
 
-        List<TransactionDto> sorted = applySorting(filtered, pageable.getSort());
+        List<TransactionDto> sortedTransactions = applySorting(filteredTransactions, pageable.getSort());
 
-        return buildResponse(sorted, pageable);
+        return buildResponse(sortedTransactions, pageable);
     }
 
     public List<TransactionDto> getAllTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
@@ -125,6 +133,20 @@ public class TransactionService {
         if (daysBetween > 31) {
             throw new ValidationException("Time range cannot exceed 31 days");
         }
+    }
+
+    private boolean requiresLocalFiltering(
+            TransactionAuthorizationState status,
+            TransactionType transactionType,
+            CardBrand cardBrand,
+            String authNumber,
+            String rnn
+    ) {
+        return status != null
+                || transactionType != null
+                || cardBrand != null
+                || authNumber != null
+                || rnn != null;
     }
 
     private List<TransactionDto> applySorting(List<TransactionDto> transactions, Sort sort) {
