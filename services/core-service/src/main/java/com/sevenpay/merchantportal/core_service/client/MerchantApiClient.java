@@ -159,11 +159,54 @@ public class MerchantApiClient {
         }
     }
 
-    public ApiResponse<RawTerminalDto> fetchTerminals() {
-
+    public ApiResponse<RawTerminalDto> fetchTerminals(int page, int size, Sort sort) {
         try {
             return merchantApiRestClient.get()
-                    .uri("/terminals")
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/terminals")
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if (sort != null && sort.isSorted()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+                        return builder.build();
+                    })
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<>() {
+                    });
+        } catch (RestClientException e) {
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
+    public ApiResponse<RawTerminalDto> fetchTerminalsWithFilters(String merchantOib, String mid, int page, int size, Sort sort) {
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/terminals/search")
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if(merchantOib != null && !merchantOib.isEmpty())
+                            builder.queryParam("merchantOib", merchantOib);
+
+                        if(mid != null && !mid.isEmpty())
+                            builder.queryParam("mid", mid);
+
+                        if (sort != null && sort.isSorted()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+                        return builder.build();
+                    })
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {
                     });

@@ -5,6 +5,7 @@ import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTerminalDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,15 @@ public class TerminalService {
 
     private final MerchantApiClient merchantApiClient;
 
-    public ApiResponse<TerminalDto> getTerminals() {
+    public ApiResponse<TerminalDto> getTerminals(String merchantOib, String mid, Pageable pageable) {
 
-        ApiResponse<RawTerminalDto> rawResponse = merchantApiClient.fetchTerminals();
+        new ApiResponse<>();
+        ApiResponse<RawTerminalDto> rawResponse;
+        if (merchantOib != null || mid != null) {
+            rawResponse = merchantApiClient.fetchTerminalsWithFilters(merchantOib, mid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        } else {
+            rawResponse = merchantApiClient.fetchTerminals(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        }
 
         List<TerminalDto> terminals = rawResponse.getContent()
                 .stream()
