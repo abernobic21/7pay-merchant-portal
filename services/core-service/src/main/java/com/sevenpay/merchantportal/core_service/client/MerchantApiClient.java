@@ -49,6 +49,19 @@ public class MerchantApiClient {
         }
     }
 
+    public RawMerchantDetailDto fetchMerchantByOib(String oib) {
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/merchants/oib/{oib}/details")
+                            .build(oib))
+                    .retrieve()
+                    .body(RawMerchantDetailDto.class);
+        } catch (RestClientException e) {
+            throw new MerchantApiException(e.getMessage());//"External service unavailable");
+        }
+    }
+
     public ApiResponse<RawSalepointDto> fetchSalepoints() {
 
         try {

@@ -3,7 +3,9 @@ package com.sevenpay.merchantportal.core_service.service;
 import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.common.Page;
+import com.sevenpay.merchantportal.core_service.model.dto.external.RawMerchantDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawMerchantDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.MerchantDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.MerchantDto;
 import com.sevenpay.merchantportal.core_service.model.enums.MerchantStatus;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,12 @@ public class MerchantService {
         return allMerchants;
     }
 
+    public MerchantDetailDto getMerchantByOib(String oib) {
+        RawMerchantDetailDto rawMerchant = merchantApiClient.fetchMerchantByOib(oib);
+
+        return toMerchantDetailDto(rawMerchant);
+    }
+
     private ApiResponse<MerchantDto> buildResponse(List<MerchantDto> merchants, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), merchants.size());
@@ -94,6 +102,19 @@ public class MerchantService {
                 .oib(rawMerchantDto.getOib())
                 .status(MerchantStatus.getByName(rawMerchantDto.getStatus()))
                 .address(rawMerchantDto.getAddress())
+                .build();
+    }
+
+    private MerchantDetailDto toMerchantDetailDto(RawMerchantDetailDto rawMerchantDto) {
+        return MerchantDetailDto.builder()
+                .shortName(rawMerchantDto.getShortName())
+                .fullName(rawMerchantDto.getFullName())
+                .oib(rawMerchantDto.getOib())
+                .address(rawMerchantDto.getAddress())
+                .status(MerchantStatus.getByName(rawMerchantDto.getStatus()))
+                .supportedTransactionTypes(rawMerchantDto.getSupportedTransactionTypes())
+                .supportedAcquirers(rawMerchantDto.getSupportedAcquirers())
+                .supportedCardBrands(rawMerchantDto.getSupportedCardBrands())
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.sevenpay.merchantportal.core_service.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum TransactionType {
@@ -18,6 +19,11 @@ public enum TransactionType {
     @JsonValue
     public String getName() {
         return name;
+    }
+
+    @JsonCreator
+    public static TransactionType fromJson(String value) {
+        return getByName(value);
     }
 
     public static TransactionType getByName(String name) {

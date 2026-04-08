@@ -1,6 +1,7 @@
 package com.sevenpay.merchantportal.core_service.model.enums;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CardBrand {
@@ -21,6 +22,11 @@ public enum CardBrand {
     @JsonValue
     public String getName() {
         return name;
+    }
+
+    @JsonCreator
+    public static CardBrand fromJson(String value) {
+        return getByName(value);
     }
 
     public static CardBrand getByName(String name) {
