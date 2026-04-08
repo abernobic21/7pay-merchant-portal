@@ -146,6 +146,19 @@ public class MerchantApiClient {
         }
     }
 
+    public RawSalepointDto fetchSalepointByMid(String mid) {
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/salepoints/{mid}")
+                            .build(mid))
+                    .retrieve()
+                    .body(RawSalepointDto.class);
+        } catch (RestClientException e) {
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
     public ApiResponse<RawTerminalDto> fetchTerminals() {
 
         try {

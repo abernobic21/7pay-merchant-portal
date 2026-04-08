@@ -3,7 +3,9 @@ package com.sevenpay.merchantportal.core_service.service;
 import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawSalepointDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.SalepointDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.SalepointDto;
+import com.sevenpay.merchantportal.core_service.model.enums.SalepointStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,11 @@ public class SalepointService {
         return response;
     }
 
+    public SalepointDetailDto getSalepointByMid(String mid) {
+        RawSalepointDto rawSalepoint = merchantApiClient.fetchSalepointByMid(mid);
+        return toSalepointDetailDto(rawSalepoint);
+    }
+
     private SalepointDto toSalepointDto(RawSalepointDto rawSalepointDto){
         return SalepointDto.builder()
                 .name(rawSalepointDto.getName())
@@ -45,6 +52,17 @@ public class SalepointService {
                 .status(rawSalepointDto.getStatus())
                 .address(rawSalepointDto.getAddress())
                 .merchantOib(rawSalepointDto.getMerchantOib())
+                .build();
+    }
+
+    private SalepointDetailDto toSalepointDetailDto(RawSalepointDto rawSalepointDto){
+        return SalepointDetailDto.builder()
+                .name(rawSalepointDto.getName())
+                .mid(rawSalepointDto.getMid())
+                .status(SalepointStatus.getByName(rawSalepointDto.getStatus()))
+                .address(rawSalepointDto.getAddress())
+                .merchantOib(rawSalepointDto.getMerchantOib())
+                .acquirerMerchantData(rawSalepointDto.getAcquirerMerchantData())
                 .build();
     }
 }
