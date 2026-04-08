@@ -33,7 +33,7 @@ public class MerchantApiClient {
                                 .queryParam("page", page)
                                 .queryParam("size", size);
 
-                        if (sort.isSorted()) {
+                        if (sort != null && sort.isSorted()) {
                             sort.forEach(order -> builder.queryParam(
                                     "sort",
                                     order.getProperty() + "," + order.getDirection().name().toLowerCase()
@@ -87,15 +87,57 @@ public class MerchantApiClient {
                     .retrieve()
                     .body(RawMerchantDetailDto.class);
         } catch (RestClientException e) {
-            throw new MerchantApiException(e.getMessage());//"External service unavailable");
+            throw new MerchantApiException("External service unavailable");
         }
     }
 
-    public ApiResponse<RawSalepointDto> fetchSalepoints() {
+    public ApiResponse<RawSalepointDto> fetchSalepoints(int page, int size, Sort sort) {
 
         try {
             return merchantApiRestClient.get()
-                    .uri("/salepoints")
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/salepoints")
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if (sort != null && sort.isSorted()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+
+                        return builder.build();
+                    })
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<>() {
+                    });
+        } catch (RestClientException e) {
+            throw new MerchantApiException("External service unavailable");
+        }
+    }
+
+    public ApiResponse<RawSalepointDto> fetchSalepointsByMerchantOib(String merchantOib, int page, int size, Sort sort) {
+
+        try {
+            return merchantApiRestClient.get()
+                    .uri(uriBuilder -> {
+                        UriBuilder builder = uriBuilder
+                                .path("/salepoints/search")
+                                .queryParam("merchantOib", merchantOib)
+                                .queryParam("page", page)
+                                .queryParam("size", size);
+
+                        if (sort != null && sort.isSorted()) {
+                            sort.forEach(order -> builder.queryParam(
+                                    "sort",
+                                    order.getProperty() + "," + order.getDirection().name().toLowerCase()
+                            ));
+                        }
+
+                        return builder.build();
+                    })
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {
                     });
@@ -133,7 +175,7 @@ public class MerchantApiClient {
                                 .queryParam("page", page)
                                 .queryParam("size", size);
 
-                        if (sort.isSorted()) {
+                        if (sort != null && sort.isSorted()) {
                             sort.forEach(order -> builder.queryParam(
                                     "sort",
                                     order.getProperty() + "," + order.getDirection().name().toLowerCase()
