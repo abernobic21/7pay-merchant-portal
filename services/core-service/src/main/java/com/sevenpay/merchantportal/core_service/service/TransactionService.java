@@ -35,8 +35,6 @@ public class TransactionService {
 
     public ApiResponse<TransactionDto> fetchTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, int page, int size, Sort sort) {
 
-        validateTimeRange(timeFrom, timeUntil);
-
         String formattedTimeFrom = timeFrom.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String formattedTimeUntil = timeUntil.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
@@ -67,6 +65,8 @@ public class TransactionService {
 
 
     public ApiResponse<TransactionDto> getTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, TransactionAuthorizationState status, TransactionType transactionType, CardBrand cardBrand, String authNumber, String rnn, Pageable pageable) {
+
+        validateTimeRange(timeFrom, timeUntil);
 
         if(!requiresLocalFiltering(status, transactionType, cardBrand, authNumber, rnn)){
             ApiResponse<TransactionDto> transactionResponse = fetchTransactions(merchantOib, timeFrom, timeUntil, mid, tid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
