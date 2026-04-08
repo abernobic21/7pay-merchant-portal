@@ -1,6 +1,7 @@
 package com.sevenpay.merchantportal.core_service.controller;
 
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
+import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDto;
 import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
@@ -11,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -40,5 +38,12 @@ public class TransactionController {
             @RequestParam(required = false) String rnn
     ) {
         return ResponseEntity.ok(transactionService.getTransactions(merchantOib, timeFrom, timeUntil, mid, tid, status, transactionType, cardBrand, authNumber, rnn, pageable));
+    }
+
+    @GetMapping("/{transactionId}")
+    public ResponseEntity<TransactionDetailDto> getTransactionById(
+            @PathVariable String transactionId
+    ){
+        return ResponseEntity.ok(transactionService.getTransactionById(transactionId));
     }
 }

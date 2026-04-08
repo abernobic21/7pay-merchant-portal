@@ -6,11 +6,9 @@ import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.common.Page;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTransactionDto;
+import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDto;
-import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
-import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
-import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
-import com.sevenpay.merchantportal.core_service.model.enums.TransactionValidity;
+import com.sevenpay.merchantportal.core_service.model.enums.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -119,6 +117,12 @@ public class TransactionService {
         return allTransactions;
     }
 
+
+    public TransactionDetailDto getTransactionById(String transactionId) {
+        RawTransactionDetailDto rawTransaction = merchantApiClient.fetchTransactionById(transactionId);
+        return toTransactionDetailDto(rawTransaction);
+    }
+
     private void validateTimeRange(LocalDateTime timeFrom, LocalDateTime timeUntil) {
         if (timeFrom == null || timeUntil == null) {
             throw new ValidationException("timeFrom and timeUntil must not be null");
@@ -210,6 +214,41 @@ public class TransactionService {
                 .authNumber(rawDto.getAuthNumber())
                 .rrn(rawDto.getRrn())
                 .timestamp(rawDto.getTimestamp())
+                .build();
+    }
+
+    private TransactionDetailDto toTransactionDetailDto(RawTransactionDetailDto rawDto) {
+        return TransactionDetailDto.builder()
+                .transactionId(rawDto.getTransactionId())
+                .transactionType(TransactionType.getByName(rawDto.getTransactionType()))
+                .amount(rawDto.getAmount())
+                .currency(rawDto.getCurrency())
+                .authorizationState(TransactionAuthorizationState.getByName(rawDto.getAuthorizationState()))
+                .responseCode(rawDto.getResponseCode())
+                .validity(TransactionValidity.getByName(rawDto.getValidity()))
+                .cardBrand(CardBrand.getByName(rawDto.getCardBrand()))
+                .acquirerHost(rawDto.getAcquirerHost())
+                .acquirerTid(rawDto.getAcquirerTid())
+                .acquirerMid(rawDto.getAcquirerMid())
+                .authNumber(rawDto.getAuthNumber())
+                .rrn(rawDto.getRrn())
+                .acquirerRrn(rawDto.getAcquirerRrn())
+                .timestamp(rawDto.getTimestamp())
+                .posTimestamp(rawDto.getPosTimestamp())
+                .acquirerTimestamp(rawDto.getAcquirerTimestamp())
+                .panMasked(rawDto.getPanMasked())
+                .panExpireDate(rawDto.getPanExpireDate())
+                .amount2(rawDto.getAmount2())
+                .currency2(rawDto.getCurrency2())
+                .stan(rawDto.getStan())
+                .acquirerStan(rawDto.getAcquirerStan())
+                .tid(rawDto.getTid())
+                .mid(rawDto.getMid())
+                .paymentType(rawDto.getPaymentType())
+                .installmentNumber(rawDto.getInstallmentNumber())
+                .transactionStateMDCProcessing(TransactionStateMDCProcessing.getByName(rawDto.getTransactionStateMDCProcessing()))
+                .transactionReference(rawDto.getTransactionReference())
+                .tipAmount(rawDto.getTipAmount())
                 .build();
     }
 }
