@@ -8,27 +8,42 @@ import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthoriza
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionValidity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
 
     private final TransactionService transactionService;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final Duration TTL = Duration.ofMinutes(15);
 
     public DashboardStatsDto getStats(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
+
+        String key = "dashboard:" + merchantOib;
+
+        DashboardStatsDto cached = (DashboardStatsDto) redisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return cached;
+        }
+
         List<TransactionDto> transactions = transactionService.getAllTransactions(merchantOib, timeFrom, timeUntil, mid, tid);
 
         DashboardStatsDto stats = calculateStats(transactions);
 
-        stats.setCachedAt(null);
+        stats.setCachedAt(LocalDateTime.now());
+        redisTemplate.opsForValue().set(key, stats, TTL);
+
         return stats;
     }
 
