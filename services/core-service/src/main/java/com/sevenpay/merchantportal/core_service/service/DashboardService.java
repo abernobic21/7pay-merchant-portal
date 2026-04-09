@@ -30,7 +30,7 @@ public class DashboardService {
 
     public DashboardStatsDto getStats(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
 
-        String key = "dashboard:" + merchantOib;
+        String key = buildCacheKey(merchantOib, timeFrom, timeUntil, mid, tid);
 
         DashboardStatsDto cached = (DashboardStatsDto) redisTemplate.opsForValue().get(key);
         if (cached != null) {
@@ -80,5 +80,15 @@ public class DashboardService {
 
     private boolean isRevenueTransaction(TransactionDto t) {
         return t.getAuthorizationState() == TransactionAuthorizationState.AUTHORIZED && t.getValidity() == TransactionValidity.VALID && (t.getTransactionType() == TransactionType.SALE || t.getTransactionType() == TransactionType.SALE_WITH_INSTALLMENTS);
+    }
+
+    private String buildCacheKey(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
+        return String.format("dashboard:merchantOib_%s:timeFrom_%s:timeUntil_%s:mid_%s:tid_%s",
+                merchantOib != null ? merchantOib.toLowerCase() : "all",
+                timeFrom.toString(),
+                timeUntil.toString(),
+                mid != null ? mid.toLowerCase() : "all",
+                tid != null ? tid.toLowerCase() : "all"
+        );
     }
 }
