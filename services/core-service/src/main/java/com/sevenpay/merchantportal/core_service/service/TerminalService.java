@@ -8,8 +8,10 @@ import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDto;
 import com.sevenpay.merchantportal.core_service.model.enums.TerminalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +20,17 @@ import java.util.stream.Collectors;
 public class TerminalService {
 
     private final MerchantApiClient merchantApiClient;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final Duration TTL = Duration.ofMinutes(15);
 
     public ApiResponse<TerminalDto> getTerminals(String merchantOib, String mid, Pageable pageable) {
+        String key = buildCacheKey(merchantOib, mid, pageable);
 
-        new ApiResponse<>();
+        ApiResponse<TerminalDto> cached = (ApiResponse<TerminalDto>) redisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return cached;
+        }
+
         ApiResponse<RawTerminalDto> rawResponse;
         if (merchantOib != null || mid != null) {
             rawResponse = merchantApiClient.fetchTerminalsWithFilters(merchantOib, mid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
@@ -37,13 +46,35 @@ public class TerminalService {
         ApiResponse<TerminalDto> response = new ApiResponse<>();
         response.setContent(terminals);
         response.setPage(rawResponse.getPage());
+
+        redisTemplate.opsForValue().set(key, response, TTL);
         return response;
     }
 
     public TerminalDetailDto getTerminalByTid(String tid) {
+        String key = "terminal:" + tid;
+
+        TerminalDetailDto cached = (TerminalDetailDto) redisTemplate.opsForValue().get(key);
+        if(cached != null){
+            return cached;
+        }
+
         RawTerminalDto rawTerminal = merchantApiClient.fetchTerminalByTid(tid);
 
-        return toTerminalDetailDto(rawTerminal);
+        TerminalDetailDto terminal = toTerminalDetailDto(rawTerminal);
+        redisTemplate.opsForValue().set(key, terminal, TTL);
+
+        return terminal;
+    }
+
+    private String buildCacheKey(String merchantOib, String mid, Pageable pageable) {
+        return String.format("terminals:merchantOib_%s:mid_%s:page_%d:size_%d:sort_%s",
+                merchantOib != null ? merchantOib.toLowerCase() : "all",
+                mid != null ? mid.toLowerCase() : "all",
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
     }
 
     private TerminalDto toTerminalDto(RawTerminalDto rawTerminalDto) {
