@@ -50,9 +50,19 @@ public class MerchantService {
     }
 
     public MerchantDetailDto getMerchantByOib(String oib) {
+        String key = "merchant:" + oib;
+
+        MerchantDetailDto cached = (MerchantDetailDto) redisTemplate.opsForValue().get(key);
+        if(cached != null){
+            return cached;
+        }
+
         RawMerchantDetailDto rawMerchant = merchantApiClient.fetchMerchantByOib(oib);
 
-        return toMerchantDetailDto(rawMerchant);
+        MerchantDetailDto merchant = toMerchantDetailDto(rawMerchant);
+        redisTemplate.opsForValue().set(key, merchant, TTL);
+
+        return merchant;
     }
 
     private String buildCacheKey(MerchantStatus status, Pageable pageable) {
