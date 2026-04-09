@@ -1,4 +1,4 @@
-package com.sevenpay.merchantportal.core_service.cofig;
+package com.sevenpay.merchantportal.core_service.cofig.converter;
 
 import com.sevenpay.merchantportal.core_service.model.enums.MerchantStatus;
 import org.springframework.core.convert.converter.Converter;
