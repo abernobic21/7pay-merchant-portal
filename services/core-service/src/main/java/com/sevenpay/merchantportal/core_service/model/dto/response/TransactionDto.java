@@ -4,14 +4,18 @@ import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionValidity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionDto {
     private String transactionId;
     private TransactionType transactionType;

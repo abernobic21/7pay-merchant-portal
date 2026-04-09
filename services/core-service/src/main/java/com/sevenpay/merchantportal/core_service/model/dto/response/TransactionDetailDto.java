@@ -1,14 +1,18 @@
 package com.sevenpay.merchantportal.core_service.model.dto.response;
 
 import com.sevenpay.merchantportal.core_service.model.enums.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionDetailDto {
     private String transactionId;
     private TransactionType transactionType;

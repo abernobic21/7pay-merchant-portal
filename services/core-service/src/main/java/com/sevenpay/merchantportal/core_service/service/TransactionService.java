@@ -12,8 +12,10 @@ import com.sevenpay.merchantportal.core_service.model.enums.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -32,6 +34,8 @@ public class TransactionService {
     private final MerchantApiClient merchantApiClient;
     private final ExecutorService transactionExecutor;
     private final ExecutorService pageExecutor;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final Duration TTL = Duration.ofMinutes(2);
 
     public ApiResponse<TransactionDto> fetchTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, int page, int size, Sort sort) {
 
@@ -69,14 +73,36 @@ public class TransactionService {
         validateTimeRange(timeFrom, timeUntil);
 
         if(!requiresLocalFiltering(status, transactionType, cardBrand, authNumber, rnn)){
+            String key = buildPaginatedKey(merchantOib, timeFrom, timeUntil, mid, tid, pageable);
+
+            ApiResponse<TransactionDto> cached = (ApiResponse<TransactionDto>) redisTemplate.opsForValue().get(key);
+            if (cached != null) {
+                return cached;
+            }
+
+            String rawKey = buildRawKey(merchantOib, timeFrom, timeUntil, mid, tid);
+
+            List<TransactionDto> rawCached = (List<TransactionDto>) redisTemplate.opsForValue().get(rawKey);
+            if (rawCached != null) {
+                List<TransactionDto> sorted = applySorting(rawCached, pageable.getSort());
+                ApiResponse<TransactionDto> transactionResponse = buildResponse(sorted, pageable);
+                redisTemplate.opsForValue().set(key, transactionResponse, TTL);
+                return transactionResponse;
+            }
+
             ApiResponse<TransactionDto> transactionResponse = fetchTransactions(merchantOib, timeFrom, timeUntil, mid, tid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
-            List<TransactionDto> sortedTransactions = applySorting(transactionResponse.getContent(), pageable.getSort());
-
-            return buildResponse(sortedTransactions, pageable);
+            redisTemplate.opsForValue().set(key, transactionResponse, TTL);
+            return transactionResponse;
         }
 
-        List<TransactionDto> allTransactions = getAllTransactions(merchantOib, timeFrom, timeUntil, mid, tid);
+        String key = buildRawKey(merchantOib, timeFrom, timeUntil, mid, tid);
+
+        List<TransactionDto> allTransactions = (List<TransactionDto>) redisTemplate.opsForValue().get(key);
+        if (allTransactions == null) {
+            allTransactions = getAllTransactions(merchantOib, timeFrom, timeUntil, mid, tid);
+            redisTemplate.opsForValue().set(key, allTransactions, Duration.ofMinutes(2));
+        }
 
         List<TransactionDto> filteredTransactions = allTransactions.stream()
                 .filter(t -> status == null || t.getAuthorizationState() == status)
@@ -87,7 +113,6 @@ public class TransactionService {
                 .toList();
 
         List<TransactionDto> sortedTransactions = applySorting(filteredTransactions, pageable.getSort());
-
         return buildResponse(sortedTransactions, pageable);
     }
 
@@ -119,8 +144,17 @@ public class TransactionService {
 
 
     public TransactionDetailDto getTransactionById(String transactionId) {
+        String key = "transactions:id_" + transactionId;
+
+        TransactionDetailDto cached = (TransactionDetailDto) redisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return cached;
+        }
+
         RawTransactionDetailDto rawTransaction = merchantApiClient.fetchTransactionById(transactionId);
-        return toTransactionDetailDto(rawTransaction);
+        TransactionDetailDto transaction = toTransactionDetailDto(rawTransaction);
+        redisTemplate.opsForValue().set(key, transaction, TTL);
+        return transaction;
     }
 
     private void validateTimeRange(LocalDateTime timeFrom, LocalDateTime timeUntil) {
@@ -199,6 +233,31 @@ public class TransactionService {
         response.setPage(page);
 
         return response;
+    }
+
+    private String buildPaginatedKey(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil,
+                                     String mid, String tid, Pageable pageable) {
+        return String.format("transactions:paginated:%s:from_%s:until_%s:mid_%s:tid_%s:page_%d:size_%d:sort_%s",
+                merchantOib,
+                timeFrom  != null ? timeFrom  : "all",
+                timeUntil != null ? timeUntil : "all",
+                mid != null ? mid : "all",
+                tid != null ? tid : "all",
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+    }
+
+    private String buildRawKey(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil,
+                               String mid, String tid) {
+        return String.format("transactions:raw:%s:from_%s:until_%s:mid_%s:tid_%s",
+                merchantOib,
+                timeFrom  != null ? timeFrom  : "all",
+                timeUntil != null ? timeUntil : "all",
+                mid != null ? mid : "all",
+                tid != null ? tid : "all"
+        );
     }
 
     private TransactionDto toTransactionDto(RawTransactionDetailDto rawDto) {
