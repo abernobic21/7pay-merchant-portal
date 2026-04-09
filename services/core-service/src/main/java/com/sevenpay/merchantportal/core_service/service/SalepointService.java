@@ -8,8 +8,10 @@ import com.sevenpay.merchantportal.core_service.model.dto.response.SalepointDto;
 import com.sevenpay.merchantportal.core_service.model.enums.SalepointStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,16 +20,19 @@ import java.util.stream.Collectors;
 public class SalepointService {
 
     private final MerchantApiClient merchantApiClient;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final Duration TTL = Duration.ofMinutes(15);
 
-    public ApiResponse<SalepointDto> getSalepoints(String merchantOib, Pageable pageable){
+    public ApiResponse<SalepointDto> getSalepoints(String mid, Pageable pageable) {
+        String key = buildCacheKey(mid, pageable);
 
-        ApiResponse<RawSalepointDto> rawResponse;
-
-        if (merchantOib != null) {
-            rawResponse = merchantApiClient.fetchSalepointsByMerchantOib(merchantOib, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-        } else {
-            rawResponse = merchantApiClient.fetchSalepoints(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        ApiResponse<SalepointDto> cached = (ApiResponse<SalepointDto>) redisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return cached;
         }
+        ApiResponse<RawSalepointDto> rawResponse = mid != null
+                ? merchantApiClient.fetchSalepointsByMerchantOib(mid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort())
+                : merchantApiClient.fetchSalepoints(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
         List<SalepointDto> salepoints = rawResponse.getContent()
                 .stream()
@@ -37,15 +42,36 @@ public class SalepointService {
         ApiResponse<SalepointDto> response = new ApiResponse<>();
         response.setContent(salepoints);
         response.setPage(rawResponse.getPage());
+
+        redisTemplate.opsForValue().set(key, response, TTL);
         return response;
     }
 
     public SalepointDetailDto getSalepointByMid(String mid) {
+        String key = "salepoint:" + mid;
+
+        SalepointDetailDto cached = (SalepointDetailDto) redisTemplate.opsForValue().get(key);
+        if(cached != null){
+            return cached;
+        }
+
         RawSalepointDto rawSalepoint = merchantApiClient.fetchSalepointByMid(mid);
-        return toSalepointDetailDto(rawSalepoint);
+        SalepointDetailDto salepoint = toSalepointDetailDto(rawSalepoint);
+        redisTemplate.opsForValue().set(key, salepoint, TTL);
+
+        return salepoint;
     }
 
-    private SalepointDto toSalepointDto(RawSalepointDto rawSalepointDto){
+    private String buildCacheKey(String mid, Pageable pageable) {
+        return String.format("salepoints:mid_%s:page_%d:size_%d:sort_%s",
+                mid != null ? mid.toLowerCase() : "all",
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+    }
+
+    private SalepointDto toSalepointDto(RawSalepointDto rawSalepointDto) {
         return SalepointDto.builder()
                 .name(rawSalepointDto.getName())
                 .mid(rawSalepointDto.getMid())
@@ -55,7 +81,7 @@ public class SalepointService {
                 .build();
     }
 
-    private SalepointDetailDto toSalepointDetailDto(RawSalepointDto rawSalepointDto){
+    private SalepointDetailDto toSalepointDetailDto(RawSalepointDto rawSalepointDto) {
         return SalepointDetailDto.builder()
                 .name(rawSalepointDto.getName())
                 .mid(rawSalepointDto.getMid())
