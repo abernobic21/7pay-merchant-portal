@@ -66,10 +66,11 @@ public class MerchantService {
     }
 
     private String buildCacheKey(MerchantStatus status, Pageable pageable) {
-        return String.format("merchants:status_%s:page_%d:size_%d",
+        return String.format("merchants:status_%s:page_%d:size_%d:sort_%s",
                 status != null ? status.name().toLowerCase() : "all",
                 pageable.getPageNumber(),
-                pageable.getPageSize()
+                pageable.getPageSize(),
+                pageable.getSort()
         );
     }
 
