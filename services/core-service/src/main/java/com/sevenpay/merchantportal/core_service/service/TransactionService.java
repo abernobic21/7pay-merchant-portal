@@ -3,16 +3,19 @@ package com.sevenpay.merchantportal.core_service.service;
 import com.sevenpay.merchantportal.core_service.client.MerchantApiClient;
 import com.sevenpay.merchantportal.core_service.exception.ValidationException;
 import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
-import com.sevenpay.merchantportal.core_service.model.common.Page;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTransactionDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TransactionDto;
-import com.sevenpay.merchantportal.core_service.model.enums.*;
+import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
+import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
+import com.sevenpay.merchantportal.core_service.util.ApiResponseBuilder;
+import com.sevenpay.merchantportal.core_service.util.TransactionListProcessor;
+import com.sevenpay.merchantportal.core_service.util.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +36,7 @@ public class TransactionService {
     private final MerchantApiClient merchantApiClient;
     private final ExecutorService transactionExecutor;
     private final ExecutorService pageExecutor;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisCacheService cacheService;
     private static final Duration TTL = Duration.ofMinutes(2);
 
     public ApiResponse<TransactionDto> fetchTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, int page, int size, Sort sort) {
@@ -58,7 +60,7 @@ public class TransactionService {
                 .map(t -> CompletableFuture.supplyAsync(() -> {
                     RawTransactionDetailDto detail =
                             merchantApiClient.fetchTransactionById(t.getTransactionId());
-                    return toTransactionDto(detail);
+                    return TransactionMapper.toTransactionDto(detail);
                 }, transactionExecutor))
                 .toList();
 
@@ -67,53 +69,58 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-
-    public ApiResponse<TransactionDto> getTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, TransactionAuthorizationState status, TransactionType transactionType, CardBrand cardBrand, String authNumber, String rnn, Pageable pageable) {
+    public ApiResponse<TransactionDto> getTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid, TransactionAuthorizationState status, TransactionType transactionType, CardBrand cardBrand, String authNumber, String rrn, Pageable pageable) {
 
         validateTimeRange(timeFrom, timeUntil);
 
-        if(!requiresLocalFiltering(status, transactionType, cardBrand, authNumber, rnn)){
-            String key = buildPaginatedKey(merchantOib, timeFrom, timeUntil, mid, tid, pageable);
-
-            ApiResponse<TransactionDto> cached = (ApiResponse<TransactionDto>) redisTemplate.opsForValue().get(key);
-            if (cached != null) {
-                return cached;
-            }
-
-            String rawKey = buildRawKey(merchantOib, timeFrom, timeUntil, mid, tid);
-
-            List<TransactionDto> rawCached = (List<TransactionDto>) redisTemplate.opsForValue().get(rawKey);
-            if (rawCached != null) {
-                List<TransactionDto> sorted = applySorting(rawCached, pageable.getSort());
-                ApiResponse<TransactionDto> transactionResponse = buildResponse(sorted, pageable);
-                redisTemplate.opsForValue().set(key, transactionResponse, TTL);
-                return transactionResponse;
-            }
-
-            ApiResponse<TransactionDto> transactionResponse = fetchTransactions(merchantOib, timeFrom, timeUntil, mid, tid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-
-            redisTemplate.opsForValue().set(key, transactionResponse, TTL);
-            return transactionResponse;
+        if (!TransactionListProcessor.requiresLocalFiltering(status, transactionType, cardBrand, authNumber, rrn)) {
+            return handlePaginatedFetch(merchantOib, timeFrom, timeUntil, mid, tid, pageable);
         }
 
-        String key = buildRawKey(merchantOib, timeFrom, timeUntil, mid, tid);
+        return handleFetchWithLocalFilters(merchantOib, timeFrom, timeUntil, mid, tid,
+                status, transactionType, cardBrand, authNumber, rrn, pageable);
+    }
 
-        List<TransactionDto> allTransactions = (List<TransactionDto>) redisTemplate.opsForValue().get(key);
+    private ApiResponse<TransactionDto> handlePaginatedFetch(String merchantOib, LocalDateTime timeFrom,
+                                                             LocalDateTime timeUntil, String mid, String tid, Pageable pageable) {
+
+        String paginatedKey = buildPaginatedKey(merchantOib, timeFrom, timeUntil, mid, tid, pageable);
+        ApiResponse<TransactionDto> cached = cacheService.get(paginatedKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        String rawKey = buildRawKey(merchantOib, timeFrom, timeUntil, mid, tid);
+        List<TransactionDto> rawCached = cacheService.get(rawKey);
+        if (rawCached != null) {
+            List<TransactionDto> sorted = TransactionListProcessor.sort(rawCached, pageable.getSort());
+            ApiResponse<TransactionDto> response = ApiResponseBuilder.build(sorted, pageable);
+            cacheService.set(paginatedKey, response, TTL);
+            return response;
+        }
+
+        ApiResponse<TransactionDto> response = fetchTransactions(merchantOib, timeFrom, timeUntil,
+                mid, tid, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        cacheService.set(paginatedKey, response, TTL);
+        return response;
+    }
+
+    private ApiResponse<TransactionDto> handleFetchWithLocalFilters(String merchantOib, LocalDateTime timeFrom,
+                                                                    LocalDateTime timeUntil, String mid, String tid, TransactionAuthorizationState status,
+                                                                    TransactionType transactionType, CardBrand cardBrand, String authNumber, String rrn,
+                                                                    Pageable pageable) {
+
+        String rawKey = buildRawKey(merchantOib, timeFrom, timeUntil, mid, tid);
+        List<TransactionDto> allTransactions = cacheService.get(rawKey);
         if (allTransactions == null) {
             allTransactions = getAllTransactions(merchantOib, timeFrom, timeUntil, mid, tid);
-            redisTemplate.opsForValue().set(key, allTransactions, Duration.ofMinutes(2));
+            cacheService.set(rawKey, allTransactions, TTL);
         }
 
-        List<TransactionDto> filteredTransactions = allTransactions.stream()
-                .filter(t -> status == null || t.getAuthorizationState() == status)
-                .filter(t -> transactionType == null || t.getTransactionType() == transactionType)
-                .filter(t -> cardBrand == null || t.getCardBrand() == cardBrand)
-                .filter(t -> authNumber == null || authNumber.equals(t.getAuthNumber()))
-                .filter(t -> rnn == null || rnn.equals(t.getRrn()))
-                .toList();
-
-        List<TransactionDto> sortedTransactions = applySorting(filteredTransactions, pageable.getSort());
-        return buildResponse(sortedTransactions, pageable);
+        List<TransactionDto> filtered = TransactionListProcessor.filter(allTransactions, status,
+                transactionType, cardBrand, authNumber, rrn);
+        List<TransactionDto> sorted = TransactionListProcessor.sort(filtered, pageable.getSort());
+        return ApiResponseBuilder.build(sorted, pageable);
     }
 
     public List<TransactionDto> getAllTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
@@ -146,14 +153,14 @@ public class TransactionService {
     public TransactionDetailDto getTransactionById(String transactionId) {
         String key = "transactions:id_" + transactionId;
 
-        TransactionDetailDto cached = (TransactionDetailDto) redisTemplate.opsForValue().get(key);
+        TransactionDetailDto cached = cacheService.get(key);
         if (cached != null) {
             return cached;
         }
 
         RawTransactionDetailDto rawTransaction = merchantApiClient.fetchTransactionById(transactionId);
-        TransactionDetailDto transaction = toTransactionDetailDto(rawTransaction);
-        redisTemplate.opsForValue().set(key, transaction, TTL);
+        TransactionDetailDto transaction = TransactionMapper.toTransactionDetailDto(rawTransaction);
+        cacheService.set(key, transaction, TTL);
         return transaction;
     }
 
@@ -173,73 +180,11 @@ public class TransactionService {
         }
     }
 
-    private boolean requiresLocalFiltering(
-            TransactionAuthorizationState status,
-            TransactionType transactionType,
-            CardBrand cardBrand,
-            String authNumber,
-            String rnn
-    ) {
-        return status != null
-                || transactionType != null
-                || cardBrand != null
-                || authNumber != null
-                || rnn != null;
-    }
-
-    private List<TransactionDto> applySorting(List<TransactionDto> transactions, Sort sort) {
-        if (sort.isUnsorted()) return transactions;
-
-        Comparator<TransactionDto> comparator = sort.stream()
-                .map(order -> {
-                    Comparator<TransactionDto> c = switch (order.getProperty()) {
-                        case "transactionId" -> Comparator.comparing(TransactionDto::getTransactionId);
-                        case "transactionType" -> Comparator.comparing(t -> t.getTransactionType().name());
-                        case "amount" -> Comparator.comparing(TransactionDto::getAmount);
-                        case "currency" -> Comparator.comparing(TransactionDto::getCurrency);
-                        case "authorizationState" -> Comparator.comparing(t -> t.getAuthorizationState().name());
-                        case "validity" -> Comparator.comparing(t -> t.getValidity().name());
-                        case "cardBrand" -> Comparator.comparing(t -> t.getCardBrand().name());
-                        case "acquirerHost" -> Comparator.comparing(TransactionDto::getAcquirerHost);
-                        case "authNumber" -> Comparator.comparing(TransactionDto::getAuthNumber);
-                        case "rrn" -> Comparator.comparing(TransactionDto::getRrn,
-                                Comparator.nullsLast(Comparator.naturalOrder()));
-                        case "timestamp" -> Comparator.comparing(TransactionDto::getTimestamp);
-                        default -> throw new ValidationException("Unsupported sort field: " + order.getProperty());
-                    };
-                    return order.isAscending() ? c : c.reversed();
-                })
-                .reduce(Comparator::thenComparing)
-                .orElseThrow();
-
-        return transactions.stream().sorted(comparator).collect(Collectors.toList());
-    }
-
-
-    private ApiResponse<TransactionDto> buildResponse(List<TransactionDto> transactions, Pageable pageable) {
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), transactions.size());
-        List<TransactionDto> pageTransactions = transactions.subList(start, end);
-
-        Page page = Page.builder()
-                .totalPages((int) Math.ceil((double) transactions.size() / pageable.getPageSize()))
-                .totalElements(transactions.size())
-                .size(pageable.getPageSize())
-                .number(pageable.getPageNumber())
-                .build();
-
-        ApiResponse<TransactionDto> response = new ApiResponse<>();
-        response.setContent(pageTransactions);
-        response.setPage(page);
-
-        return response;
-    }
-
     private String buildPaginatedKey(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil,
                                      String mid, String tid, Pageable pageable) {
         return String.format("transactions:paginated:%s:from_%s:until_%s:mid_%s:tid_%s:page_%d:size_%d:sort_%s",
                 merchantOib,
-                timeFrom  != null ? timeFrom  : "all",
+                timeFrom != null ? timeFrom : "all",
                 timeUntil != null ? timeUntil : "all",
                 mid != null ? mid : "all",
                 tid != null ? tid : "all",
@@ -253,62 +198,10 @@ public class TransactionService {
                                String mid, String tid) {
         return String.format("transactions:raw:%s:from_%s:until_%s:mid_%s:tid_%s",
                 merchantOib,
-                timeFrom  != null ? timeFrom  : "all",
+                timeFrom != null ? timeFrom : "all",
                 timeUntil != null ? timeUntil : "all",
                 mid != null ? mid : "all",
                 tid != null ? tid : "all"
         );
     }
-
-    private TransactionDto toTransactionDto(RawTransactionDetailDto rawDto) {
-        return TransactionDto.builder()
-                .transactionId(rawDto.getTransactionId())
-                .transactionType(TransactionType.getByName(rawDto.getTransactionType()))
-                .amount(rawDto.getAmount())
-                .currency(rawDto.getCurrency())
-                .authorizationState(TransactionAuthorizationState.getByName(rawDto.getAuthorizationState()))
-                .validity(TransactionValidity.getByName(rawDto.getValidity()))
-                .cardBrand(CardBrand.getByName(rawDto.getCardBrand()))
-                .acquirerHost(rawDto.getAcquirerHost())
-                .authNumber(rawDto.getAuthNumber())
-                .rrn(rawDto.getRrn())
-                .timestamp(rawDto.getTimestamp())
-                .build();
-    }
-
-    private TransactionDetailDto toTransactionDetailDto(RawTransactionDetailDto rawDto) {
-        return TransactionDetailDto.builder()
-                .transactionId(rawDto.getTransactionId())
-                .transactionType(TransactionType.getByName(rawDto.getTransactionType()))
-                .amount(rawDto.getAmount())
-                .currency(rawDto.getCurrency())
-                .authorizationState(TransactionAuthorizationState.getByName(rawDto.getAuthorizationState()))
-                .responseCode(rawDto.getResponseCode())
-                .validity(TransactionValidity.getByName(rawDto.getValidity()))
-                .cardBrand(CardBrand.getByName(rawDto.getCardBrand()))
-                .acquirerHost(rawDto.getAcquirerHost())
-                .acquirerTid(rawDto.getAcquirerTid())
-                .acquirerMid(rawDto.getAcquirerMid())
-                .authNumber(rawDto.getAuthNumber())
-                .rrn(rawDto.getRrn())
-                .acquirerRrn(rawDto.getAcquirerRrn())
-                .timestamp(rawDto.getTimestamp())
-                .posTimestamp(rawDto.getPosTimestamp())
-                .acquirerTimestamp(rawDto.getAcquirerTimestamp())
-                .panMasked(rawDto.getPanMasked())
-                .panExpireDate(rawDto.getPanExpireDate())
-                .amount2(rawDto.getAmount2())
-                .currency2(rawDto.getCurrency2())
-                .stan(rawDto.getStan())
-                .acquirerStan(rawDto.getAcquirerStan())
-                .tid(rawDto.getTid())
-                .mid(rawDto.getMid())
-                .paymentType(rawDto.getPaymentType())
-                .installmentNumber(rawDto.getInstallmentNumber())
-                .transactionStateMDCProcessing(TransactionStateMDCProcessing.getByName(rawDto.getTransactionStateMDCProcessing()))
-                .transactionReference(rawDto.getTransactionReference())
-                .tipAmount(rawDto.getTipAmount())
-                .build();
-    }
 }
-
