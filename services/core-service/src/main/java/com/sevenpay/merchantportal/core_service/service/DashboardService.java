@@ -8,7 +8,6 @@ import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthoriza
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionValidity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,14 +24,14 @@ import java.util.List;
 public class DashboardService {
 
     private final TransactionService transactionService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisCacheService cacheService;
     private static final Duration TTL = Duration.ofMinutes(15);
 
     public DashboardStatsDto getStats(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
 
         String key = buildCacheKey(merchantOib, timeFrom, timeUntil, mid, tid);
 
-        DashboardStatsDto cached = (DashboardStatsDto) redisTemplate.opsForValue().get(key);
+        DashboardStatsDto cached = cacheService.get(key);
         if (cached != null) {
             return cached;
         }
@@ -42,7 +41,7 @@ public class DashboardService {
         DashboardStatsDto stats = calculateStats(transactions);
 
         stats.setCachedAt(LocalDateTime.now());
-        redisTemplate.opsForValue().set(key, stats, TTL);
+        cacheService.set(key, stats, TTL);
 
         return stats;
     }
@@ -75,11 +74,19 @@ public class DashboardService {
         }
         BigDecimal avg = totalCount > 0 ? totalRevenue.divide(BigDecimal.valueOf(totalCount), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO;
 
-        return DashboardStatsDto.builder().totalRevenue(totalRevenue).totalTransactions(totalCount).avgTransactionValue(avg).revenueByCardBrand(new ArrayList<>(byCardBrand.values())).revenueByAcquirer(new ArrayList<>(byAcquirer.values())).build();
+        return DashboardStatsDto.builder()
+                .totalRevenue(totalRevenue)
+                .totalTransactions(totalCount)
+                .avgTransactionValue(avg)
+                .revenueByCardBrand(new ArrayList<>(byCardBrand.values()))
+                .revenueByAcquirer(new ArrayList<>(byAcquirer.values()))
+                .build();
     }
 
     private boolean isRevenueTransaction(TransactionDto t) {
-        return t.getAuthorizationState() == TransactionAuthorizationState.AUTHORIZED && t.getValidity() == TransactionValidity.VALID && (t.getTransactionType() == TransactionType.SALE || t.getTransactionType() == TransactionType.SALE_WITH_INSTALLMENTS);
+        return t.getAuthorizationState() == TransactionAuthorizationState.AUTHORIZED
+                && t.getValidity() == TransactionValidity.VALID
+                && (t.getTransactionType() == TransactionType.SALE || t.getTransactionType() == TransactionType.SALE_WITH_INSTALLMENTS);
     }
 
     private String buildCacheKey(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
