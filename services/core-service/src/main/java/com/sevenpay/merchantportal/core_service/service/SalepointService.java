@@ -5,10 +5,9 @@ import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawSalepointDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.SalepointDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.SalepointDto;
-import com.sevenpay.merchantportal.core_service.model.enums.SalepointStatus;
+import com.sevenpay.merchantportal.core_service.util.mapper.SalepointMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,13 +19,13 @@ import java.util.stream.Collectors;
 public class SalepointService {
 
     private final MerchantApiClient merchantApiClient;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisCacheService cacheService;
     private static final Duration TTL = Duration.ofMinutes(15);
 
     public ApiResponse<SalepointDto> getSalepoints(String mid, Pageable pageable) {
         String key = buildCacheKey(mid, pageable);
 
-        ApiResponse<SalepointDto> cached = (ApiResponse<SalepointDto>) redisTemplate.opsForValue().get(key);
+        ApiResponse<SalepointDto> cached = cacheService.get(key);
         if (cached != null) {
             return cached;
         }
@@ -36,28 +35,28 @@ public class SalepointService {
 
         List<SalepointDto> salepoints = rawResponse.getContent()
                 .stream()
-                .map(this::toSalepointDto)
+                .map(SalepointMapper::toSalepointDto)
                 .collect(Collectors.toList());
 
         ApiResponse<SalepointDto> response = new ApiResponse<>();
         response.setContent(salepoints);
         response.setPage(rawResponse.getPage());
 
-        redisTemplate.opsForValue().set(key, response, TTL);
+        cacheService.set(key, response, TTL);
         return response;
     }
 
     public SalepointDetailDto getSalepointByMid(String mid) {
         String key = "salepoint:" + mid;
 
-        SalepointDetailDto cached = (SalepointDetailDto) redisTemplate.opsForValue().get(key);
+        SalepointDetailDto cached = cacheService.get(key);
         if(cached != null){
             return cached;
         }
 
         RawSalepointDto rawSalepoint = merchantApiClient.fetchSalepointByMid(mid);
-        SalepointDetailDto salepoint = toSalepointDetailDto(rawSalepoint);
-        redisTemplate.opsForValue().set(key, salepoint, TTL);
+        SalepointDetailDto salepoint = SalepointMapper.toSalepointDetailDto(rawSalepoint);
+        cacheService.set(key, salepoint, TTL);
 
         return salepoint;
     }
@@ -69,26 +68,5 @@ public class SalepointService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-    }
-
-    private SalepointDto toSalepointDto(RawSalepointDto rawSalepointDto) {
-        return SalepointDto.builder()
-                .name(rawSalepointDto.getName())
-                .mid(rawSalepointDto.getMid())
-                .status(rawSalepointDto.getStatus())
-                .address(rawSalepointDto.getAddress())
-                .merchantOib(rawSalepointDto.getMerchantOib())
-                .build();
-    }
-
-    private SalepointDetailDto toSalepointDetailDto(RawSalepointDto rawSalepointDto) {
-        return SalepointDetailDto.builder()
-                .name(rawSalepointDto.getName())
-                .mid(rawSalepointDto.getMid())
-                .status(SalepointStatus.getByName(rawSalepointDto.getStatus()))
-                .address(rawSalepointDto.getAddress())
-                .merchantOib(rawSalepointDto.getMerchantOib())
-                .acquirerMerchantData(rawSalepointDto.getAcquirerMerchantData())
-                .build();
     }
 }
