@@ -7,9 +7,9 @@ import com.sevenpay.merchantportal.core_service.model.dto.external.RawMerchantDt
 import com.sevenpay.merchantportal.core_service.model.dto.response.MerchantDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.MerchantDto;
 import com.sevenpay.merchantportal.core_service.model.enums.MerchantStatus;
+import com.sevenpay.merchantportal.core_service.util.mapper.MerchantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 public class MerchantService {
 
     private final MerchantApiClient merchantApiClient;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisCacheService cacheService;
     private static final Duration TTL = Duration.ofMinutes(15);
 
     public ApiResponse<MerchantDto> getMerchants(MerchantStatus status, Pageable pageable) {
         String key = buildCacheKey(status, pageable);
 
-        ApiResponse<MerchantDto> cached = (ApiResponse<MerchantDto>) redisTemplate.opsForValue().get(key);
+        ApiResponse<MerchantDto> cached = cacheService.get(key);
         if (cached != null) {
             return cached;
         }
@@ -38,29 +38,29 @@ public class MerchantService {
 
         List<MerchantDto> merchants = rawResponse.getContent()
                 .stream()
-                .map(this::toMerchantDto)
+                .map(MerchantMapper::toMerchantDto)
                 .collect(Collectors.toList());
 
         ApiResponse<MerchantDto> response = new ApiResponse<>();
         response.setContent(merchants);
         response.setPage(rawResponse.getPage());
 
-        redisTemplate.opsForValue().set(key, response, TTL);
+        cacheService.set(key, response, TTL);
         return response;
     }
 
     public MerchantDetailDto getMerchantByOib(String oib) {
         String key = "merchant:" + oib;
 
-        MerchantDetailDto cached = (MerchantDetailDto) redisTemplate.opsForValue().get(key);
+        MerchantDetailDto cached = cacheService.get(key);
         if(cached != null){
             return cached;
         }
 
         RawMerchantDetailDto rawMerchant = merchantApiClient.fetchMerchantByOib(oib);
 
-        MerchantDetailDto merchant = toMerchantDetailDto(rawMerchant);
-        redisTemplate.opsForValue().set(key, merchant, TTL);
+        MerchantDetailDto merchant = MerchantMapper.toMerchantDetailDto(rawMerchant);
+        cacheService.set(key, merchant, TTL);
 
         return merchant;
     }
@@ -72,28 +72,5 @@ public class MerchantService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-    }
-
-    private MerchantDto toMerchantDto(RawMerchantDto rawMerchantDto) {
-        return MerchantDto.builder()
-                .shortName(rawMerchantDto.getShortName())
-                .fullName(rawMerchantDto.getFullName())
-                .oib(rawMerchantDto.getOib())
-                .status(MerchantStatus.getByName(rawMerchantDto.getStatus()))
-                .address(rawMerchantDto.getAddress())
-                .build();
-    }
-
-    private MerchantDetailDto toMerchantDetailDto(RawMerchantDetailDto rawMerchantDto) {
-        return MerchantDetailDto.builder()
-                .shortName(rawMerchantDto.getShortName())
-                .fullName(rawMerchantDto.getFullName())
-                .oib(rawMerchantDto.getOib())
-                .address(rawMerchantDto.getAddress())
-                .status(MerchantStatus.getByName(rawMerchantDto.getStatus()))
-                .supportedTransactionTypes(rawMerchantDto.getSupportedTransactionTypes())
-                .supportedAcquirers(rawMerchantDto.getSupportedAcquirers())
-                .supportedCardBrands(rawMerchantDto.getSupportedCardBrands())
-                .build();
     }
 }
