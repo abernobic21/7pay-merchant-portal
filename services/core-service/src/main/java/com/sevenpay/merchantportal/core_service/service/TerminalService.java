@@ -5,10 +5,9 @@ import com.sevenpay.merchantportal.core_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.core_service.model.dto.external.RawTerminalDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDetailDto;
 import com.sevenpay.merchantportal.core_service.model.dto.response.TerminalDto;
-import com.sevenpay.merchantportal.core_service.model.enums.TerminalStatus;
+import com.sevenpay.merchantportal.core_service.util.mapper.TerminalMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,13 +19,13 @@ import java.util.stream.Collectors;
 public class TerminalService {
 
     private final MerchantApiClient merchantApiClient;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisCacheService cacheService;
     private static final Duration TTL = Duration.ofMinutes(15);
 
     public ApiResponse<TerminalDto> getTerminals(String merchantOib, String mid, Pageable pageable) {
         String key = buildCacheKey(merchantOib, mid, pageable);
 
-        ApiResponse<TerminalDto> cached = (ApiResponse<TerminalDto>) redisTemplate.opsForValue().get(key);
+        ApiResponse<TerminalDto> cached = cacheService.get(key);
         if (cached != null) {
             return cached;
         }
@@ -40,29 +39,29 @@ public class TerminalService {
 
         List<TerminalDto> terminals = rawResponse.getContent()
                 .stream()
-                .map(this::toTerminalDto)
+                .map(TerminalMapper::toTerminalDto)
                 .collect(Collectors.toList());
 
         ApiResponse<TerminalDto> response = new ApiResponse<>();
         response.setContent(terminals);
         response.setPage(rawResponse.getPage());
 
-        redisTemplate.opsForValue().set(key, response, TTL);
+        cacheService.set(key, response, TTL);
         return response;
     }
 
     public TerminalDetailDto getTerminalByTid(String tid) {
         String key = "terminal:" + tid;
 
-        TerminalDetailDto cached = (TerminalDetailDto) redisTemplate.opsForValue().get(key);
+        TerminalDetailDto cached = cacheService.get(key);
         if(cached != null){
             return cached;
         }
 
         RawTerminalDto rawTerminal = merchantApiClient.fetchTerminalByTid(tid);
 
-        TerminalDetailDto terminal = toTerminalDetailDto(rawTerminal);
-        redisTemplate.opsForValue().set(key, terminal, TTL);
+        TerminalDetailDto terminal = TerminalMapper.toTerminalDetailDto(rawTerminal);
+        cacheService.set(key, terminal, TTL);
 
         return terminal;
     }
@@ -75,35 +74,6 @@ public class TerminalService {
                 pageable.getPageSize(),
                 pageable.getSort()
         );
-    }
-
-    private TerminalDto toTerminalDto(RawTerminalDto rawTerminalDto) {
-        return TerminalDto.builder()
-                .tid(rawTerminalDto.getTid())
-                .terminalType(rawTerminalDto.getTerminalType())
-                .status(rawTerminalDto.getStatus())
-                .midReference(rawTerminalDto.getMidReference())
-                .merchantCategoryCode(rawTerminalDto.getMerchantCategoryCode())
-                .currency(rawTerminalDto.getCurrency())
-                .build();
-    }
-
-    private TerminalDetailDto toTerminalDetailDto(RawTerminalDto rawTerminalDto) {
-        return TerminalDetailDto.builder()
-                .tid(rawTerminalDto.getTid())
-                .terminalType(rawTerminalDto.getTerminalType())
-                .status(TerminalStatus.getByName(rawTerminalDto.getStatus()))
-                .midReference(rawTerminalDto.getMidReference())
-                .phoneNumber(rawTerminalDto.getPhoneNumber())
-                .emailContact(rawTerminalDto.getEmailContact())
-                .currency(rawTerminalDto.getCurrency())
-                .merchantCategoryCode(rawTerminalDto.getMerchantCategoryCode())
-                .authenticationMode(rawTerminalDto.getAuthenticationMode())
-                .softPosId(rawTerminalDto.getSoftPosId())
-                .softPosStatus(rawTerminalDto.getSoftPosStatus())
-                .acquirerTerminalData(rawTerminalDto.getAcquirerTerminalData())
-                .tipEnabled(rawTerminalDto.getTipEnabled())
-                .build();
     }
 }
 
