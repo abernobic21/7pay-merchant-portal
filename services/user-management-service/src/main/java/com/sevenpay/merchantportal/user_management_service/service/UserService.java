@@ -9,6 +9,7 @@ import com.sevenpay.merchantportal.user_management_service.model.entity.User;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Role;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
 import com.sevenpay.merchantportal.user_management_service.repository.UserRepository;
+import com.sevenpay.merchantportal.user_management_service.util.UserMapper;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,7 @@ public class UserService {
 
         List<UserDto> userDtos = userPage.getContent()
                 .stream()
-                .map(this::toUserDto)
+                .map(UserMapper::toUserDto)
                 .toList();
 
         return buildResponse(userDtos, userPage);
@@ -41,10 +42,10 @@ public class UserService {
 
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
-        return toUserDto(user);
+        return UserMapper.toUserDto(user);
     }
 
-    public UserDto createUser(CreateUserRequest request) {
+    public User createUser(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email already exists");
         }
@@ -61,7 +62,7 @@ public class UserService {
                 .firstLoginFlag(true)
                 .build();
 
-        return toUserDto(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     public UserDto updateUser(UUID id, UpdateUserRequest request) {
@@ -76,7 +77,7 @@ public class UserService {
         if (request.getAccessLevel() != null) user.setAccessLevel(request.getAccessLevel());
         if (request.getMerchantId() != null) user.setMerchantId(request.getMerchantId());
 
-        return toUserDto(userRepository.save(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     public void deleteUser(UUID id) {
@@ -91,42 +92,13 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException());
 
         user.setStatus(request.getStatus());
-        return toUserDto(userRepository.save(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     public UserProfileDto getUserProfile(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
-        return toUserProfileDto(user);
-    }
-
-    private UserDto toUserDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .accessLevel(user.getAccessLevel())
-                .merchantId(user.getMerchantId())
-                .status(user.getStatus())
-                .firstLoginFlag(user.getFirstLoginFlag())
-                .createdAt(user.getCreatedAt())
-                .build();
-    }
-
-    private UserProfileDto toUserProfileDto(User user) {
-        return UserProfileDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .accessLevel(user.getAccessLevel())
-                .merchantId(user.getMerchantId())
-                .status(user.getStatus())
-                .build();
+        return UserMapper.toUserProfileDto(user);
     }
 
     private Specification<User> buildSpec(Status status, Role role) {

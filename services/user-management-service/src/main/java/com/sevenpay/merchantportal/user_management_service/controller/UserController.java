@@ -2,9 +2,13 @@ package com.sevenpay.merchantportal.user_management_service.controller;
 
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.dto.*;
+import com.sevenpay.merchantportal.user_management_service.model.entity.User;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Role;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
+import com.sevenpay.merchantportal.user_management_service.service.EmailService;
+import com.sevenpay.merchantportal.user_management_service.service.PasswordResetService;
 import com.sevenpay.merchantportal.user_management_service.service.UserService;
+import com.sevenpay.merchantportal.user_management_service.util.UserMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,8 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final EmailService emailService;
+    private final PasswordResetService passwordResetService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<UserDto>> getUsers(
@@ -36,7 +42,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
+
+        User user = userService.createUser(request);
+        String token = passwordResetService.createSetPasswordToken(user);
+        emailService.sendSetPasswordEmail(user.getEmail(), token);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toUserDto(user));
     }
 
     @GetMapping("/{id}")
