@@ -3,6 +3,7 @@ package com.sevenpay.merchantportal.auth_service.service;
 import com.sevenpay.merchantportal.auth_service.exception.*;
 import com.sevenpay.merchantportal.auth_service.model.dto.AuthResult;
 import com.sevenpay.merchantportal.auth_service.model.dto.LoginRequest;
+import com.sevenpay.merchantportal.auth_service.model.dto.ResetPasswordRequest;
 import com.sevenpay.merchantportal.auth_service.model.dto.SetPasswordRequest;
 import com.sevenpay.merchantportal.auth_service.model.entity.PasswordReset;
 import com.sevenpay.merchantportal.auth_service.model.entity.User;
@@ -140,27 +141,39 @@ public class AuthService {
         }
     }
 
+    public void resetPassword(ResetPasswordRequest request) {
+
+        PasswordReset record = validateToken(request.getToken());
+        applyPasswordChange(record.getUser(), request.getNewPassword(), record);
+
+        applyPasswordChange(record.getUser(), request.getNewPassword(), record);
+    }
+
     public void setPassword(SetPasswordRequest request) {
 
-        String hashedIncoming = TokenUtil.hashToken(request.getToken());
+        PasswordReset record = validateToken(request.getToken());
+        User user = record.getUser();
 
+        if (!user.getFirstLoginFlag()) {
+            throw new ForbiddenException("User not in first login state");
+        }
+        user.setFirstLoginFlag(false);
+        applyPasswordChange(user, request.getNewPassword(), record);
+    }
+
+    private PasswordReset validateToken(String rawToken) {
+        String hashedIncoming = TokenUtil.hashToken(rawToken);
         PasswordReset record = passwordResetRepository.findByResetToken(hashedIncoming)
                 .orElseThrow(() -> new InvalidTokenException());
-
         if (record.getExpiry().isBefore(LocalDateTime.now()) || record.getUsedAt() != null) {
             throw new InvalidTokenException();
         }
+        return record;
+    }
 
-        User user = record.getUser();
-
-        if(!user.getFirstLoginFlag()) {
-            throw new ForbiddenException("User not in first login state");
-        }
-
-        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-        user.setFirstLoginFlag(false);
+    private void applyPasswordChange(User user, String newPassword, PasswordReset record) {
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-
         record.setUsedAt(LocalDateTime.now());
         passwordResetRepository.save(record);
     }

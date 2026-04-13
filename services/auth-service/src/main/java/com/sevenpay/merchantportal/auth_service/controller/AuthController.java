@@ -71,6 +71,15 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "If the email exists, a reset link has been sent"));
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(
+            @RequestBody @Valid ResetPasswordRequest request) {
+
+        authService.resetPassword(request);
+
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    }
+
     @PostMapping("/set-password")
     public ResponseEntity<Map<String, String>> setPassword(
             @RequestBody @Valid SetPasswordRequest request) {
