@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +29,7 @@ public class AuthService {
     private final PasswordResetRepository passwordResetRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
+    private final EmailService emailService;
     private final JwtUtil jwtUtil;
 
     @Value("${jwt.access-expiry}")
@@ -117,6 +119,25 @@ public class AuthService {
                     .expiresIn(accessExpiry)
                     .firstLogin(user.getFirstLoginFlag())
                     .build();
+    }
+
+    public void forgotPassword(String email){
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+            String rawToken = TokenUtil.generateSecureToken();
+            String hashedToken = TokenUtil.hashToken(rawToken);
+
+            PasswordReset reset = PasswordReset.builder()
+                    .user(user.get())
+                    .resetToken(hashedToken)
+                    .expiry(LocalDateTime.now().plusHours(1))
+                    .build();
+
+            passwordResetRepository.save(reset);
+
+            emailService.sendForgotPasswordEmail(email, rawToken);
+        }
     }
 
     public void setPassword(SetPasswordRequest request) {
