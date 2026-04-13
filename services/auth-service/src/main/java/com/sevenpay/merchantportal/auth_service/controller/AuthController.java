@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -34,6 +31,18 @@ public class AuthController {
                 .expiresIn(result.getExpiresIn())
                 .firstLogin(result.isFirstLogin())
                 .build());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(
+            @CookieValue(name = "access_token") String accessToken,
+            HttpServletResponse response) {
+
+        authService.logout(accessToken);
+        response.addCookie(cookieUtil.clearCookie("access_token"));
+        response.addCookie(cookieUtil.clearCookie("refresh_token"));
+
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     @PostMapping("/set-password")

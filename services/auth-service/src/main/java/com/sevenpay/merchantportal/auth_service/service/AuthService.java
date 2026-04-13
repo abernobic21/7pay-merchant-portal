@@ -11,6 +11,7 @@ import com.sevenpay.merchantportal.auth_service.repository.PasswordResetReposito
 import com.sevenpay.merchantportal.auth_service.repository.UserRepository;
 import com.sevenpay.merchantportal.auth_service.util.JwtUtil;
 import com.sevenpay.merchantportal.auth_service.util.TokenUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -75,6 +76,16 @@ public class AuthService {
                 .expiresIn(accessExpiry)
                 .firstLogin(user.getFirstLoginFlag())
                 .build();
+    }
+
+    public void logout(String accessToken) {
+            Claims claims = jwtUtil.extractClaims(accessToken);
+            long remainingTtl = (claims.getExpiration().getTime() - System.currentTimeMillis()) / 1000;
+            if (remainingTtl > 0) {
+                redisService.blacklistToken(accessToken, remainingTtl);
+            }
+            String userId = claims.getSubject();
+            redisService.deleteRefreshToken(userId);
     }
 
     public void setPassword(SetPasswordRequest request) {
