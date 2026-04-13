@@ -8,6 +8,8 @@ services:
 
   auth-service:
     build: ./services/auth-service
+    env_file:
+      - ./database/.env
     #ports:
     #  - "8081:8081"
 

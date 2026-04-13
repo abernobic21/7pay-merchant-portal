@@ -1,4 +1,4 @@
-package com._pay.merchantportal.auth_service;
+package com.sevenpay.merchantportal.auth_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
