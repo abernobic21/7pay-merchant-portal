@@ -1,7 +1,12 @@
 package com.sevenpay.merchantportal.auth_service.controller;
 
+import com.sevenpay.merchantportal.auth_service.model.dto.AuthResult;
+import com.sevenpay.merchantportal.auth_service.model.dto.LoginRequest;
+import com.sevenpay.merchantportal.auth_service.model.dto.LoginResponse;
 import com.sevenpay.merchantportal.auth_service.model.dto.SetPasswordRequest;
 import com.sevenpay.merchantportal.auth_service.service.AuthService;
+import com.sevenpay.merchantportal.auth_service.util.CookieUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +22,19 @@ import java.util.Map;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
+    private final CookieUtil cookieUtil;
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
+                                               HttpServletResponse response) {
+        AuthResult result = authService.login(request);
+        response.addCookie(cookieUtil.createAccessTokenCookie(result.getAccessToken(), (int) result.getExpiresIn()));
+        response.addCookie(cookieUtil.createRefreshTokenCookie(result.getRefreshToken()));
+        return ResponseEntity.ok(LoginResponse.builder()
+                .expiresIn(result.getExpiresIn())
+                .firstLogin(result.isFirstLogin())
+                .build());
+    }
 
     @PostMapping("/set-password")
     public ResponseEntity<Map<String, String>> setPassword(

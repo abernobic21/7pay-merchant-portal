@@ -1,14 +1,18 @@
 package com.sevenpay.merchantportal.auth_service.service;
 
-import com.sevenpay.merchantportal.auth_service.exception.ForbiddenException;
-import com.sevenpay.merchantportal.auth_service.exception.InvalidTokenException;
+import com.sevenpay.merchantportal.auth_service.exception.*;
+import com.sevenpay.merchantportal.auth_service.model.dto.AuthResult;
+import com.sevenpay.merchantportal.auth_service.model.dto.LoginRequest;
 import com.sevenpay.merchantportal.auth_service.model.dto.SetPasswordRequest;
 import com.sevenpay.merchantportal.auth_service.model.entity.PasswordReset;
 import com.sevenpay.merchantportal.auth_service.model.entity.User;
+import com.sevenpay.merchantportal.auth_service.model.enums.Status;
 import com.sevenpay.merchantportal.auth_service.repository.PasswordResetRepository;
 import com.sevenpay.merchantportal.auth_service.repository.UserRepository;
+import com.sevenpay.merchantportal.auth_service.util.JwtUtil;
 import com.sevenpay.merchantportal.auth_service.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,57 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordResetRepository passwordResetRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RedisService redisService;
+    private final JwtUtil jwtUtil;
+
+    @Value("${jwt.access-expiry}")
+    private long accessExpiry;
+
+    @Value("${jwt.refresh-expiry}")
+    private long refreshExpiry;
+
+    public AuthResult login(LoginRequest request){
+        if (redisService.isAccountLocked(request.getEmail())) {
+            throw new AccountLockedException();
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> {
+                    redisService.recordFailedAttempt(request.getEmail());
+                    return new InvalidCredentialsException();
+                });
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            redisService.recordFailedAttempt(request.getEmail());
+            throw new InvalidCredentialsException();
+        }
+
+        if (user.getStatus() == Status.DEACTIVATED) {
+            throw new AccountDeactivatedException();
+        }
+
+        if (user.getPasswordHash() == null) {
+            throw new InvalidCredentialsException();
+        }
+
+        String accessToken = jwtUtil.generateAccessToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+
+        redisService.storeRefreshToken(
+                user.getId().toString(),
+                refreshToken,
+                refreshExpiry
+        );
+
+        redisService.clearFailedAttempts(request.getEmail());
+
+        return AuthResult.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .expiresIn(accessExpiry)
+                .firstLogin(user.getFirstLoginFlag())
+                .build();
+    }
 
     public void setPassword(SetPasswordRequest request) {
 
