@@ -1,9 +1,7 @@
 package com.sevenpay.merchantportal.auth_service.controller;
 
-import com.sevenpay.merchantportal.auth_service.model.dto.AuthResult;
-import com.sevenpay.merchantportal.auth_service.model.dto.LoginRequest;
-import com.sevenpay.merchantportal.auth_service.model.dto.LoginResponse;
-import com.sevenpay.merchantportal.auth_service.model.dto.SetPasswordRequest;
+import com.sevenpay.merchantportal.auth_service.exception.InvalidRefreshTokenException;
+import com.sevenpay.merchantportal.auth_service.model.dto.*;
 import com.sevenpay.merchantportal.auth_service.service.AuthService;
 import com.sevenpay.merchantportal.auth_service.util.CookieUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,6 +41,25 @@ public class AuthController {
         response.addCookie(cookieUtil.clearCookie("refresh_token"));
 
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refresh(
+            @CookieValue(name = "refresh_token", required = false) String refreshToken,
+            HttpServletResponse response) {
+
+        if (refreshToken == null) {
+            throw new InvalidRefreshTokenException();
+        }
+
+        AuthResult result = authService.refresh(refreshToken);
+
+        response.addCookie(cookieUtil.createAccessTokenCookie(result.getAccessToken(), (int) result.getExpiresIn()));
+        response.addCookie(cookieUtil.createRefreshTokenCookie(result.getRefreshToken()));
+
+        return ResponseEntity.ok(RefreshTokenResponse.builder()
+                .expiresIn(result.getExpiresIn())
+                .build());
     }
 
     @PostMapping("/set-password")

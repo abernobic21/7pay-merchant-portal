@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +87,36 @@ public class AuthService {
             }
             String userId = claims.getSubject();
             redisService.deleteRefreshToken(userId);
+    }
+
+    public AuthResult refresh(String refreshToken) {
+        Claims claims;
+        try {
+            claims = jwtUtil.extractClaims(refreshToken);
+        } catch (Exception e) {
+            throw new InvalidRefreshTokenException();
+        }
+            String userId = claims.getSubject();
+
+            String storedToken = redisService.getRefreshToken(userId);
+            if (storedToken == null || !storedToken.equals(refreshToken)) {
+                throw new InvalidRefreshTokenException();
+            }
+
+            User user = userRepository.findById(UUID.fromString(userId))
+                    .orElseThrow(() -> new InvalidRefreshTokenException());
+
+            String newAccessToken = jwtUtil.generateAccessToken(user);
+            String newRefreshToken = jwtUtil.generateRefreshToken(user);
+
+            redisService.storeRefreshToken(userId, newRefreshToken, refreshExpiry);
+
+            return AuthResult.builder()
+                    .accessToken(newAccessToken)
+                    .refreshToken(newRefreshToken)
+                    .expiresIn(accessExpiry)
+                    .firstLogin(user.getFirstLoginFlag())
+                    .build();
     }
 
     public void setPassword(SetPasswordRequest request) {
