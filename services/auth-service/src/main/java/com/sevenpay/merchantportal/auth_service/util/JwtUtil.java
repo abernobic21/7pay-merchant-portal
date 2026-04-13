@@ -33,7 +33,6 @@ public class JwtUtil {
                 .claim("role", user.getRole())
                 .claim("accessLevel", user.getAccessLevel())
                 .claim("merchantId", user.getMerchantId())
-                .claim("firstLogin", user.getFirstLoginFlag())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessExpiry * 1000))
                 .signWith(getSigningKey())

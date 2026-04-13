@@ -1,10 +1,7 @@
 package com.sevenpay.merchantportal.auth_service.service;
 
 import com.sevenpay.merchantportal.auth_service.exception.*;
-import com.sevenpay.merchantportal.auth_service.model.dto.AuthResult;
-import com.sevenpay.merchantportal.auth_service.model.dto.LoginRequest;
-import com.sevenpay.merchantportal.auth_service.model.dto.ResetPasswordRequest;
-import com.sevenpay.merchantportal.auth_service.model.dto.SetPasswordRequest;
+import com.sevenpay.merchantportal.auth_service.model.dto.*;
 import com.sevenpay.merchantportal.auth_service.model.entity.PasswordReset;
 import com.sevenpay.merchantportal.auth_service.model.entity.User;
 import com.sevenpay.merchantportal.auth_service.model.enums.Status;
@@ -176,5 +173,22 @@ public class AuthService {
         userRepository.save(user);
         record.setUsedAt(LocalDateTime.now());
         passwordResetRepository.save(record);
+    }
+
+    public JwtTokenValidationResponse validateJwtToken(String jwtToken) {
+        if (redisService.isTokenBlacklisted(jwtToken)) {
+            throw new InvalidTokenException();
+        }
+        try {
+            Claims claims = jwtUtil.extractClaims(jwtToken);
+            return JwtTokenValidationResponse.builder()
+                    .userId(claims.getSubject())
+                    .role(claims.get("role", String.class))
+                    .accessLevel(claims.get("accessLevel", String.class))
+                    .merchantId(claims.get("merchantId", String.class))
+                    .build();
+        } catch (Exception e) {
+            throw new InvalidTokenException();
+        }
     }
 }

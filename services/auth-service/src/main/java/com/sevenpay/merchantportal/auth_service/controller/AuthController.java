@@ -1,6 +1,7 @@
 package com.sevenpay.merchantportal.auth_service.controller;
 
 import com.sevenpay.merchantportal.auth_service.exception.InvalidRefreshTokenException;
+import com.sevenpay.merchantportal.auth_service.exception.InvalidTokenException;
 import com.sevenpay.merchantportal.auth_service.model.dto.*;
 import com.sevenpay.merchantportal.auth_service.service.AuthService;
 import com.sevenpay.merchantportal.auth_service.util.CookieUtil;
@@ -18,6 +19,16 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final CookieUtil cookieUtil;
+
+
+    @GetMapping("/validate")
+    public ResponseEntity<JwtTokenValidationResponse> validate(
+            @CookieValue(name = "access_token", required = false) String accessToken) {
+        if (accessToken == null) {
+            throw new InvalidTokenException();
+        }
+        return ResponseEntity.ok(authService.validateJwtToken(accessToken));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
