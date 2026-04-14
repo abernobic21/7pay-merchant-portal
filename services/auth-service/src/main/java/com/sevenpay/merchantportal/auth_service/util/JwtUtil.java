@@ -30,8 +30,8 @@ public class JwtUtil {
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .subject(user.getId().toString())
-                .claim("role", user.getRole())
-                .claim("accessLevel", user.getAccessLevel())
+                .claim("role", user.getRole().name())
+                .claim("accessLevel", user.getAccessLevel().name())
                 .claim("merchantId", user.getMerchantId())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessExpiry * 1000))

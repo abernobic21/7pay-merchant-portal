@@ -101,8 +101,7 @@ public class UserController {
             @CookieValue(name = "access_token", required = false) String accessToken) {
 
         JwtTokenValidationResponse accessTokenData = authGuard.authenticate(accessToken);
-        UUID userId = UUID.fromString(accessTokenData.getUserId());
-        return ResponseEntity.ok(userService.getUserProfile(userId));
+        return ResponseEntity.ok(userService.getUserProfile(accessTokenData.getUserId()));
     }
 
     @PutMapping("/me/password")
@@ -111,8 +110,7 @@ public class UserController {
             @RequestBody @Valid UpdatePasswordRequest request) {
 
         JwtTokenValidationResponse accessTokenData = authGuard.authenticate(accessToken);
-        UUID userId = UUID.fromString(accessTokenData.getUserId());
-        userService.updatePassword(userId, request);
+        userService.updatePassword(accessTokenData.getUserId(), request);
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
 }

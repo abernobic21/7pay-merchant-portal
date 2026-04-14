@@ -4,6 +4,8 @@ import com.sevenpay.merchantportal.auth_service.exception.*;
 import com.sevenpay.merchantportal.auth_service.model.dto.*;
 import com.sevenpay.merchantportal.auth_service.model.entity.PasswordReset;
 import com.sevenpay.merchantportal.auth_service.model.entity.User;
+import com.sevenpay.merchantportal.auth_service.model.enums.AccessLevel;
+import com.sevenpay.merchantportal.auth_service.model.enums.Role;
 import com.sevenpay.merchantportal.auth_service.model.enums.Status;
 import com.sevenpay.merchantportal.auth_service.repository.PasswordResetRepository;
 import com.sevenpay.merchantportal.auth_service.repository.UserRepository;
@@ -47,7 +49,7 @@ public class AuthService {
                     return new InvalidCredentialsException();
                 });
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        if (user.getPasswordHash() == null) {
             redisService.recordFailedAttempt(request.getEmail());
             throw new InvalidCredentialsException();
         }
@@ -56,7 +58,8 @@ public class AuthService {
             throw new AccountDeactivatedException();
         }
 
-        if (user.getPasswordHash() == null) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            redisService.recordFailedAttempt(request.getEmail());
             throw new InvalidCredentialsException();
         }
 
@@ -182,12 +185,13 @@ public class AuthService {
         try {
             Claims claims = jwtUtil.extractClaims(jwtToken);
             return JwtTokenValidationResponse.builder()
-                    .userId(claims.getSubject())
-                    .role(claims.get("role", String.class))
-                    .accessLevel(claims.get("accessLevel", String.class))
+                    .userId(UUID.fromString(claims.getSubject()))
+                    .role(Role.valueOf(claims.get("role", String.class)))
+                    .accessLevel(AccessLevel.valueOf(claims.get("accessLevel", String.class)))
                     .merchantId(claims.get("merchantId", String.class))
                     .build();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new InvalidTokenException();
         }
     }

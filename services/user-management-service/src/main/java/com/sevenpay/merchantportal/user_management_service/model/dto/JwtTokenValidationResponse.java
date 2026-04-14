@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtTokenValidationResponse {
-    private String userId;
+    private UUID userId;
     private Role role;
     private AccessLevel accessLevel;
     private String merchantId;

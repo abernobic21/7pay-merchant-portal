@@ -1,5 +1,6 @@
 package com.sevenpay.merchantportal.auth_service.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Role {
@@ -8,5 +9,10 @@ public enum Role {
     @JsonValue
     public String toLowerCase() {
         return name().toLowerCase();
+    }
+
+    @JsonCreator
+    public static Role fromString(String value) {
+        return valueOf(value.toUpperCase());
     }
 }

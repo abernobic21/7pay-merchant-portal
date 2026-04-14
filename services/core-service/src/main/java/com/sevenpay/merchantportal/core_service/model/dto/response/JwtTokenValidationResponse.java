@@ -1,0 +1,18 @@
+package com.sevenpay.merchantportal.core_service.model.dto.response;
+
+import com.sevenpay.merchantportal.core_service.model.enums.Role;
+import com.sevenpay.merchantportal.core_service.model.enums.AccessLevel;
+import lombok.*;
+
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class JwtTokenValidationResponse {
+    private UUID userId;
+    private Role role;
+    private AccessLevel accessLevel;
+    private String merchantId;
+}
