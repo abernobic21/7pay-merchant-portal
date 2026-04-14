@@ -97,8 +97,11 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserProfileDto> getUserProfile() {
-        UUID hardcodedId = UUID.fromString("db0c535d-aee8-4ca9-bb13-052795c04e07");
-        return ResponseEntity.ok(userService.getUserProfile(hardcodedId));
+    public ResponseEntity<UserProfileDto> getUserProfile(
+            @CookieValue(name = "access_token", required = false) String accessToken
+            ) {
+        JwtTokenValidationResponse accessTokenData = authGuard.authenticate(accessToken);
+        UUID userId = UUID.fromString(accessTokenData.getUserId());
+        return ResponseEntity.ok(userService.getUserProfile(userId));
     }
 }

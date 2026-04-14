@@ -15,7 +15,7 @@ public class AuthGuard {
     private final AuthClient authClient;
 
     public JwtTokenValidationResponse authenticate(String accessToken) {
-        if (accessToken == null) throw new UnauthorizedException("Missing token");
+        if (accessToken == null) throw new UnauthorizedException("Unauthorized");
         return authClient.validate(accessToken);
     }
 
