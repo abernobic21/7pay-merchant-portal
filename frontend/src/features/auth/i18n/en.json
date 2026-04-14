@@ -1,0 +1,40 @@
+{
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "forgotPassword": "Forgot password?"
+  },
+  "setPassword": {
+    "title": "Set your password",
+    "subtitle": "Create a password to activate your account",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submit": "Set password"
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "subtitle": "Enter your email to receive reset instructions",
+    "email": "Email",
+    "submit": "Send reset link"
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your new password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submit": "Reset password"
+  },
+  "changePassword": {
+    "title": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submit": "Change password"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  }
+}

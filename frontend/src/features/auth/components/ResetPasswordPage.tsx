@@ -1,12 +1,18 @@
+import { useTranslation } from "react-i18next";
 import { AuthForm } from "./AuthForm";
 
 export const ResetPasswordPage = () => {
-  return (
-    <AuthForm title="Reset password" subtitle="Enter your new password">
-      <input type="password" placeholder="New password" />
-      <input type="password" placeholder="Confirm password" />
+  const { t } = useTranslation("auth");
 
-      <button type="submit">Reset password</button>
+  return (
+    <AuthForm
+      title={t("resetPassword.title")}
+      subtitle={t("resetPassword.subtitle")}
+    >
+      <input type="password" placeholder={t("resetPassword.newPassword")} />
+      <input type="password" placeholder={t("resetPassword.confirmPassword")} />
+
+      <button type="submit">{t("resetPassword.submit")}</button>
     </AuthForm>
   );
 };

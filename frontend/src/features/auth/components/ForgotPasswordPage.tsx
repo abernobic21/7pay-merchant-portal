@@ -1,14 +1,17 @@
 import { AuthForm } from "./AuthForm";
+import { useTranslation } from "react-i18next";
 
 export const ForgotPasswordPage = () => {
+  const { t } = useTranslation("auth");
+
   return (
     <AuthForm
-      title="Forgot password"
-      subtitle="Enter your email to receive reset instructions"
+      title={t("forgotPassword.title")}
+      subtitle={t("forgotPassword.subtitle")}
     >
-      <input type="email" placeholder="Email" />
+      <input type="email" placeholder={t("forgotPassword.email")} />
 
-      <button type="submit">Send reset link</button>
+      <button type="submit">{t("forgotPassword.submit")}</button>
     </AuthForm>
   );
 };

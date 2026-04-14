@@ -1,14 +1,24 @@
+import { useTranslation } from "react-i18next";
+
 export const ChangePasswordPage = () => {
+  const { t } = useTranslation("auth");
+
   return (
-    <div>
-      <h2>Change Password</h2>
+    <div className="page-container">
+      <h2>{t("changePassword.title")}</h2>
 
-      <form>
-        <input type="password" placeholder="Current password" />
-        <input type="password" placeholder="New password" />
-        <input type="password" placeholder="Confirm password" />
+      <form className="auth-form">
+        <input
+          type="password"
+          placeholder={t("changePassword.currentPassword")}
+        />
+        <input type="password" placeholder={t("changePassword.newPassword")} />
+        <input
+          type="password"
+          placeholder={t("changePassword.confirmPassword")}
+        />
 
-        <button type="submit">Change password</button>
+        <button type="submit">{t("changePassword.submit")}</button>
       </form>
     </div>
   );

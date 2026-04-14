@@ -1,0 +1,40 @@
+{
+  "login": {
+    "title": "Prijava",
+    "email": "Email",
+    "password": "Lozinka",
+    "submit": "Prijavi se",
+    "forgotPassword": "Zaboravili ste lozinku?"
+  },
+  "setPassword": {
+    "title": "Postavite lozinku",
+    "subtitle": "Kreirajte lozinku za aktivaciju računa",
+    "newPassword": "Nova lozinka",
+    "confirmPassword": "Potvrdite lozinku",
+    "submit": "Postavi lozinku"
+  },
+  "forgotPassword": {
+    "title": "Zaboravljena lozinka",
+    "subtitle": "Unesite email za resetiranje lozinke",
+    "email": "Email",
+    "submit": "Pošalji link za reset"
+  },
+  "resetPassword": {
+    "title": "Resetiranje lozinke",
+    "subtitle": "Unesite novu lozinku",
+    "newPassword": "Nova lozinka",
+    "confirmPassword": "Potvrdite lozinku",
+    "submit": "Resetiraj lozinku"
+  },
+  "changePassword": {
+    "title": "Promjena lozinke",
+    "currentPassword": "Trenutna lozinka",
+    "newPassword": "Nova lozinka",
+    "confirmPassword": "Potvrdite lozinku",
+    "submit": "Promijeni lozinku"
+  },
+  "common": {
+    "loading": "Učitavanje...",
+    "error": "Došlo je do greške"
+  }
+}
