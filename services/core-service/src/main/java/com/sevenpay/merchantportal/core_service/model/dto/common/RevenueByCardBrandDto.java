@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.jackson.Jacksonized;
 
 import java.math.BigDecimal;
 
@@ -12,7 +11,6 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Jacksonized
 public class RevenueByCardBrandDto {
     private String cardBrand;
     private BigDecimal revenue;
