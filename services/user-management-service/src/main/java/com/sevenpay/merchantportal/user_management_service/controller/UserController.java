@@ -70,7 +70,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateUser(
             @CookieValue(name = "access_token", required = false) String accessToken,
             @PathVariable UUID id,
-            @RequestBody UpdateUserRequest request) {
+            @RequestBody @Valid UpdateUserRequest request) {
 
         authGuard.requireAdmin(accessToken);
         return ResponseEntity.ok().body(userService.updateUser(id, request));
@@ -90,7 +90,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateUserStatus(
             @CookieValue(name = "access_token", required = false) String accessToken,
             @PathVariable UUID id,
-            @RequestBody UpdateUserStatusRequest request) {
+            @RequestBody @Valid UpdateUserStatusRequest request) {
 
         authGuard.requireAdmin(accessToken);
         return ResponseEntity.ok(userService.updateUserStatus(id, request));
@@ -98,10 +98,21 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserProfileDto> getUserProfile(
-            @CookieValue(name = "access_token", required = false) String accessToken
-            ) {
+            @CookieValue(name = "access_token", required = false) String accessToken) {
+
         JwtTokenValidationResponse accessTokenData = authGuard.authenticate(accessToken);
         UUID userId = UUID.fromString(accessTokenData.getUserId());
         return ResponseEntity.ok(userService.getUserProfile(userId));
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<Map<String, String>> updatePassword(
+            @CookieValue(name = "access_token", required = false) String accessToken,
+            @RequestBody @Valid UpdatePasswordRequest request) {
+
+        JwtTokenValidationResponse accessTokenData = authGuard.authenticate(accessToken);
+        UUID userId = UUID.fromString(accessTokenData.getUserId());
+        userService.updatePassword(userId, request);
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
 }

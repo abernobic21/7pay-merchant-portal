@@ -1,6 +1,7 @@
 package com.sevenpay.merchantportal.user_management_service.service;
 
 import com.sevenpay.merchantportal.user_management_service.exception.ConflictException;
+import com.sevenpay.merchantportal.user_management_service.exception.InvalidCredentialsException;
 import com.sevenpay.merchantportal.user_management_service.exception.NotFoundException;
 import com.sevenpay.merchantportal.user_management_service.model.common.ApiResponse;
 import com.sevenpay.merchantportal.user_management_service.model.common.PageInfo;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public ApiResponse<UserDto> getUsers(Pageable pageable, Status status, Role role){
         Page<User> userPage = userRepository.findAll(buildSpec(status, role), pageable);
@@ -99,6 +102,17 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
         return UserMapper.toUserProfileDto(user);
+    }
+
+    public void updatePassword(UUID id, UpdatePasswordRequest request) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new InvalidCredentialsException("Current password incorrect");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     private Specification<User> buildSpec(Status status, Role role) {
