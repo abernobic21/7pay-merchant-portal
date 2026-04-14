@@ -7,6 +7,7 @@ import com.sevenpay.merchantportal.core_service.model.enums.CardBrand;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionAuthorizationState;
 import com.sevenpay.merchantportal.core_service.model.enums.TransactionType;
 import com.sevenpay.merchantportal.core_service.service.TransactionService;
+import com.sevenpay.merchantportal.core_service.util.AuthGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,9 +23,11 @@ import java.time.LocalDateTime;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final AuthGuard authGuard;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<TransactionDto>> getTransactions(
+            @CookieValue(name = "access_token", required = false) String accessToken,
             @RequestParam String merchantOib,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeFrom,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeUntil,
@@ -35,15 +38,18 @@ public class TransactionController {
             @RequestParam(required = false) TransactionType transactionType,
             @RequestParam(required = false) CardBrand cardBrand,
             @RequestParam(required = false) String authNumber,
-            @RequestParam(required = false) String rnn
-    ) {
+            @RequestParam(required = false) String rnn) {
+
+        authGuard.authenticate(accessToken);
         return ResponseEntity.ok(transactionService.getTransactions(merchantOib, timeFrom, timeUntil, mid, tid, status, transactionType, cardBrand, authNumber, rnn, pageable));
     }
 
     @GetMapping("/{transactionId}")
     public ResponseEntity<TransactionDetailDto> getTransactionById(
-            @PathVariable String transactionId
-    ){
+            @CookieValue(name = "access_token", required = false) String accessToken,
+            @PathVariable String transactionId){
+
+        authGuard.authenticate(accessToken);
         return ResponseEntity.ok(transactionService.getTransactionById(transactionId));
     }
 }
