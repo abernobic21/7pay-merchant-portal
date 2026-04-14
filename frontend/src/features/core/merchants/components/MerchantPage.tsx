@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { MerchantTable } from "../components/MerchantTable";
-import { useMerchants } from "../hooks/useMerschants";
+import { useMerchants } from "../hooks/useMerchants";
 
 export const MerchantsPage = () => {
   const { t } = useTranslation("merchants");

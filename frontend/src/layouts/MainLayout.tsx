@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "@/shared/components/layout/Sidebar";
-import { LanguageSwitcher } from "@/shared/components/LangugageSwitcher";
+import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
 
 export const MainLayout = () => {
   return (
