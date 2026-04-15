@@ -8,7 +8,7 @@ interface CreateUserModalProps {
 }
 
 export const CreateUserModal = ({ onClose }: CreateUserModalProps) => {
-  const { t } = useTranslation("users");
+  const { t } = useTranslation(["users", "common"]);
   const { mutate, isPending, error } = useCreateUser();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,7 +58,7 @@ export const CreateUserModal = ({ onClose }: CreateUserModalProps) => {
         {error && <p>{getApiErrorMessage(error) ?? t("errors.create")}</p>}
 
         <button type="button" onClick={onClose}>
-          {t("common.cancel")}
+          {t("common:cancel")}
         </button>
         <button type="submit" disabled={isPending}>
           {isPending ? "..." : t("actions.create")}

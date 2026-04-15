@@ -51,11 +51,6 @@
     "merchant": "Trgovac",
     "branch": "Poslovnica"
   },
-  "common": {
-    "yes": "Da",
-    "no": "Ne",
-    "cancel": "Odustani"
-  },
   "errors": {
     "fetch": "Greška pri učitavanju korisnika",
     "create": "Greška pri kreiranju korisnika",

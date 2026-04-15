@@ -9,18 +9,22 @@ import authEn from "@/features/auth/i18n/en.json";
 import authHr from "@/features/auth/i18n/hr.json";
 import usersEn from "@/features/users/i18n/en.json";
 import usersHr from "@/features/users/i18n/hr.json";
+import commonEn from "@/shared/i18n/en/common.json";
+import commonHr from "@/shared/i18n/hr/common.json";
 
 i18n.use(initReactI18next).init({
   lng: "en",
   fallbackLng: "en",
   resources: {
     en: {
+      common: commonEn,
       auth: authEn,
       users: usersEn,
       merchants: merchantsEn,
       salepoints: salepointsEn,
     },
     hr: {
+      common: commonHr,
       auth: authHr,
       users: usersHr,
       merchants: merchantsHr,

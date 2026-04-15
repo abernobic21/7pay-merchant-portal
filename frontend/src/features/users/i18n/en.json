@@ -51,11 +51,6 @@
     "merchant": "Merchant",
     "branch": "Branch"
   },
-  "common": {
-    "yes": "Yes",
-    "no": "No",
-    "cancel": "Cancel"
-  },
   "errors": {
     "fetch": "Failed to load users",
     "create": "Failed to create user",

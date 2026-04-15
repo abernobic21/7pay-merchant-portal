@@ -27,7 +27,7 @@ export const DeleteUserModal = ({ user, onClose }: DeleteUserModalProps) => {
       {error && <p>{getApiErrorMessage(error) ?? t("errors.delete")}</p>}
 
       <button type="button" onClick={onClose}>
-        {t("common.cancel")}
+        {t("common:cancel")}
       </button>
       <button onClick={handleDelete} disabled={isPending}>
         {isPending ? "..." : t("actions.delete")}

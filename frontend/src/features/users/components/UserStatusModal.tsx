@@ -35,7 +35,7 @@ export const StatusModal = ({ user, onClose }: UserStatusModalProps) => {
       </select>
       {error && <p>{getApiErrorMessage(error) ?? t("errors.status")}</p>}
       <button type="button" onClick={onClose}>
-        {t("common.cancel")}
+        {t("common:cancel")}
       </button>
       <button onClick={handleConfirm} disabled={isPending}>
         {isPending ? "..." : t("actions.changeStatus")}

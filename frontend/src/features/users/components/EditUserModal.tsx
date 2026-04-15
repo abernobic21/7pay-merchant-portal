@@ -77,7 +77,7 @@ export const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
         {error && <p>{getApiErrorMessage(error) ?? t("errors.update")}</p>}
 
         <button type="button" onClick={onClose}>
-          {t("common.cancel")}
+          {t("common:cancel")}
         </button>
         <button type="submit" disabled={isPending}>
           {isPending ? "..." : t("actions.edit")}
