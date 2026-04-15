@@ -9,6 +9,7 @@ import { LoginPage } from "@/features/auth/components/LoginPage";
 import { SetPasswordPage } from "@/features/auth/components/SetPasswordPage";
 import { ForgotPasswordPage } from "@/features/auth/components/ForgotPasswordPage";
 import { ResetPasswordPage } from "@/features/auth/components/ResetPasswordPage";
+import { UsersPage } from "@/features/users/components/UsersPage";
 
 export const router = createBrowserRouter([
   // public
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to={ROUTES.MERCHANTS} replace /> },
           { path: ROUTES.MERCHANTS, element: <MerchantsPage /> },
           { path: ROUTES.SALEPOINTS, element: <SalepointsPage /> },
+          { path: ROUTES.USERS, element: <UsersPage /> },
         ],
       },
     ],

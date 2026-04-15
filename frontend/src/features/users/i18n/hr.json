@@ -1,0 +1,66 @@
+{
+  "title": "Korisnici",
+  "table": {
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "email": "Email",
+    "phone": "Telefon",
+    "role": "Uloga",
+    "accessLevel": "Razina pristupa",
+    "status": "Status",
+    "createdAt": "Datum kreiranja",
+    "firstLoginFlag": "Prva prijava",
+    "actions": "Akcije"
+  },
+  "filters": {
+    "status": "Status",
+    "role": "Uloga",
+    "all": "Sve"
+  },
+  "actions": {
+    "create": "Dodaj korisnika",
+    "edit": "Uredi",
+    "delete": "Obriši",
+    "changeStatus": "Promijeni status"
+  },
+  "create": {
+    "title": "Dodaj korisnika",
+    "success": "Korisnik uspješno kreiran"
+  },
+  "edit": {
+    "title": "Uredi korisnika",
+    "success": "Korisnik uspješno ažuriran"
+  },
+  "delete": {
+    "title": "Obriši korisnika",
+    "message": "Jeste li sigurni da želite obrisati ovog korisnika?",
+    "success": "Korisnik uspješno obrisan"
+  },
+  "status": {
+    "title": "Promijeni status",
+    "message": "Odaberite novi status za ovog korisnika",
+    "active": "Aktivan",
+    "deactivated": "Deaktiviran",
+    "success": "Status uspješno ažuriran"
+  },
+  "role": {
+    "admin": "Admin",
+    "user": "Korisnik"
+  },
+  "accessLevel": {
+    "merchant": "Trgovac",
+    "branch": "Poslovnica"
+  },
+  "common": {
+    "yes": "Da",
+    "no": "Ne",
+    "cancel": "Odustani"
+  },
+  "errors": {
+    "fetch": "Greška pri učitavanju korisnika",
+    "create": "Greška pri kreiranju korisnika",
+    "update": "Greška pri ažuriranju korisnika",
+    "delete": "Greška pri brisanju korisnika",
+    "status": "Greška pri ažuriranju statusa"
+  }
+}

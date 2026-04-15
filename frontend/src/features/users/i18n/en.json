@@ -1,0 +1,66 @@
+{
+  "title": "Users",
+  "table": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "accessLevel": "Access level",
+    "status": "Status",
+    "createdAt": "Created at",
+    "firstLoginFlag": "First login",
+    "actions": "Actions"
+  },
+  "filters": {
+    "status": "Status",
+    "role": "Role",
+    "all": "All"
+  },
+  "actions": {
+    "create": "Add user",
+    "edit": "Edit",
+    "delete": "Delete",
+    "changeStatus": "Change status"
+  },
+  "create": {
+    "title": "Add user",
+    "success": "User created successfully"
+  },
+  "edit": {
+    "title": "Edit user",
+    "success": "User updated successfully"
+  },
+  "delete": {
+    "title": "Delete user",
+    "message": "Are you sure you want to delete this user?",
+    "success": "User deleted successfully"
+  },
+  "status": {
+    "title": "Change status",
+    "message": "Select new status for this user",
+    "active": "Active",
+    "deactivated": "Deactivated",
+    "success": "Status updated successfully"
+  },
+  "role": {
+    "admin": "Admin",
+    "user": "User"
+  },
+  "accessLevel": {
+    "merchant": "Merchant",
+    "branch": "Branch"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "fetch": "Failed to load users",
+    "create": "Failed to create user",
+    "update": "Failed to update user",
+    "delete": "Failed to delete user",
+    "status": "Failed to update status"
+  }
+}
