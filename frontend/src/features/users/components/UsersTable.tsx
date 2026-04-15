@@ -1,9 +1,5 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { User } from "../types/User";
-import { EditUserModal } from "./EditUserModal";
-import { DeleteUserModal } from "./DeleteUserModal";
-import { StatusModal } from "./UserStatusModal";
 
 interface UsersTableProps {
   users: User[];
@@ -11,6 +7,9 @@ interface UsersTableProps {
   totalPages: number;
   totalElements: number;
   onPageChange: (page: number) => void;
+  onEdit: (user: User) => void;
+  onDelete: (user: User) => void;
+  onStatus: (user: User) => void;
 }
 
 export const UsersTable = ({
@@ -19,17 +18,17 @@ export const UsersTable = ({
   totalPages,
   totalElements,
   onPageChange,
+  onEdit,
+  onDelete,
+  onStatus,
 }: UsersTableProps) => {
-  const { t } = useTranslation("users");
-
-  const [editUser, setEditUser] = useState<User | null>(null);
-  const [deleteUser, setDeleteUser] = useState<User | null>(null);
-  const [statusUser, setStatusUser] = useState<User | null>(null);
+  const { t } = useTranslation(["users", "common"]);
 
   return (
     <div>
+      <h2>{t("title")}</h2>
       <p>
-        {totalElements} {t("title")}
+        {t("totalUsers")} {totalElements}
       </p>
 
       <table>
@@ -55,19 +54,19 @@ export const UsersTable = ({
               <td>{user.email}</td>
               <td>{user.phone}</td>
               <td>{t(`role.${user.role}`)}</td>
-              <td>{t(`accessLevel.${user.accessLevel}`)}</td>{" "}
+              <td>{t(`accessLevel.${user.accessLevel}`)}</td>
               <td>
-                <button onClick={() => setStatusUser(user)}>
+                <button onClick={() => onStatus(user)}>
                   {t(`status.${user.status.toLowerCase()}`)}
                 </button>
               </td>
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-              <td>{user.firstLoginFlag ? t("common.yes") : t("common.no")}</td>
+              <td>{user.firstLoginFlag ? t("common:yes") : t("common:no")}</td>
               <td>
-                <button onClick={() => setEditUser(user)}>
+                <button onClick={() => onEdit(user)}>
                   {t("actions.edit")}
                 </button>
-                <button onClick={() => setDeleteUser(user)}>
+                <button onClick={() => onDelete(user)}>
                   {t("actions.delete")}
                 </button>
               </td>
@@ -101,19 +100,6 @@ export const UsersTable = ({
           →
         </button>
       </div>
-
-      {editUser && (
-        <EditUserModal user={editUser} onClose={() => setEditUser(null)} />
-      )}
-      {deleteUser && (
-        <DeleteUserModal
-          user={deleteUser}
-          onClose={() => setDeleteUser(null)}
-        />
-      )}
-      {statusUser && (
-        <StatusModal user={statusUser} onClose={() => setStatusUser(null)} />
-      )}
     </div>
   );
 };

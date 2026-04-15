@@ -1,5 +1,6 @@
 {
   "title": "Users",
+  "totalUsers": "Total users: ",
   "table": {
     "firstName": "First name",
     "lastName": "Last name",

@@ -1,5 +1,6 @@
 {
   "title": "Korisnici",
+  "totalUsers": "Ukupno korisnika: ",
   "table": {
     "firstName": "Ime",
     "lastName": "Prezime",
