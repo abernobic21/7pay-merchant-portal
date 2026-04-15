@@ -2,12 +2,38 @@
   "title": "Merchants",
   "loading": "Loading merchants...",
   "error": "Error loading merchants",
+
   "fields": {
     "shortName": "Short Name",
     "fullName": "Full Name",
     "oib": "OIB",
     "city": "City",
     "status": "Status",
-    "address": "Address"
+    "address": "Address",
+    "actions": "Actions"
+  },
+
+  "actions": {
+    "details": "Details"
+  },
+
+  "filters": {
+    "all": "All"
+  },
+
+  "status": {
+    "active": "Active",
+    "blocked": "Blocked"
+  },
+
+  "details": {
+    "title": "Merchant Details",
+    "shortName": "Short name",
+    "oib": "OIB",
+    "status": "Status",
+    "address": "Address",
+    "transactionTypes": "Supported Transaction Types",
+    "acquirers": "Supported Acquirers",
+    "cardBrands": "Supported Card Brands"
   }
 }

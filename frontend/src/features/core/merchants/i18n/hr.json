@@ -2,12 +2,38 @@
   "title": "Trgovci",
   "loading": "Učitavanje trgovaca...",
   "error": "Greška pri učitavanju trgovaca",
+
   "fields": {
     "shortName": "Kratki naziv",
     "fullName": "Puni naziv",
     "oib": "OIB",
     "city": "Grad",
     "status": "Status",
-    "address": "Adresa"
+    "address": "Adresa",
+    "actions": "Akcije"
+  },
+
+  "actions": {
+    "details": "Detalji"
+  },
+
+  "filters": {
+    "all": "Svi"
+  },
+
+  "status": {
+    "active": "Aktivan",
+    "blocked": "Blokiran"
+  },
+
+  "details": {
+    "title": "Detalji trgovca",
+    "shortName": "Kratki naziv",
+    "oib": "OIB",
+    "status": "Status",
+    "address": "Adresa",
+    "transactionTypes": "Podržani tipovi transakcija",
+    "acquirers": "Podržani akceptanti",
+    "cardBrands": "Podržane kartične kuće"
   }
 }
