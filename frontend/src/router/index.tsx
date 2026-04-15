@@ -9,6 +9,7 @@ import { LoginPage } from "@/features/auth/components/LoginPage";
 import { SetPasswordPage } from "@/features/auth/components/SetPasswordPage";
 import { ForgotPasswordPage } from "@/features/auth/components/ForgotPasswordPage";
 import { ResetPasswordPage } from "@/features/auth/components/ResetPasswordPage";
+import { RoleRoute } from "./RoleRoute";
 import { UsersPage } from "@/features/users/components/UsersPage";
 
 export const router = createBrowserRouter([
@@ -32,9 +33,15 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.MERCHANTS} replace /> },
+
           { path: ROUTES.MERCHANTS, element: <MerchantsPage /> },
           { path: ROUTES.SALEPOINTS, element: <SalepointsPage /> },
-          { path: ROUTES.USERS, element: <UsersPage /> },
+
+          // 👇 ADMIN ONLY
+          {
+            element: <RoleRoute allowedRoles={["admin"]} />,
+            children: [{ path: ROUTES.USERS, element: <UsersPage /> }],
+          },
         ],
       },
     ],

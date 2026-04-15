@@ -9,3 +9,7 @@ export interface ApiResponse<T> {
   content: T[];
   page: Page;
 }
+
+export type ApiErrorResponse = {
+  message: string;
+};
