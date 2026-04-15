@@ -1,8 +1,14 @@
 import apiClient from "@/shared/api/apiClient";
-import type { Salepoint } from "../types/Salepoint";
-import type { ApiResponse } from "@/shared/types";
+import type { SalepointFilters } from "../types/Salepoint";
 
-export const fetchSalepoints = async (): Promise<ApiResponse<Salepoint>> => {
-  const { data } = await apiClient.get("salepoints");
+export const fetchSalepoints = async (filters: SalepointFilters) => {
+  const { data } = await apiClient.get("/salepoints", {
+    params: filters,
+  });
+  return data;
+};
+
+export const fetchSalepointDetail = async (mid: string) => {
+  const { data } = await apiClient.get(`/salepoints/${mid}`);
   return data;
 };

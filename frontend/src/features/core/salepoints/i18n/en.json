@@ -1,12 +1,35 @@
 {
-  "title": "Sale Points",
-  "loading": "Loading sale points...",
-  "error": "Error loading sale points",
+  "title": "Salepoints",
+  "loading": "Loading salepoints...",
+  "error": "Error loading salepoints",
+
   "fields": {
     "name": "Name",
     "mid": "MID",
+    "status": "Status",
+    "actions": "Actions"
+  },
+
+  "actions": {
+    "details": "Details"
+  },
+
+  "status": {
+    "active": "Active",
+    "blocked": "Blocked"
+  },
+
+  "details": {
+    "title": "Salepoint Details",
+    "name": "Name",
+    "mid": "MID",
+    "status": "Status",
     "merchantOib": "Merchant OIB",
     "address": "Address",
-    "status": "Status"
+    "acquirers": "Acquirers",
+    "acquirerHost": "Acquirer Host",
+    "acquirerMid": "Acquirer MID",
+    "transactionTypes": "Transaction Types",
+    "cardBrands": "Card Brands"
   }
 }

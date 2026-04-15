@@ -2,11 +2,39 @@
   "title": "Prodajna mjesta",
   "loading": "Učitavanje prodajnih mjesta...",
   "error": "Greška pri učitavanju prodajnih mjesta",
+
   "fields": {
     "name": "Naziv",
     "mid": "MID",
     "merchantOib": "OIB trgovca",
+    "status": "Status",
     "address": "Adresa",
+    "actions": "Akcije"
+  },
+
+  "filters": {
+    "all": "Svi",
     "status": "Status"
+  },
+
+  "actions": {
+    "details": "Detalji",
+    "close": "Zatvori"
+  },
+
+  "status": {
+    "active": "Aktivan",
+    "inactive": "Neaktivan",
+    "blocked": "Blokiran"
+  },
+
+  "details": {
+    "title": "Detalji prodajnog mjesta",
+    "address": "Adresa",
+    "acquirers": "Acquireri",
+    "acquirerHost": "Acquirer host",
+    "acquirerMid": "Acquirer MID",
+    "transactionTypes": "Tipovi transakcija",
+    "cardBrands": "Kartični brandovi"
   }
 }
