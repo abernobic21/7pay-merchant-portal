@@ -17,6 +17,7 @@ export const Sidebar = () => {
       <NavLink to={ROUTES.DASHBOARD}>Dashboard</NavLink>
       <NavLink to={ROUTES.MERCHANTS}>Merchants</NavLink>
       <NavLink to={ROUTES.SALEPOINTS}>Salepoints</NavLink>
+      <NavLink to={ROUTES.TERMINALS}>Terminals</NavLink>
 
       {user?.role === "admin" && <NavLink to={ROUTES.USERS}>Users</NavLink>}
 

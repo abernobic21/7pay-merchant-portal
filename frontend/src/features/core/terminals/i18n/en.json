@@ -1,0 +1,61 @@
+{
+  "title": "Terminals",
+  "loading": "Loading terminals...",
+  "error": "Error loading terminals",
+
+  "fields": {
+    "tid": "TID",
+    "terminalType": "Terminal Type",
+    "status": "Status",
+    "midReference": "MID",
+    "currency": "Currency",
+    "actions": "Actions"
+  },
+
+  "filters": {
+    "all": "All",
+    "status": "Status",
+    "merchantOib": "Merchant OIB",
+    "mid": "MID"
+  },
+
+  "actions": {
+    "details": "Details",
+    "close": "Close"
+  },
+
+  "status": {
+    "prepared": "Prepared",
+    "authenticated": "Initialized and successfully validated",
+    "active": "Active",
+    "deactivated": "Deactivated",
+    "suspended": "Suspended",
+    "blocked": "Blocked"
+  },
+
+  "details": {
+    "title": "Terminal Details",
+    "terminalType": "Terminal Type",
+    "status": "Status",
+    "midReference": "MID",
+    "phoneNumber": "Phone",
+    "emailContact": "Email",
+    "currency": "Currency",
+    "merchantCategoryCode": "MCC",
+    "authenticationMode": "Authentication Mode",
+    "softPosId": "SoftPOS ID",
+    "softPosStatus": "SoftPOS Status",
+    "tipEnabled": "Tip Enabled",
+
+    "acquirers": "Acquirers",
+    "acquirerHost": "Acquirer Host",
+    "acquirerTid": "Acquirer TID",
+    "transactionTypes": "Transaction Types",
+    "cardBrands": "Card Brands"
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
+  }
+}

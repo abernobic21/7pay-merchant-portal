@@ -13,6 +13,7 @@ import { RoleRoute } from "./RoleRoute";
 import { UsersPage } from "@/features/users/components/UsersPage";
 import { ProfilePage } from "@/features/users/components/ProfilePage";
 import { DashboardPage } from "@/features/core/dashboard/components/DashboardPage";
+import { TerminalsPage } from "@/features/core/terminals/components/TerminalPage";
 
 export const router = createBrowserRouter([
   // public
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.DASHBOARD, element: <DashboardPage /> },
           { path: ROUTES.MERCHANTS, element: <MerchantsPage /> },
           { path: ROUTES.SALEPOINTS, element: <SalepointsPage /> },
+          { path: ROUTES.TERMINALS, element: <TerminalsPage /> },
           { path: ROUTES.PROFILE, element: <ProfilePage /> },
 
           //ADMIN ONLY

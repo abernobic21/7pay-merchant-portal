@@ -1,0 +1,61 @@
+{
+  "title": "Terminali",
+  "loading": "Učitavanje terminala...",
+  "error": "Greška pri učitavanju terminala",
+
+  "fields": {
+    "tid": "TID",
+    "terminalType": "Tip terminala",
+    "status": "Status",
+    "midReference": "MID",
+    "currency": "Valuta",
+    "actions": "Akcije"
+  },
+
+  "filters": {
+    "all": "Svi",
+    "status": "Status",
+    "merchantOib": "OIB trgovca",
+    "mid": "MID"
+  },
+
+  "actions": {
+    "details": "Detalji",
+    "close": "Zatvori"
+  },
+
+  "status": {
+    "prepared": "Pripremljen",
+    "authenticated": "Inicijaliziran i uspješno validiran",
+    "active": "Aktivan",
+    "deactivated": "Deaktiviran",
+    "suspended": "Suspendiran",
+    "blocked": "Blokiran"
+  },
+
+  "details": {
+    "title": "Detalji terminala",
+    "terminalType": "Tip terminala",
+    "status": "Status",
+    "midReference": "MID",
+    "phoneNumber": "Telefon",
+    "emailContact": "Email",
+    "currency": "Valuta",
+    "merchantCategoryCode": "MCC",
+    "authenticationMode": "Način autentikacije",
+    "softPosId": "SoftPOS ID",
+    "softPosStatus": "SoftPOS status",
+    "tipEnabled": "Napojnica omogućena",
+
+    "acquirers": "Acquireri",
+    "acquirerHost": "Acquirer host",
+    "acquirerTid": "Acquirer TID",
+    "transactionTypes": "Tipovi transakcija",
+    "cardBrands": "Kartični brandovi"
+  },
+
+  "pagination": {
+    "previous": "Prethodno",
+    "next": "Sljedeće"
+  }
+}
