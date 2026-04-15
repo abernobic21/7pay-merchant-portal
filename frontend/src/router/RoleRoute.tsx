@@ -16,7 +16,7 @@ export const RoleRoute = ({ allowedRoles }: RoleRouteProps) => {
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to={ROUTES.MERCHANTS} replace />;
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
   return <Outlet />;

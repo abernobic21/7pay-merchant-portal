@@ -7,6 +7,7 @@ export const ROUTES = {
 
   // protected
   USERS: "/users",
+  DASHBOARD: "/dashboard",
   MERCHANTS: "/merchants",
   SALEPOINTS: "/salepoints",
   PROFILE: "/profile",

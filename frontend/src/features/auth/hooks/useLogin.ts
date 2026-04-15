@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { ROUTES } from "@/router/routes";
 import apiClient from "@/shared/api/apiClient";
-import type { User } from "@/shared/types/userProfile";
 import { login } from "../api/authApi";
+import type { UserProfile } from "@/features/users/types/User";
 
 export const useLogin = () => {
   const { setUser } = useAuth();
@@ -14,11 +14,11 @@ export const useLogin = () => {
     mutationFn: login,
     onSuccess: async () => {
       try {
-        const { data } = await apiClient.get<User>("users/me");
+        const { data } = await apiClient.get<UserProfile>("users/me");
         setUser(data);
-        navigate(ROUTES.MERCHANTS);
+        navigate(ROUTES.DASHBOARD);
       } catch {
-        navigate(ROUTES.MERCHANTS);
+        navigate(ROUTES.DASHBOARD);
       }
     },
   });

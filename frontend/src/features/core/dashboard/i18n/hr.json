@@ -1,0 +1,27 @@
+{
+  "title": "Nadzorna ploča",
+  "lastUpdated": "Zadnje ažuriranje",
+  "stats": {
+    "totalRevenue": "Ukupni prihod",
+    "totalTransactions": "Ukupno transakcija",
+    "avgTransactionValue": "Prosječna vrijednost transakcije"
+  },
+  "filters": {
+    "timeFrom": "Od",
+    "timeTo": "Do",
+    "mid": "mid",
+    "tid": "tid",
+    "apply": "Primijeni"
+  },
+  "charts": {
+    "revenueByCardBrand": "Prihod po vrsti kartice",
+    "revenueByAcquirer": "Prihod po acquireru",
+    "cardBrand": "Vrsta kartice",
+    "acquirerHost": "Acquirer",
+    "revenue": "Prihod",
+    "count": "Broj"
+  },
+  "errors": {
+    "fetch": "Greška pri učitavanju podataka"
+  }
+}

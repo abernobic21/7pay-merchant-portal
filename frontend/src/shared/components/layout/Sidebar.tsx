@@ -14,6 +14,7 @@ export const Sidebar = () => {
   };
   return (
     <nav>
+      <NavLink to={ROUTES.DASHBOARD}>Dashboard</NavLink>
       <NavLink to={ROUTES.MERCHANTS}>Merchants</NavLink>
       <NavLink to={ROUTES.SALEPOINTS}>Salepoints</NavLink>
 

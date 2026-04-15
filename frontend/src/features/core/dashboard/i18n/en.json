@@ -1,0 +1,27 @@
+{
+  "title": "Dashboard",
+  "lastUpdated": "Last updated",
+  "stats": {
+    "totalRevenue": "Total Revenue",
+    "totalTransactions": "Total Transactions",
+    "avgTransactionValue": "Avg Transaction Value"
+  },
+  "filters": {
+    "timeFrom": "From",
+    "timeTo": "To",
+    "mid": "mid",
+    "tid": "tid",
+    "apply": "Apply"
+  },
+  "charts": {
+    "revenueByCardBrand": "Revenue by Card Brand",
+    "revenueByAcquirer": "Revenue by Acquirer",
+    "cardBrand": "Card Brand",
+    "acquirerHost": "Acquirer",
+    "revenue": "Revenue",
+    "count": "Count"
+  },
+  "errors": {
+    "fetch": "Failed to load dashboard data"
+  }
+}
