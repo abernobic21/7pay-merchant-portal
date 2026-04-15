@@ -57,6 +57,19 @@
     "create": "Failed to create user",
     "update": "Failed to update user",
     "delete": "Failed to delete user",
-    "status": "Failed to update status"
+    "status": "Failed to update status",
+    "changePassword": "Failed to change password"
+  },
+  "profile": {
+    "title": "My Profile",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "passwordMismatch": "Passwords do not match",
+    "success": "Password changed successfully"
+  },
+  "common": {
+    "cancel": "Cancel"
   }
 }

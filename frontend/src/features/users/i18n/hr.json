@@ -57,6 +57,19 @@
     "create": "Greška pri kreiranju korisnika",
     "update": "Greška pri ažuriranju korisnika",
     "delete": "Greška pri brisanju korisnika",
-    "status": "Greška pri ažuriranju statusa"
+    "status": "Greška pri ažuriranju statusa",
+    "changePassword": "Greška pri promjeni lozinke"
+  },
+  "profile": {
+    "title": "Moj profil",
+    "changePassword": "Promijeni lozinku",
+    "currentPassword": "Trenutna lozinka",
+    "newPassword": "Nova lozinka",
+    "confirmPassword": "Potvrdi novu lozinku",
+    "passwordMismatch": "Lozinke se ne podudaraju",
+    "success": "Lozinka uspješno promijenjena"
+  },
+  "common": {
+    "cancel": "Odustani"
   }
 }

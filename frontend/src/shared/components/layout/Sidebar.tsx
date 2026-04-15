@@ -19,6 +19,7 @@ export const Sidebar = () => {
 
       {user?.role === "admin" && <NavLink to={ROUTES.USERS}>Users</NavLink>}
 
+      <NavLink to={ROUTES.PROFILE}>Profile</NavLink>
       <div>
         <button onClick={handleLogout}>{t("logout")}</button>
       </div>

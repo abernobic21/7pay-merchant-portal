@@ -1,23 +1,23 @@
 import { createContext, useEffect, useState } from "react";
 import apiClient from "@/shared/api/apiClient";
-import type { User } from "@/shared/types/User";
+import type { UserProfile } from "@/features/users/types/User";
 
 interface AuthContextType {
-  user: User | null;
+  user: UserProfile | null;
   isLoading: boolean;
-  setUser: (user: User | null) => void;
+  setUser: (user: UserProfile | null) => void;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     apiClient
-      .get<User>("/users/me")
+      .get<UserProfile>("/users/me")
       .then(({ data }) => setUser(data))
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));

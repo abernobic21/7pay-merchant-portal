@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { ROUTES } from "@/router/routes";
 import apiClient from "@/shared/api/apiClient";
-import type { User } from "@/shared/types/User";
+import type { User } from "@/shared/types/userProfile";
 import { login } from "../api/authApi";
 
 export const useLogin = () => {

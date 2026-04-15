@@ -12,6 +12,17 @@ export interface User {
   createdAt: string;
 }
 
+export interface UserProfile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: "admin" | "user";
+  accessLevel: "merchant" | "branch";
+  merchantId: string | null;
+  status: "active" | "deactivated";
+}
+
 export interface CreateUserPayload {
   firstName: string;
   lastName: string;
@@ -42,4 +53,9 @@ export interface UserFilters {
   sort?: string;
   status?: "active" | "deactivated";
   role?: "admin" | "user";
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
 }

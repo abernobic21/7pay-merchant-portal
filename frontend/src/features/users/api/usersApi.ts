@@ -6,6 +6,8 @@ import type {
   UpdateUserPayload,
   UpdateStatusPayload,
   UserFilters,
+  UserProfile,
+  ChangePasswordPayload,
 } from "../types/User";
 
 export const getUsers = async (
@@ -44,7 +46,13 @@ export const updateStatus = async (
   await apiClient.patch(`/users/${id}/status`, payload);
 };
 
-export const getMe = async (): Promise<User> => {
+export const getMe = async (): Promise<UserProfile> => {
   const { data } = await apiClient.get("/users/me");
   return data;
+};
+
+export const changePassword = async (
+  payload: ChangePasswordPayload,
+): Promise<void> => {
+  await apiClient.put("/users/me/password", payload);
 };
