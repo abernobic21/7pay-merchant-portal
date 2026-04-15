@@ -22,7 +22,7 @@ export const AuthForm = ({
       <h2>{title}</h2>
       {subtitle && <p>{subtitle}</p>}
 
-      <form onSubmit={onSubmit} className="auth-form">
+      <form onSubmit={onSubmit}>
         {children}
 
         <button type="submit" disabled={isLoading}>

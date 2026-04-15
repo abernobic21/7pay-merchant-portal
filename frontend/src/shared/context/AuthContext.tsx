@@ -15,13 +15,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const isAuthPage =
+    location.pathname.includes("login") ||
+    location.pathname.includes("set-password") ||
+    location.pathname.includes("reset-password") ||
+    location.pathname.includes("forgot-password");
+
   useEffect(() => {
+    if (isAuthPage) {
+      setIsLoading(false);
+      return;
+    }
+
     apiClient
       .get<UserProfile>("/users/me")
       .then(({ data }) => setUser(data))
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [isAuthPage]);
 
   const logout = async () => {
     try {

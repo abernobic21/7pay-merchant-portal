@@ -3,38 +3,38 @@
     "title": "Prijava",
     "email": "Email",
     "password": "Lozinka",
-    "submit": "Prijavi se",
+    "submit": "Prijava",
     "forgotPassword": "Zaboravili ste lozinku?"
   },
   "setPassword": {
     "title": "Postavite lozinku",
-    "subtitle": "Kreirajte lozinku za aktivaciju računa",
+    "subtitle": "Odaberite lozinku za dovršetak postavljanja računa",
     "newPassword": "Nova lozinka",
-    "confirmPassword": "Potvrdite lozinku",
-    "submit": "Postavi lozinku"
+    "confirmPassword": "Potvrdi lozinku",
+    "submit": "Postavi lozinku",
+    "invalidLink": "Ova poveznica je nevažeća ili je istekla",
+    "passwordMismatch": "Lozinke se ne podudaraju"
   },
   "forgotPassword": {
     "title": "Zaboravljena lozinka",
-    "subtitle": "Unesite email za resetiranje lozinke",
+    "subtitle": "Unesite email i poslat ćemo vam poveznicu za resetiranje",
     "email": "Email",
-    "submit": "Pošalji link za reset"
+    "submit": "Pošalji poveznicu",
+    "backToLogin": "Natrag na prijavu",
+    "successMessage": "Ako račun s tim emailom postoji, uskoro ćete primiti poveznicu za resetiranje"
   },
   "resetPassword": {
-    "title": "Resetiranje lozinke",
+    "title": "Resetirajte lozinku",
     "subtitle": "Unesite novu lozinku",
     "newPassword": "Nova lozinka",
-    "confirmPassword": "Potvrdite lozinku",
-    "submit": "Resetiraj lozinku"
+    "confirmPassword": "Potvrdi lozinku",
+    "submit": "Resetiraj lozinku",
+    "invalidLink": "Ova poveznica je nevažeća ili je istekla",
+    "passwordMismatch": "Lozinke se ne podudaraju"
   },
-  "changePassword": {
-    "title": "Promjena lozinke",
-    "currentPassword": "Trenutna lozinka",
-    "newPassword": "Nova lozinka",
-    "confirmPassword": "Potvrdite lozinku",
-    "submit": "Promijeni lozinku"
-  },
-  "common": {
-    "loading": "Učitavanje...",
-    "error": "Došlo je do greške"
+  "errors": {
+    "invalidCredentials": "Pogrešan email ili lozinka",
+    "accountLocked": "Račun je zaključan. Pokušajte za 15 minuta",
+    "accountDeactivated": "Vaš račun je deaktiviran"
   }
 }

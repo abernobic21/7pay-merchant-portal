@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 import { ROUTES } from "@/router/routes";
 import { AuthForm } from "./AuthForm";
-import type { AxiosError } from "axios";
+import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
 
 export const LoginPage = () => {
   const { t } = useTranslation("auth");
@@ -42,12 +42,7 @@ export const LoginPage = () => {
         placeholder={t("login.password")}
         required
       />
-      {error && (
-        <p>
-          {(error as AxiosError<{ message: string }>)?.response?.data
-            ?.message ?? t("common.error")}
-        </p>
-      )}
+      {error && <p>{getApiErrorMessage(error) ?? t("common.error")}</p>}
     </AuthForm>
   );
 };

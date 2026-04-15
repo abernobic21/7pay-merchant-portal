@@ -1,40 +1,40 @@
 {
   "login": {
-    "title": "Login",
+    "title": "Sign in",
     "email": "Email",
     "password": "Password",
-    "submit": "Login",
+    "submit": "Sign in",
     "forgotPassword": "Forgot password?"
   },
   "setPassword": {
     "title": "Set your password",
-    "subtitle": "Create a password to activate your account",
+    "subtitle": "Choose a password to complete your account setup",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
-    "submit": "Set password"
+    "submit": "Set password",
+    "invalidLink": "This link is invalid or has expired",
+    "passwordMismatch": "Passwords do not match"
   },
   "forgotPassword": {
     "title": "Forgot password",
-    "subtitle": "Enter your email to receive reset instructions",
+    "subtitle": "Enter your email and we'll send you a reset link",
     "email": "Email",
-    "submit": "Send reset link"
+    "submit": "Send reset link",
+    "backToLogin": "Back to login",
+    "successMessage": "If an account with that email exists, you will receive a reset link shortly"
   },
   "resetPassword": {
-    "title": "Reset password",
+    "title": "Reset your password",
     "subtitle": "Enter your new password",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
-    "submit": "Reset password"
+    "submit": "Reset password",
+    "invalidLink": "This link is invalid or has expired",
+    "passwordMismatch": "Passwords do not match"
   },
-  "changePassword": {
-    "title": "Change password",
-    "currentPassword": "Current password",
-    "newPassword": "New password",
-    "confirmPassword": "Confirm password",
-    "submit": "Change password"
-  },
-  "common": {
-    "loading": "Loading...",
-    "error": "Something went wrong"
+  "errors": {
+    "invalidCredentials": "Invalid email or password",
+    "accountLocked": "Account locked. Try again in 15 minutes",
+    "accountDeactivated": "Your account has been deactivated"
   }
 }
