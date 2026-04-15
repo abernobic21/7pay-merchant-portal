@@ -6,7 +6,6 @@ export const ROUTES = {
   RESET_PASSWORD: "/reset-password",
 
   // protected
-  CHANGE_PASSWORD: "/change-password",
   MERCHANTS: "/merchants",
   SALEPOINTS: "/salepoints",
 } as const;

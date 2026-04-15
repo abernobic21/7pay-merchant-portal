@@ -1,19 +1,19 @@
 import type { AxiosInstance } from "axios";
-import { router } from "@/router";
-import { ROUTES } from "@/router/routes";
 
-export const applyAuthInterceptor = (client: AxiosInstance) => {
-  client.interceptors.request.use((config) => {
-    if (import.meta.env.DEV) {
-      console.log(
-        "API call:",
-        config.method?.toUpperCase(),
-        (config.baseURL ?? "") + config.url,
-      );
-    }
-    return config;
-  });
+const PUBLIC_ENDPOINTS = [
+  "auth/login",
+  "auth/refresh",
+  "auth/set-password",
+  "auth/reset-password",
+];
 
+const isPublicEndpoint = (url?: string) =>
+  PUBLIC_ENDPOINTS.some((endpoint) => url?.includes(endpoint));
+
+export const applyAuthInterceptor = (
+  client: AxiosInstance,
+  onSessionExpired: () => void,
+) => {
   let isRefreshing = false;
   let queue: Array<{
     resolve: (value?: unknown) => void;
@@ -29,45 +29,36 @@ export const applyAuthInterceptor = (client: AxiosInstance) => {
     (response) => response,
     async (error) => {
       const original = error.config;
-
       const is401 = error.response?.status === 401;
-      const isRefreshEndpoint = original?.url?.includes("/auth/refresh");
       const alreadyRetried = original?._retry;
 
-      if (is401 && isRefreshEndpoint) {
+      if (!is401 || alreadyRetried || isPublicEndpoint(original?.url)) {
         return Promise.reject(error);
       }
 
-      if (is401 && !alreadyRetried) {
-        original._retry = true;
+      original._retry = true;
 
-        if (isRefreshing) {
-          return new Promise((resolve, reject) => {
-            queue.push({ resolve, reject });
-          })
-            .then(() => client(original))
-            .catch((err) => Promise.reject(err));
-        }
-
-        isRefreshing = true;
-
-        try {
-          await client.post("/api/v1/auth/refresh");
-          processQueue(null);
-          return client(original);
-        } catch (refreshError) {
-          processQueue(refreshError);
-          router.navigate(ROUTES.LOGIN, { replace: true });
-          return Promise.reject(refreshError);
-        } finally {
-          isRefreshing = false;
-        }
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          queue.push({ resolve, reject });
+        })
+          .then(() => client(original))
+          .catch((err) => Promise.reject(err));
       }
 
-      const message =
-        error.response?.data?.message ?? error.message ?? "Unknown error";
+      isRefreshing = true;
 
-      return Promise.reject({ ...error, message });
+      try {
+        await client.post("/auth/refresh");
+        processQueue(null);
+        return client(original);
+      } catch (refreshError) {
+        processQueue(refreshError);
+        onSessionExpired();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     },
   );
 };

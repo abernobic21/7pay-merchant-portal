@@ -1,4 +1,4 @@
-import apiClient from "@/shared/api/axios";
+import apiClient from "@/shared/api/apiClient";
 import type { ApiResponse } from "@/shared/types";
 import type { Merchant } from "../types/Merchant";
 
