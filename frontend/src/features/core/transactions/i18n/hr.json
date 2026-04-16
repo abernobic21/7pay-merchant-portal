@@ -1,0 +1,87 @@
+{
+  "title": "Transakcije",
+  "loading": "Učitavanje...",
+  "error": "Došlo je do greške.",
+  "filters": {
+    "merchantOib": "OIB trgovca",
+    "mid": "MID",
+    "tid": "TID",
+    "authNumber": "Broj autorizacije",
+    "rrn": "RRN",
+    "status": "Status",
+    "transactionType": "Vrsta transakcije",
+    "cardBrand": "Vrsta kartice",
+    "rangeError": {
+      "toBeforeFrom": "Datum završetka mora biti nakon datuma početka.",
+      "exceeds31Days": "Raspon datuma ne smije biti veći od 31 dan."
+    }
+  },
+  "status": {
+    "authorized": "Autorizirana",
+    "rejected": "Odbijena",
+    "no_response": "Bez odgovora"
+  },
+  "transactionType": {
+    "sale": "Prodaja",
+    "sale_with_installments": "Prodaja na rate",
+    "refund": "Povrat",
+    "storno": "Storno",
+    "technical_reversal": "Tehnički reversal"
+  },
+  "cardBrand": {
+    "mastercard": "MasterCard",
+    "visa": "VISA",
+    "amex": "AMEX",
+    "maestro": "Maestro",
+    "diners": "Diners",
+    "discover": "Discover"
+  },
+  "fields": {
+    "transactionId": "ID transakcije",
+    "transactionType": "Vrsta transakcije",
+    "amount": "Iznos",
+    "currency": "Valuta",
+    "authorizationState": "Status autorizacije",
+    "cardBrand": "Vrsta kartice",
+    "timestamp": "Datum i vrijeme",
+    "actions": "Akcije"
+  },
+  "details": {
+    "transactionType": "Vrsta transakcije",
+    "amount": "Iznos",
+    "authorizationState": "Status autorizacije",
+    "validity": "Valjanost",
+    "responseCode": "Kod odgovora",
+    "authNumber": "Broj autorizacije",
+    "rrn": "RRN",
+    "acquirerRrn": "Acquirer RRN",
+    "stan": "STAN",
+    "acquirerStan": "Acquirer STAN",
+    "cardBrand": "Vrsta kartice",
+    "panMasked": "Maskirani PAN",
+    "panExpireDate": "Datum isteka kartice",
+    "acquirerHost": "Acquirer host",
+    "acquirerTid": "Acquirer TID",
+    "acquirerMid": "Acquirer MID",
+    "tid": "TID",
+    "mid": "MID",
+    "paymentType": "Vrsta plaćanja",
+    "installmentNumber": "Broj rata",
+    "tipAmount": "Iznos napojnice",
+    "amount2": "Drugi iznos",
+    "timestamp": "Datum i vrijeme",
+    "posTimestamp": "POS datum i vrijeme",
+    "acquirerTimestamp": "Acquirer datum i vrijeme",
+    "transactionReference": "Referenca transakcije",
+    "transactionStateMDCProcessing": "MDC stanje obrade"
+  },
+  "actions": {
+    "search": "Pretraži",
+    "details": "Detalji",
+    "close": "Zatvori"
+  },
+  "pagination": {
+    "previous": "Prethodna",
+    "next": "Sljedeća"
+  }
+}

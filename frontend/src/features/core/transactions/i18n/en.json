@@ -1,0 +1,87 @@
+{
+  "title": "Transactions",
+  "loading": "Loading...",
+  "error": "An error occurred.",
+  "filters": {
+    "merchantOib": "Merchant OIB",
+    "mid": "MID",
+    "tid": "TID",
+    "authNumber": "Auth number",
+    "rrn": "RRN",
+    "status": "Status",
+    "transactionType": "Transaction type",
+    "cardBrand": "Card brand",
+    "rangeError": {
+      "toBeforeFrom": "End date must be after start date.",
+      "exceeds31Days": "Date range cannot exceed 31 days."
+    }
+  },
+  "status": {
+    "authorized": "Authorized",
+    "rejected": "Rejected",
+    "no_response": "No response"
+  },
+  "transactionType": {
+    "sale": "Sale",
+    "sale_with_installments": "Sale with installments",
+    "refund": "Refund",
+    "storno": "Storno",
+    "technical_reversal": "Technical Reversal"
+  },
+  "cardBrand": {
+    "mastercard": "MasterCard",
+    "visa": "VISA",
+    "amex": "AMEX",
+    "maestro": "Maestro",
+    "diners": "Diners",
+    "discover": "Discover"
+  },
+  "fields": {
+    "transactionId": "Transaction ID",
+    "transactionType": "Transaction type",
+    "amount": "Amount",
+    "currency": "Currency",
+    "authorizationState": "Authorization status",
+    "cardBrand": "Card brand",
+    "timestamp": "Date & time",
+    "actions": "Actions"
+  },
+  "details": {
+    "transactionType": "Transaction type",
+    "amount": "Amount",
+    "authorizationState": "Authorization status",
+    "validity": "Validity",
+    "responseCode": "Response code",
+    "authNumber": "Auth number",
+    "rrn": "RRN",
+    "acquirerRrn": "Acquirer RRN",
+    "stan": "STAN",
+    "acquirerStan": "Acquirer STAN",
+    "cardBrand": "Card brand",
+    "panMasked": "Masked PAN",
+    "panExpireDate": "Card expiry date",
+    "acquirerHost": "Acquirer host",
+    "acquirerTid": "Acquirer TID",
+    "acquirerMid": "Acquirer MID",
+    "tid": "TID",
+    "mid": "MID",
+    "paymentType": "Payment type",
+    "installmentNumber": "Installment number",
+    "tipAmount": "Tip amount",
+    "amount2": "Second amount",
+    "timestamp": "Date & time",
+    "posTimestamp": "POS date & time",
+    "acquirerTimestamp": "Acquirer date & time",
+    "transactionReference": "Transaction reference",
+    "transactionStateMDCProcessing": "MDC processing state"
+  },
+  "actions": {
+    "search": "Search",
+    "details": "Details",
+    "close": "Close"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
+  }
+}

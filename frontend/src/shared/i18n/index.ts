@@ -15,6 +15,8 @@ import dashboardEn from "@/features/core/dashboard/i18n/en.json";
 import dashboardHr from "@/features/core/dashboard/i18n/hr.json";
 import terminalsEn from "@/features/core/terminals/i18n/en.json";
 import terminalsHr from "@/features/core/terminals/i18n/hr.json";
+import transactionsEn from "@/features/core/transactions/i18n/en.json";
+import transactionsHr from "@/features/core/transactions/i18n/hr.json";
 
 i18n.use(initReactI18next).init({
   lng: "en",
@@ -28,6 +30,7 @@ i18n.use(initReactI18next).init({
       merchants: merchantsEn,
       salepoints: salepointsEn,
       terminals: terminalsEn,
+      transactions: transactionsEn,
     },
     hr: {
       common: commonHr,
@@ -37,6 +40,7 @@ i18n.use(initReactI18next).init({
       merchants: merchantsHr,
       salepoints: salepointsHr,
       terminals: terminalsHr,
+      transactions: transactionsHr,
     },
   },
 });
