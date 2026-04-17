@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -71,5 +75,46 @@ public class RedisService {
 
     private String refreshKey(String userId) {
         return "refresh:" + userId;
+    }
+
+    private static final String TWO_FA_SETUP_PREFIX = "2fa:setup:";
+    private static final String TWO_FA_BACKUP_PREFIX = "2fa:setup:backup:";
+
+    public void storeTwoFaSecret(UUID userId, String secret, long ttlMinutes) {
+        redisTemplate.opsForValue().set(
+                TWO_FA_SETUP_PREFIX + userId,
+                secret,
+                ttlMinutes,
+                TimeUnit.MINUTES
+        );
+    }
+
+    public String getTwoFaSecret(UUID userId) {
+        return redisTemplate.opsForValue().get(TWO_FA_SETUP_PREFIX + userId);
+    }
+
+    public void deleteTwoFaSecret(UUID userId) {
+        redisTemplate.delete(TWO_FA_SETUP_PREFIX + userId);
+    }
+
+    public void storePendingBackupCodes(UUID userId, List<String> hashedCodes, long ttlMinutes) {
+        redisTemplate.opsForValue().set(
+                TWO_FA_BACKUP_PREFIX + userId,
+                String.join(",", hashedCodes),
+                ttlMinutes,
+                TimeUnit.MINUTES
+        );
+    }
+
+    public List<String> getPendingBackupCodes(UUID userId) {
+        String value = redisTemplate.opsForValue().get(TWO_FA_BACKUP_PREFIX + userId);
+
+        if (value == null) return Collections.emptyList();
+
+        return Arrays.asList(value.split(","));
+    }
+
+    public void deletePendingBackupCodes(UUID userId) {
+        redisTemplate.delete(TWO_FA_BACKUP_PREFIX + userId);
     }
 }

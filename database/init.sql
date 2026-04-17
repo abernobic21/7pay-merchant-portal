@@ -29,8 +29,27 @@ CREATE TABLE password_resets (
     used_at         TIMESTAMP
 );
 
+-- 2FA
+CREATE TABLE user_2fa (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    secret      VARCHAR(255) NOT NULL,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+--2FA backup tokens
+CREATE TABLE backup_codes (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    code_hash   VARCHAR(255) NOT NULL,
+    used_at     TIMESTAMP
+);
+
 -- Indexes
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_merchant_id ON users(merchant_id);
 CREATE INDEX idx_password_resets_user_id ON password_resets(user_id);
 CREATE INDEX idx_password_resets_token ON password_resets(reset_token);
+CREATE INDEX idx_user_2fa_user_id ON user_2fa(user_id);
+CREATE INDEX idx_backup_codes_user_id ON backup_codes(user_id);

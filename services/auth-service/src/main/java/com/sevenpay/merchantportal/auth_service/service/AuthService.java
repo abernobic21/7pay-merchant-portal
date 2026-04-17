@@ -2,22 +2,29 @@ package com.sevenpay.merchantportal.auth_service.service;
 
 import com.sevenpay.merchantportal.auth_service.exception.*;
 import com.sevenpay.merchantportal.auth_service.model.dto.*;
+import com.sevenpay.merchantportal.auth_service.model.entity.BackupCode;
 import com.sevenpay.merchantportal.auth_service.model.entity.PasswordReset;
 import com.sevenpay.merchantportal.auth_service.model.entity.User;
+import com.sevenpay.merchantportal.auth_service.model.entity.UserTwoFa;
 import com.sevenpay.merchantportal.auth_service.model.enums.AccessLevel;
 import com.sevenpay.merchantportal.auth_service.model.enums.Role;
 import com.sevenpay.merchantportal.auth_service.model.enums.Status;
+import com.sevenpay.merchantportal.auth_service.repository.BackupCodeRepository;
 import com.sevenpay.merchantportal.auth_service.repository.PasswordResetRepository;
 import com.sevenpay.merchantportal.auth_service.repository.UserRepository;
+import com.sevenpay.merchantportal.auth_service.repository.UserTwoFaRepository;
 import com.sevenpay.merchantportal.auth_service.util.JwtUtil;
 import com.sevenpay.merchantportal.auth_service.util.TokenUtil;
+import com.sevenpay.merchantportal.auth_service.util.TwoFaUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,10 +34,13 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordResetRepository passwordResetRepository;
+    private final UserTwoFaRepository userTwoFaRepository;
+    private final BackupCodeRepository backupCodeRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
+    private final TwoFaUtil twoFaUtil;
 
     @Value("${jwt.access-expiry}")
     private long accessExpiry;
@@ -159,6 +169,87 @@ public class AuthService {
         }
         user.setFirstLoginFlag(false);
         applyPasswordChange(user, request.getNewPassword(), record);
+    }
+
+    public TwoFaSetupResponse setup2Fa(String accessToken) {
+        JwtTokenValidationResponse validationResponse = validateJwtToken(accessToken);
+
+        UUID userId = validationResponse.getUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userId));
+
+        if (userTwoFaRepository.existsByUserId(userId)) {
+            throw new ConflictException("2FA already enabled");
+        }
+
+        String secret = twoFaUtil.generateSecret();
+
+        redisService.storeTwoFaSecret(userId, secret, 10);
+
+        List<String> backupCodes = twoFaUtil.generateBackupCodes(8);
+
+        List<String> hashed = backupCodes.stream()
+                .map(twoFaUtil::hashBackupCode)
+                .toList();
+
+        redisService.storePendingBackupCodes(userId, hashed, 10);
+
+        String qr = twoFaUtil.generateQrCodeUrl("SevenPay", user.getEmail() , secret);
+        return TwoFaSetupResponse.builder()
+                .secret(secret)
+                .qrCodeUrl(qr)
+                .backupCodes(backupCodes)
+                .build();
+    }
+
+    @Transactional
+    public void verifyTwoFaSetup(String accessToken, String code) {
+
+        UUID userId = validateJwtToken(accessToken).getUserId();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (userTwoFaRepository.existsByUserId(userId)) {
+            throw new ConflictException("2FA already enabled");
+        }
+
+        String secret = redisService.getTwoFaSecret(userId);
+
+        if (secret == null) {
+            throw new Invalid2FaTokenException();
+        }
+
+        boolean valid = twoFaUtil.verifyCode(secret, code);
+
+        if (!valid) {
+            throw new Invalid2FaTokenException();
+        }
+
+        List<String> hashedBackupCodes = redisService.getPendingBackupCodes(userId);
+
+        if (hashedBackupCodes.isEmpty()) {
+            throw new Invalid2FaTokenException();
+        }
+
+        UserTwoFa userTwoFa = new UserTwoFa();
+        userTwoFa.setUser(user);
+        userTwoFa.setSecret(secret);
+        userTwoFaRepository.save(userTwoFa);
+
+        List<BackupCode> backupCodes = hashedBackupCodes.stream()
+                .map(hash -> {
+                    BackupCode bc = new BackupCode();
+                    bc.setUser(user);
+                    bc.setCodeHash(hash);
+                    return bc;
+                })
+                .toList();
+
+        backupCodeRepository.saveAll(backupCodes);
+
+        redisService.deleteTwoFaSecret(userId);
+        redisService.deletePendingBackupCodes(userId);
     }
 
     private PasswordReset validateToken(String rawToken) {

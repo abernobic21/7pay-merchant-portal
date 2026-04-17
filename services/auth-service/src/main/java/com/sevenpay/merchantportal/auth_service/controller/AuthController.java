@@ -99,4 +99,21 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of("message", "Password set successfully"));
     }
+
+    @PostMapping("/2fa/setup")
+    public ResponseEntity<TwoFaSetupResponse> setup2Fa(
+            @CookieValue(name = "access_token", required = false) String accessToken) {
+
+        return ResponseEntity.ok(authService.setup2Fa(accessToken));
+    }
+
+    @PostMapping("/2fa/verify-setup")
+    public ResponseEntity<Map<String, String>> verifySetup(
+            @CookieValue("access_token") String accessToken,
+            @RequestBody TwoFaVerifyRequest request) {
+
+        authService.verifyTwoFaSetup(accessToken, request.getCode());
+
+        return ResponseEntity.ok(Map.of("message","2FA enabled successfully"));
+    }
 }
