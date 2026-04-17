@@ -134,4 +134,20 @@ public class AuthController {
                 .preAuthToken(result.getPreAuthToken())
                 .build());
     }
+
+    @PostMapping("/2fa/validate-backup")
+    public ResponseEntity<AuthSuccessResponse> validate2faBackup(
+            @RequestBody TwoFaBackupRequest request,
+            HttpServletResponse response) {
+
+        AuthResult result = authService.validateTwoFaBackupCode(request);
+        response.addCookie(cookieUtil.createAccessTokenCookie(result.getAccessToken(), (int) result.getExpiresIn()));
+        response.addCookie(cookieUtil.createRefreshTokenCookie(result.getRefreshToken()));
+        return ResponseEntity.ok(AuthSuccessResponse.builder()
+                .expiresIn(result.getExpiresIn())
+                .firstLogin(result.isFirstLogin())
+                .requires2fa(result.isRequires2fa())
+                .preAuthToken(result.getPreAuthToken())
+                .build());
+    }
 }

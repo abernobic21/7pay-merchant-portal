@@ -24,7 +24,8 @@ public class SecurityConfig {
             "/api/v1/auth/refresh",
             "/api/v1/auth/forgot-password",
             "/api/v1/auth/reset-password",
-            "/api/v1/auth/2fa/validate"
+            "/api/v1/auth/2fa/validate",
+            "/api/v1/auth/2fa/validate-backup"
     };
 
     @Bean

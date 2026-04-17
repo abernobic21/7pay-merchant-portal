@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -220,8 +221,6 @@ public class AuthService {
 
     @Transactional
     public AuthResult validateTwoFa(@Valid TwoFaValidationRequest request) {
-
-        System.out.println("Tuuu");
         User user = consumePreAuthToken(request.getPreAuthToken());
 
         UserTwoFa twoFa = userTwoFaRepository.findByUserId(user.getId())
@@ -229,16 +228,31 @@ public class AuthService {
 
         if (redisService.isTotpUsed(user.getId(), request.getCode())) {
 
-            System.out.println("Totp used");
             throw new Invalid2FaCodeException();
         }
 
         if (!twoFaUtil.verifyCode(twoFa.getSecret(), request.getCode())) {
-            System.out.println("invalid code");
             throw new Invalid2FaCodeException();
         }
 
         redisService.markTotpUsed(user.getId(), request.getCode());
+
+        return buildFullAuthResult(user);
+    }
+
+    @Transactional
+    public AuthResult validateTwoFaBackupCode(TwoFaBackupRequest request) {
+        User user = consumePreAuthToken(request.getPreAuthToken());
+
+        List<BackupCode> unusedCodes = backupCodeRepository.findByUserIdAndUsedAtIsNull(user.getId());
+
+        BackupCode matched = unusedCodes.stream()
+                .filter(bc -> passwordEncoder.matches(request.getBackupCode(), bc.getCodeHash()))
+                .findFirst()
+                .orElseThrow(InvalidBackupCodeException::new);
+
+        matched.setUsedAt(Instant.now());
+        backupCodeRepository.save(matched);
 
         return buildFullAuthResult(user);
     }
