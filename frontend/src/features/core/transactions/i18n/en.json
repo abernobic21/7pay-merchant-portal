@@ -21,21 +21,40 @@
     "rejected": "Rejected",
     "no_response": "No response"
   },
-  "transactionType": {
+  "transactionTypes": {
     "sale": "Sale",
     "sale_with_installments": "Sale with installments",
     "refund": "Refund",
     "storno": "Storno",
     "technical_reversal": "Technical Reversal"
   },
-  "cardBrand": {
-    "mastercard": "MasterCard",
-    "visa": "VISA",
-    "amex": "AMEX",
+  "cardBrands": {
+    "mastercard": "Mastercard",
+    "visa": "Visa",
+    "amex": "American Express",
     "maestro": "Maestro",
     "diners": "Diners",
-    "discover": "Discover"
+    "discover": "Discover",
+    "jcb": "JCB",
+    "closed_loop_prepaid": "Closed-loop prepaid",
+    "closed_loop_postpaid": "Closed-loop postpaid",
+    "not_known": "Unknown",
+    "naka": "Naka",
+    "invalid": "Invalid"
   },
+
+  "validity": {
+    "valid": "Valid",
+    "invalid": "Invalid",
+    "voided": "Voided"
+  },
+
+  "transactionStateMDCProcessing": {
+    "included": "Included",
+    "not_included": "Not included",
+    "irrelevant": "Irrelevant"
+  },
+
   "fields": {
     "transactionId": "Transaction ID",
     "transactionType": "Transaction type",

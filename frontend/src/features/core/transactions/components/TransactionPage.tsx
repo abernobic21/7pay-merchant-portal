@@ -162,14 +162,14 @@ export const TransactionsPage = () => {
           onChange={(e) => handleChange("transactionType", e.target.value)}
         >
           <option value="">{t("filters.transactionType")}</option>
-          <option value="sale">{t("transactionType.sale")}</option>
+          <option value="sale">{t("transactionTypes.sale")}</option>
           <option value="sale_with_installments">
-            {t("transactionType.sale_with_installments")}
+            {t("transactionTypes.sale_with_installments")}
           </option>
-          <option value="refund">{t("transactionType.refund")}</option>
-          <option value="storno">{t("transactionType.storno")}</option>
+          <option value="refund">{t("transactionTypes.refund")}</option>
+          <option value="storno">{t("transactionTypes.storno")}</option>
           <option value="technical_reversal">
-            {t("transactionType.technical_reversal")}
+            {t("transactionTypes.technical_reversal")}
           </option>
         </select>
 
@@ -178,12 +178,20 @@ export const TransactionsPage = () => {
           onChange={(e) => handleChange("cardBrand", e.target.value)}
         >
           <option value="">{t("filters.cardBrand")}</option>
-          <option value="mastercard">{t("cardBrand.mastercard")}</option>
-          <option value="visa">{t("cardBrand.visa")}</option>
-          <option value="amex">{t("cardBrand.amex")}</option>
-          <option value="maestro">{t("cardBrand.maestro")}</option>
-          <option value="diners">{t("cardBrand.diners")}</option>
-          <option value="discover">{t("cardBrand.discover")}</option>
+          <option value="mastercard">{t("cardBrands.mastercard")}</option>
+          <option value="visa">{t("cardBrands.visa")}</option>
+          <option value="amex">{t("cardBrands.amex")}</option>
+          <option value="maestro">{t("cardBrands.maestro")}</option>
+          <option value="diners">{t("cardBrands.diners")}</option>
+          <option value="discover">{t("cardBrands.discover")}</option>
+          <option value="jcb">{t("cardBrands.jcb")}</option>
+          <option value="naka">{t("cardBrands.naka")}</option>
+          <option value="closed_loop_prepaid">
+            {t("cardBrands.closed_loop_prepaid")}
+          </option>
+          <option value="closed_loop_postpaid">
+            {t("cardBrands.closed_loop_postpaid")}
+          </option>
         </select>
       </div>
 

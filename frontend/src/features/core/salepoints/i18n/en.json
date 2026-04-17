@@ -31,22 +31,6 @@
     "hold": "On hold"
   },
 
-  "transactionType": {
-    "sale": "Sale",
-    "sale_with_installments": "Sale with installments",
-    "refund": "Refund",
-    "storno": "Storno",
-    "technical_reversal": "Technical Reversal"
-  },
-  "cardBrand": {
-    "mastercard": "MasterCard",
-    "visa": "VISA",
-    "amex": "AMEX",
-    "maestro": "Maestro",
-    "diners": "Diners",
-    "discover": "Discover"
-  },
-
   "details": {
     "title": "Salepoint Details",
     "name": "Name",

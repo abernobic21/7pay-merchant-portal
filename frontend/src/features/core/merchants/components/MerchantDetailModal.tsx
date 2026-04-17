@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const MerchantDetailModal = ({ oib, onClose }: Props) => {
-  const { t } = useTranslation("merchants");
+  const { t } = useTranslation(["merchants", "transactions"]);
   const { data, isLoading, error } = useMerchantDetail(oib);
 
   if (isLoading) return <div>{t("loading")}</div>;
@@ -38,9 +38,7 @@ export const MerchantDetailModal = ({ oib, onClose }: Props) => {
       <h3>{t("details.transactionTypes")}</h3>
       <ul>
         {data.supportedTransactionTypes.map((type) => (
-          <li key={type}>
-            {t(`transactionTypes.${type.toLowerCase()}`, type)}
-          </li>
+          <li key={type}>{t(`transactions:transactionTypes.${type}`)}</li>
         ))}
       </ul>
 
@@ -54,7 +52,7 @@ export const MerchantDetailModal = ({ oib, onClose }: Props) => {
       <h3>{t("details.cardBrands")}</h3>
       <ul>
         {data.supportedCardBrands.map((b) => (
-          <li key={b}>{t(`cardBrands.${b.toLowerCase()}`, b)}</li>
+          <li key={b}>{t(`transactions:cardBrands.${b}`)}</li>
         ))}
       </ul>
 

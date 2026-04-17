@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const SalepointDetailModal = ({ mid, onClose }: Props) => {
-  const { t } = useTranslation("salepoints");
+  const { t } = useTranslation(["salepoints", "transactions"]);
   const { data, isLoading, error } = useSalepointDetail(mid);
 
   if (isLoading) return <div>{t("loading")}</div>;
@@ -57,9 +57,7 @@ export const SalepointDetailModal = ({ mid, onClose }: Props) => {
           </p>
           <ul>
             {a.transactionTypes.map((type) => (
-              <li key={type}>
-                {t(`transactionTypes.${type.toLowerCase()}`, type)}
-              </li>
+              <li key={type}>{t(`transactions:transactionTypes.${type}`)}</li>
             ))}
           </ul>
 
@@ -68,7 +66,7 @@ export const SalepointDetailModal = ({ mid, onClose }: Props) => {
           </p>
           <ul>
             {a.cardBrands.map((b) => (
-              <li key={b}>{t(`cardBrands.${b.toLowerCase()}`, b)}</li>
+              <li key={b}>{t(`transactions:cardBrands.${b}`)}</li>
             ))}
           </ul>
         </div>

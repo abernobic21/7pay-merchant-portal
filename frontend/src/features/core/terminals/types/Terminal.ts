@@ -1,3 +1,8 @@
+import type {
+  CardBrand,
+  TransactionType,
+} from "../../transactions/types/Transaction";
+
 export interface Terminal {
   tid: string;
   terminalType: string;
@@ -26,8 +31,8 @@ export interface TerminalDetail {
 export interface AcquirerTerminalData {
   acquirerTid: string;
   acquirerHost: string;
-  transactionTypes: string[];
-  cardBrands: string[];
+  transactionTypes: TransactionType[];
+  cardBrands: CardBrand[];
 }
 
 export interface TerminalFilters {
@@ -37,3 +42,11 @@ export interface TerminalFilters {
   merchantOib?: string;
   mid?: string;
 }
+
+export type TerminalStatus =
+  | "prepared"
+  | "authenticated"
+  | "active"
+  | "deactivated"
+  | "suspended"
+  | "blocked";

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { Merchant } from "../types/Merchant";
+import { getPages } from "@/shared/components/getPages";
 
 interface Props {
   merchants: Merchant[];
@@ -17,6 +18,7 @@ export const MerchantTable = ({
   onSelect,
 }: Props) => {
   const { t } = useTranslation("merchants");
+  const pages = getPages(currentPage, totalPages);
 
   return (
     <>
@@ -53,20 +55,28 @@ export const MerchantTable = ({
           disabled={currentPage === 0}
           onClick={() => onPageChange(currentPage - 1)}
         >
-          ←
+          {t("pagination.previous")}
         </button>
 
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button key={i} onClick={() => onPageChange(i)}>
-            {i + 1}
-          </button>
-        ))}
+        {pages.map((p, i) =>
+          p === "..." ? (
+            <span key={i}>...</span>
+          ) : (
+            <button
+              key={p}
+              disabled={p === currentPage}
+              onClick={() => onPageChange(p as number)}
+            >
+              {(p as number) + 1}
+            </button>
+          ),
+        )}
 
         <button
           disabled={currentPage === totalPages - 1}
           onClick={() => onPageChange(currentPage + 1)}
         >
-          →
+          {t("pagination.next")}
         </button>
       </div>
     </>

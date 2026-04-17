@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const TerminalDetailModal = ({ tid, onClose }: Props) => {
-  const { t } = useTranslation("terminals");
+  const { t } = useTranslation(["terminals", "transactions"]);
   const { data, isLoading, error } = useTerminalDetail(tid);
 
   if (isLoading) return <p>{t("loading")}</p>;
@@ -59,14 +59,17 @@ export const TerminalDetailModal = ({ tid, onClose }: Props) => {
           <p>{t("details.transactionTypes")}:</p>
           <ul>
             {a.transactionTypes.map((tType) => (
-              <li key={tType}>{tType}</li>
+              <li key={tType}>
+                {" "}
+                {t(`transactions:transactionTypes.${tType}`)}
+              </li>
             ))}
           </ul>
 
           <p>{t("details.cardBrands")}:</p>
           <ul>
             {a.cardBrands.map((b) => (
-              <li key={b}>{b}</li>
+              <li key={b}> {t(`transactions:cardBrands.${b}`)}</li>
             ))}
           </ul>
         </div>

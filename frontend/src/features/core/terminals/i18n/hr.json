@@ -47,22 +47,6 @@
     "cardBrands": "Kartični brandovi"
   },
 
-  "transactionType": {
-    "sale": "Prodaja",
-    "sale_with_installments": "Prodaja na rate",
-    "refund": "Povrat",
-    "storno": "Storno",
-    "technical_reversal": "Tehnički reversal"
-  },
-  "cardBrand": {
-    "mastercard": "MasterCard",
-    "visa": "VISA",
-    "amex": "AMEX",
-    "maestro": "Maestro",
-    "diners": "Diners",
-    "discover": "Discover"
-  },
-
   "pagination": {
     "previous": "Prethodno",
     "next": "Sljedeće"

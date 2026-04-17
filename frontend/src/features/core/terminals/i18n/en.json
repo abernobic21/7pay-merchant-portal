@@ -47,22 +47,6 @@
     "cardBrands": "Card Brands"
   },
 
-  "transactionType": {
-    "sale": "Sale",
-    "sale_with_installments": "Sale with installments",
-    "refund": "Refund",
-    "storno": "Storno",
-    "technical_reversal": "Technical Reversal"
-  },
-  "cardBrand": {
-    "mastercard": "MasterCard",
-    "visa": "VISA",
-    "amex": "AMEX",
-    "maestro": "Maestro",
-    "diners": "Diners",
-    "discover": "Discover"
-  },
-
   "pagination": {
     "previous": "Previous",
     "next": "Next"

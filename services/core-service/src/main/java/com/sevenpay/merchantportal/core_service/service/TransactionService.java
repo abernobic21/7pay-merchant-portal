@@ -126,6 +126,8 @@ public class TransactionService {
     public List<TransactionDto> getAllTransactions(String merchantOib, LocalDateTime timeFrom, LocalDateTime timeUntil, String mid, String tid) {
         final int maxSize = 100;
 
+        validateTimeRange(timeFrom, timeUntil);
+
         ApiResponse<TransactionDto> firstResponse =
                 fetchTransactions(merchantOib, timeFrom, timeUntil, mid, tid, 0, maxSize, null);
 

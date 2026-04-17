@@ -21,21 +21,40 @@
     "rejected": "Odbijena",
     "no_response": "Bez odgovora"
   },
-  "transactionType": {
+  "transactionTypes": {
     "sale": "Prodaja",
     "sale_with_installments": "Prodaja na rate",
     "refund": "Povrat",
     "storno": "Storno",
     "technical_reversal": "Tehnički reversal"
   },
-  "cardBrand": {
-    "mastercard": "MasterCard",
-    "visa": "VISA",
-    "amex": "AMEX",
+  "cardBrands": {
+    "mastercard": "Mastercard",
+    "visa": "Visa",
+    "amex": "American Express",
     "maestro": "Maestro",
     "diners": "Diners",
-    "discover": "Discover"
+    "discover": "Discover",
+    "jcb": "JCB",
+    "closed_loop_prepaid": "Zatvoreni sustav (prepaid)",
+    "closed_loop_postpaid": "Zatvoreni sustav (postpaid)",
+    "not_known": "Nepoznato",
+    "naka": "Naka",
+    "invalid": "Nevažeća"
   },
+
+  "validity": {
+    "valid": "Valjana",
+    "invalid": "Nevaljana",
+    "voided": "Poništena"
+  },
+
+  "transactionStateMDCProcessing": {
+    "included": "Uključeno",
+    "not_included": "Nije uključeno",
+    "irrelevant": "Nije relevantno"
+  },
+
   "fields": {
     "transactionId": "ID transakcije",
     "transactionType": "Vrsta transakcije",

@@ -11,6 +11,11 @@ public enum CardBrand {
     MAESTRO("maestro"),
     DINERS("diners"),
     DISCOVER("discover"),
+    NOT_KNOWN("not_known"),
+    JCB("jcb"),
+    CLOSED_LOOP_PREPAID("closed_loop_prepaid"),
+    CLOSED_LOOP_POSTPAID("closed_loop_postpaid"),
+    NAKA("naka"),
     INVALID("invalid");
 
     private final String name;

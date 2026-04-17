@@ -1,11 +1,15 @@
 import type { Address } from "@/shared/types";
+import type {
+  CardBrand,
+  TransactionType,
+} from "../../transactions/types/Transaction";
 
 export interface Merchant {
   shortName: string;
   fullName: string;
   oib: string;
   address: Address;
-  status: string;
+  status: MerchantStatus;
 }
 
 export interface MerchantDetail {
@@ -13,15 +17,17 @@ export interface MerchantDetail {
   fullName: string;
   oib: string;
   address: Address;
-  status: string;
-  supportedTransactionTypes: string[];
+  status: MerchantStatus;
+  supportedTransactionTypes: TransactionType[];
   supportedAcquirers: string[];
-  supportedCardBrands: string[];
+  supportedCardBrands: CardBrand[];
 }
 
 export interface MerchantFilters {
   page: number;
   size: number;
   sort?: string;
-  status?: string;
+  status?: MerchantStatus;
 }
+
+export type MerchantStatus = "active" | "deactivated" | "hold";

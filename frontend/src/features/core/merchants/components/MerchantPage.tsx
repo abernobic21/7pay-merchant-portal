@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMerchants } from "../hooks/useMerchants";
-import type { MerchantFilters } from "../types/Merchant";
+import type { MerchantFilters, MerchantStatus } from "../types/Merchant";
 import { MerchantDetailModal } from "./MerchantDetailModal";
 import { MerchantTable } from "./MerchantTable";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const MerchantsPage = () => {
   const { t } = useTranslation("merchants");
@@ -15,17 +16,17 @@ export const MerchantsPage = () => {
 
   const [selectedOib, setSelectedOib] = useState<string | null>(null);
 
-  const { data, isLoading, isError } = useMerchants(filters);
+  const { data, isLoading, isError, error } = useMerchants(filters);
 
   const handlePageChange = (page: number) => {
     setFilters((p) => ({ ...p, page }));
   };
 
-  const handleStatusChange = (status?: string) => {
+  const handleStatusChange = (status?: MerchantStatus) => {
     setFilters((p) => ({ ...p, page: 0, status }));
   };
 
-  if (isError) return <p>{t("error")}</p>;
+  if (isError) return <p>{getApiError(error)}</p>;
 
   return (
     <div>
@@ -33,11 +34,14 @@ export const MerchantsPage = () => {
 
       <select
         value={filters.status ?? ""}
-        onChange={(e) => handleStatusChange(e.target.value || undefined)}
+        onChange={(e) =>
+          handleStatusChange((e.target.value as MerchantStatus) || undefined)
+        }
       >
         <option value="">{t("filters.all")}</option>
-        <option value="ACTIVE">{t("status.active")}</option>
-        <option value="BLOCKED">{t("status.blocked")}</option>
+        <option value="active">{t("status.active")}</option>
+        <option value="deactivated">{t("status.deactivated")}</option>
+        <option value="hold">{t("status.hold")}</option>
       </select>
 
       {isLoading ? (
@@ -52,7 +56,6 @@ export const MerchantsPage = () => {
         />
       )}
 
-      {/* ✅ THIS WAS MISSING */}
       {selectedOib && (
         <MerchantDetailModal
           key={selectedOib}

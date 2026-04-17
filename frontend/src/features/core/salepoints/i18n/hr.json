@@ -31,22 +31,6 @@
     "blocked": "Na čekanju"
   },
 
-  "transactionType": {
-    "sale": "Prodaja",
-    "sale_with_installments": "Prodaja na rate",
-    "refund": "Povrat",
-    "storno": "Storno",
-    "technical_reversal": "Tehnički reversal"
-  },
-  "cardBrand": {
-    "mastercard": "MasterCard",
-    "visa": "VISA",
-    "amex": "AMEX",
-    "maestro": "Maestro",
-    "diners": "Diners",
-    "discover": "Discover"
-  },
-
   "details": {
     "title": "Detalji prodajnog mjesta",
     "name": "Naziv",

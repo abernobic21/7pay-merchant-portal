@@ -40,11 +40,11 @@ export const TransactionTable = ({
           {transactions.map((tx) => (
             <tr key={tx.transactionId}>
               <td>{tx.transactionId}</td>
-              <td>{t(`transactionType.${tx.transactionType}`)}</td>
+              <td>{t(`transactionTypes.${tx.transactionType}`)}</td>
               <td>{tx.amount}</td>
               <td>{tx.currency}</td>
               <td>{t(`status.${tx.authorizationState}`)}</td>
-              <td>{t(`cardBrand.${tx.cardBrand}`)}</td>
+              <td>{t(`cardBrands.${tx.cardBrand}`)}</td>
               <td>{new Date(tx.timestamp).toLocaleString()}</td>
               <td>
                 <button onClick={() => onSelect(tx.transactionId)}>

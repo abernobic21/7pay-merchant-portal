@@ -95,7 +95,7 @@ export const UsersPage = () => {
       </div>
 
       {isLoading ? (
-        <p>{t("common.loadig")}</p>
+        <p>{t("common.loading")}</p>
       ) : (
         <>
           <UsersTable

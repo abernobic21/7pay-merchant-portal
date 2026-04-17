@@ -12,17 +12,21 @@ export const Sidebar = () => {
     await logout();
     navigate(ROUTES.LOGIN);
   };
+
   return (
     <nav>
-      <NavLink to={ROUTES.DASHBOARD}>Dashboard</NavLink>
-      <NavLink to={ROUTES.MERCHANTS}>Merchants</NavLink>
-      <NavLink to={ROUTES.SALEPOINTS}>Salepoints</NavLink>
-      <NavLink to={ROUTES.TERMINALS}>Terminals</NavLink>
-      <NavLink to={ROUTES.TRANSACTIONS}>Transactions</NavLink>
+      <NavLink to={ROUTES.DASHBOARD}>{t("nav.dashboard")}</NavLink>
+      <NavLink to={ROUTES.MERCHANTS}>{t("nav.merchants")}</NavLink>
+      <NavLink to={ROUTES.SALEPOINTS}>{t("nav.salepoints")}</NavLink>
+      <NavLink to={ROUTES.TERMINALS}>{t("nav.terminals")}</NavLink>
+      <NavLink to={ROUTES.TRANSACTIONS}>{t("nav.transactions")}</NavLink>
 
-      {user?.role === "admin" && <NavLink to={ROUTES.USERS}>Users</NavLink>}
+      {user?.role === "admin" && (
+        <NavLink to={ROUTES.USERS}>{t("nav.users")}</NavLink>
+      )}
 
-      <NavLink to={ROUTES.PROFILE}>Profile</NavLink>
+      <NavLink to={ROUTES.PROFILE}>{t("nav.profile")}</NavLink>
+
       <div>
         <button onClick={handleLogout}>{t("logout")}</button>
       </div>

@@ -13,7 +13,18 @@ export type CardBrand =
   | "amex"
   | "maestro"
   | "diners"
-  | "discover";
+  | "discover"
+  | "jcb"
+  | "closed_loop_prepaid"
+  | "closed_loop_postpaid"
+  | "not_known";
+
+export type TransactionValidity = "valid" | "invalid" | "voided";
+
+export type TransactionStateMDCProcessing =
+  | "included"
+  | "not_included"
+  | "irrelevant";
 
 export interface Transaction {
   transactionId: string;
@@ -21,7 +32,7 @@ export interface Transaction {
   amount: number;
   currency: string;
   authorizationState: TransactionStatus;
-  validity: string;
+  validity: TransactionValidity;
   cardBrand: CardBrand;
   acquirerHost: string;
   authNumber: string;
@@ -34,7 +45,7 @@ export interface TransactionDetail {
   transactionType: TransactionType;
   amount: number;
   currency: string;
-  validity: string;
+  validity: TransactionValidity;
   authorizationState: TransactionStatus;
   responseCode: string;
   authNumber: string;
@@ -55,7 +66,7 @@ export interface TransactionDetail {
   mid: string;
   paymentType: string;
   installmentNumber: number;
-  transactionStateMDCProcessing: string;
+  transactionStateMDCProcessing: TransactionStateMDCProcessing;
   posTimestamp: string;
   acquirerTimestamp: string;
   transactionReference: string;

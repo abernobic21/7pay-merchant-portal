@@ -1,3 +1,5 @@
+import type { CardBrand } from "../../transactions/types/Transaction";
+
 export interface DashboardStats {
   totalRevenue: number;
   totalTransactions: number;
@@ -8,7 +10,7 @@ export interface DashboardStats {
 }
 
 export interface RevenueByCardBrand {
-  cardBrand: string;
+  cardBrand: CardBrand;
   revenue: number;
   count: number;
 }

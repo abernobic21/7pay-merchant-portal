@@ -19,7 +19,7 @@ export const TransactionDetailModal = ({ transactionId, onClose }: Props) => {
 
       <p>
         <b>{t("details.transactionType")}:</b>{" "}
-        {t(`transactionType.${data.transactionType}`)}
+        {t(`transactionTypes.${data.transactionType}`)}
       </p>
       <p>
         <b>{t("details.amount")}:</b> {data.amount} {data.currency}
@@ -29,7 +29,7 @@ export const TransactionDetailModal = ({ transactionId, onClose }: Props) => {
         {t(`status.${data.authorizationState}`)}
       </p>
       <p>
-        <b>{t("details.validity")}:</b> {data.validity}
+        <b>{t("details.validity")}:</b> {t(`validity.${data.validity}`)}
       </p>
       <p>
         <b>{t("details.responseCode")}:</b> {data.responseCode}
@@ -50,7 +50,7 @@ export const TransactionDetailModal = ({ transactionId, onClose }: Props) => {
         <b>{t("details.acquirerStan")}:</b> {data.acquirerStan}
       </p>
       <p>
-        <b>{t("details.cardBrand")}:</b> {t(`cardBrand.${data.cardBrand}`)}
+        <b>{t("details.cardBrand")}:</b> {t(`cardBrands.${data.cardBrand}`)}
       </p>
       <p>
         <b>{t("details.panMasked")}:</b> {data.panMasked}
@@ -110,7 +110,9 @@ export const TransactionDetailModal = ({ transactionId, onClose }: Props) => {
       </p>
       <p>
         <b>{t("details.transactionStateMDCProcessing")}:</b>{" "}
-        {data.transactionStateMDCProcessing}
+        {t(
+          `transactionStateMDCProcessing.${data.transactionStateMDCProcessing}`,
+        )}
       </p>
 
       <button onClick={onClose}>{t("actions.close")}</button>
