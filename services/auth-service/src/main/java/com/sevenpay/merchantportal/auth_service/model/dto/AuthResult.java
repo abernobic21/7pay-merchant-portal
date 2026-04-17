@@ -14,4 +14,6 @@ public class AuthResult {
     private String refreshToken;
     private long expiresIn;
     private boolean firstLogin;
+    private boolean requires2fa;
+    private String preAuthToken;
 }

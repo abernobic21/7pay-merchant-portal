@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -116,5 +117,32 @@ public class RedisService {
 
     public void deletePendingBackupCodes(UUID userId) {
         redisTemplate.delete(TWO_FA_BACKUP_PREFIX + userId);
+    }
+
+    public void storePreAuthToken(UUID userId, String token, int minutes) {
+        String key = "preauth:" + token;
+        redisTemplate.opsForValue().set(key, String.valueOf(userId), Duration.ofMinutes(minutes) );
+    }
+
+    public UUID consumePreAuthToken(String token) {
+        String key = "preauth:" + token;
+        String userId = redisTemplate.opsForValue().get(key);
+
+        if (userId == null) return null;
+        try {
+            return UUID.fromString(userId);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean isTotpUsed(UUID userId, String code) {
+        String key = "totp:used:" + userId + ":" + code;
+        return redisTemplate.opsForValue().get(key) != null;
+    }
+
+    public void markTotpUsed(UUID userId, String code) {
+        String key = "totp:used:" + userId + ":" + code;
+        redisTemplate.opsForValue().set(key, "1", Duration.ofSeconds(90));
     }
 }

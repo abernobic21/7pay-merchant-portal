@@ -18,6 +18,7 @@ import com.sevenpay.merchantportal.auth_service.util.TokenUtil;
 import com.sevenpay.merchantportal.auth_service.util.TwoFaUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -48,7 +48,7 @@ public class AuthService {
     @Value("${jwt.refresh-expiry}")
     private long refreshExpiry;
 
-    public AuthResult login(LoginRequest request){
+    public AuthResult login(LoginRequest request) {
         if (redisService.isAccountLocked(request.getEmail())) {
             throw new AccountLockedException();
         }
@@ -72,34 +72,23 @@ public class AuthService {
             redisService.recordFailedAttempt(request.getEmail());
             throw new InvalidCredentialsException();
         }
-
-        String accessToken = jwtUtil.generateAccessToken(user);
-        String refreshToken = jwtUtil.generateRefreshToken(user);
-
-        redisService.storeRefreshToken(
-                user.getId().toString(),
-                refreshToken,
-                refreshExpiry
-        );
-
         redisService.clearFailedAttempts(request.getEmail());
 
-        return AuthResult.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .expiresIn(accessExpiry)
-                .firstLogin(user.getFirstLoginFlag())
-                .build();
+        if (userTwoFaRepository.existsByUserId(user.getId())) {
+            return buildPreAuthResult(user);
+        }
+
+        return buildFullAuthResult(user);
     }
 
     public void logout(String accessToken) {
-            Claims claims = jwtUtil.extractClaims(accessToken);
-            long remainingTtl = (claims.getExpiration().getTime() - System.currentTimeMillis()) / 1000;
-            if (remainingTtl > 0) {
-                redisService.blacklistToken(accessToken, remainingTtl);
-            }
-            String userId = claims.getSubject();
-            redisService.deleteRefreshToken(userId);
+        Claims claims = jwtUtil.extractClaims(accessToken);
+        long remainingTtl = (claims.getExpiration().getTime() - System.currentTimeMillis()) / 1000;
+        if (remainingTtl > 0) {
+            redisService.blacklistToken(accessToken, remainingTtl);
+        }
+        String userId = claims.getSubject();
+        redisService.deleteRefreshToken(userId);
     }
 
     public AuthResult refresh(String refreshToken) {
@@ -109,59 +98,43 @@ public class AuthService {
         } catch (Exception e) {
             throw new InvalidRefreshTokenException();
         }
-            String userId = claims.getSubject();
+        String userId = claims.getSubject();
+        String storedToken = redisService.getRefreshToken(userId);
 
-            String storedToken = redisService.getRefreshToken(userId);
-            if (storedToken == null || !storedToken.equals(refreshToken)) {
-                throw new InvalidRefreshTokenException();
-            }
+        if (storedToken == null || !storedToken.equals(refreshToken)) {
+            throw new InvalidRefreshTokenException();
+        }
 
-            User user = userRepository.findById(UUID.fromString(userId))
-                    .orElseThrow(() -> new InvalidRefreshTokenException());
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new InvalidRefreshTokenException());
 
-            String newAccessToken = jwtUtil.generateAccessToken(user);
-            String newRefreshToken = jwtUtil.generateRefreshToken(user);
-
-            redisService.storeRefreshToken(userId, newRefreshToken, refreshExpiry);
-
-            return AuthResult.builder()
-                    .accessToken(newAccessToken)
-                    .refreshToken(newRefreshToken)
-                    .expiresIn(accessExpiry)
-                    .firstLogin(user.getFirstLoginFlag())
-                    .build();
+        return buildFullAuthResult(user);
     }
 
-    public void forgotPassword(String email){
-        Optional<User> user = userRepository.findByEmail(email);
-
-        if (user.isPresent()) {
+    public void forgotPassword(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
             String rawToken = TokenUtil.generateSecureToken();
-            String hashedToken = TokenUtil.hashToken(rawToken);
 
             PasswordReset reset = PasswordReset.builder()
-                    .user(user.get())
-                    .resetToken(hashedToken)
+                    .user(user)
+                    .resetToken(TokenUtil.hashToken(rawToken))
                     .expiry(LocalDateTime.now().plusHours(1))
                     .build();
 
             passwordResetRepository.save(reset);
-
             emailService.sendForgotPasswordEmail(email, rawToken);
-        }
+        });
     }
 
     public void resetPassword(ResetPasswordRequest request) {
 
-        PasswordReset record = validateToken(request.getToken());
-        applyPasswordChange(record.getUser(), request.getNewPassword(), record);
-
+        PasswordReset record = validateResetToken(request.getToken());
         applyPasswordChange(record.getUser(), request.getNewPassword(), record);
     }
 
     public void setPassword(SetPasswordRequest request) {
 
-        PasswordReset record = validateToken(request.getToken());
+        PasswordReset record = validateResetToken(request.getToken());
         User user = record.getUser();
 
         if (!user.getFirstLoginFlag()) {
@@ -183,21 +156,17 @@ public class AuthService {
         }
 
         String secret = twoFaUtil.generateSecret();
-
-        redisService.storeTwoFaSecret(userId, secret, 10);
-
         List<String> backupCodes = twoFaUtil.generateBackupCodes(8);
-
         List<String> hashed = backupCodes.stream()
                 .map(twoFaUtil::hashBackupCode)
                 .toList();
 
+        redisService.storeTwoFaSecret(userId, secret, 10);
         redisService.storePendingBackupCodes(userId, hashed, 10);
 
-        String qr = twoFaUtil.generateQrCodeUrl("SevenPay", user.getEmail() , secret);
         return TwoFaSetupResponse.builder()
                 .secret(secret)
-                .qrCodeUrl(qr)
+                .qrCodeUrl(twoFaUtil.generateQrCodeUrl("SevenPay", user.getEmail(), secret))
                 .backupCodes(backupCodes)
                 .build();
     }
@@ -215,21 +184,18 @@ public class AuthService {
         }
 
         String secret = redisService.getTwoFaSecret(userId);
-
         if (secret == null) {
-            throw new Invalid2FaTokenException();
+            throw new Invalid2FaSetupCodeException();
         }
 
-        boolean valid = twoFaUtil.verifyCode(secret, code);
 
-        if (!valid) {
-            throw new Invalid2FaTokenException();
+        if (!twoFaUtil.verifyCode(secret, code)) {
+            throw new Invalid2FaSetupCodeException();
         }
 
         List<String> hashedBackupCodes = redisService.getPendingBackupCodes(userId);
-
         if (hashedBackupCodes.isEmpty()) {
-            throw new Invalid2FaTokenException();
+            throw new Invalid2FaSetupCodeException();
         }
 
         UserTwoFa userTwoFa = new UserTwoFa();
@@ -252,7 +218,32 @@ public class AuthService {
         redisService.deletePendingBackupCodes(userId);
     }
 
-    private PasswordReset validateToken(String rawToken) {
+    @Transactional
+    public AuthResult validateTwoFa(@Valid TwoFaValidationRequest request) {
+
+        System.out.println("Tuuu");
+        User user = consumePreAuthToken(request.getPreAuthToken());
+
+        UserTwoFa twoFa = userTwoFaRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ForbiddenException("2FA not enabled"));
+
+        if (redisService.isTotpUsed(user.getId(), request.getCode())) {
+
+            System.out.println("Totp used");
+            throw new Invalid2FaCodeException();
+        }
+
+        if (!twoFaUtil.verifyCode(twoFa.getSecret(), request.getCode())) {
+            System.out.println("invalid code");
+            throw new Invalid2FaCodeException();
+        }
+
+        redisService.markTotpUsed(user.getId(), request.getCode());
+
+        return buildFullAuthResult(user);
+    }
+
+    private PasswordReset validateResetToken(String rawToken) {
         String hashedIncoming = TokenUtil.hashToken(rawToken);
         PasswordReset record = passwordResetRepository.findByResetToken(hashedIncoming)
                 .orElseThrow(() -> new InvalidTokenException());
@@ -285,5 +276,40 @@ public class AuthService {
             System.out.println(e.getMessage());
             throw new InvalidTokenException();
         }
+    }
+
+    private AuthResult buildFullAuthResult(User user) {
+        String accessToken = jwtUtil.generateAccessToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+
+        redisService.storeRefreshToken(user.getId().toString(), refreshToken, refreshExpiry);
+
+        return AuthResult.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .expiresIn(accessExpiry)
+                .firstLogin(user.getFirstLoginFlag())
+                .build();
+    }
+
+    private AuthResult buildPreAuthResult(User user) {
+        String preAuthToken = TokenUtil.generateSecureToken();
+        redisService.storePreAuthToken(user.getId(), preAuthToken, 5);
+
+        return AuthResult.builder()
+                .requires2fa(true)
+                .preAuthToken(preAuthToken)
+                .expiresIn(0)
+                .firstLogin(user.getFirstLoginFlag())
+                .build();
+    }
+
+    private User consumePreAuthToken(String token) {
+        UUID userId = redisService.consumePreAuthToken(token);
+        if (userId == null) {
+            throw new InvalidPreAuthTokenException();
+        }
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 }

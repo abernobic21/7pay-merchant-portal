@@ -27,9 +27,21 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(e.getMessage()));
     }
 
-    @ExceptionHandler(Invalid2FaTokenException.class)
-    public ResponseEntity<ErrorResponse> handleInvalid2FaToken(Invalid2FaTokenException e) {
+    @ExceptionHandler(Invalid2FaSetupCodeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalid2FaSetupCode(Invalid2FaSetupCodeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidPreAuthTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPreAuthToken(InvalidPreAuthTokenException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(Invalid2FaCodeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalid2FaCode(Invalid2FaCodeException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(e.getMessage()));
     }
 

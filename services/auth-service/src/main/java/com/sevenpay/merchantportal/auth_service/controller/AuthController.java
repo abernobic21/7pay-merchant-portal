@@ -31,14 +31,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
-                                               HttpServletResponse response) {
+    public ResponseEntity<AuthSuccessResponse> login(@RequestBody @Valid LoginRequest request,
+                                                     HttpServletResponse response) {
         AuthResult result = authService.login(request);
         response.addCookie(cookieUtil.createAccessTokenCookie(result.getAccessToken(), (int) result.getExpiresIn()));
         response.addCookie(cookieUtil.createRefreshTokenCookie(result.getRefreshToken()));
-        return ResponseEntity.ok(LoginResponse.builder()
+        return ResponseEntity.ok(AuthSuccessResponse.builder()
                 .expiresIn(result.getExpiresIn())
                 .firstLogin(result.isFirstLogin())
+                .requires2fa(result.isRequires2fa())
+                .preAuthToken(result.getPreAuthToken())
                 .build());
     }
 
@@ -110,10 +112,26 @@ public class AuthController {
     @PostMapping("/2fa/verify-setup")
     public ResponseEntity<Map<String, String>> verifySetup(
             @CookieValue("access_token") String accessToken,
-            @RequestBody TwoFaVerifyRequest request) {
+            @RequestBody @Valid TwoFaVerifyRequest request) {
 
         authService.verifyTwoFaSetup(accessToken, request.getCode());
 
-        return ResponseEntity.ok(Map.of("message","2FA enabled successfully"));
+        return ResponseEntity.ok(Map.of("message", "2FA enabled successfully"));
+    }
+
+    @PostMapping("/2fa/validate")
+    public ResponseEntity<AuthSuccessResponse> validate2fa(
+            @RequestBody TwoFaValidationRequest request,
+            HttpServletResponse response) {
+
+        AuthResult result = authService.validateTwoFa(request);
+        response.addCookie(cookieUtil.createAccessTokenCookie(result.getAccessToken(), (int) result.getExpiresIn()));
+        response.addCookie(cookieUtil.createRefreshTokenCookie(result.getRefreshToken()));
+        return ResponseEntity.ok(AuthSuccessResponse.builder()
+                .expiresIn(result.getExpiresIn())
+                .firstLogin(result.isFirstLogin())
+                .requires2fa(result.isRequires2fa())
+                .preAuthToken(result.getPreAuthToken())
+                .build());
     }
 }
