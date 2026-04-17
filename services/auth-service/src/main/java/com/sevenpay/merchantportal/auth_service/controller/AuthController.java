@@ -150,4 +150,14 @@ public class AuthController {
                 .preAuthToken(result.getPreAuthToken())
                 .build());
     }
+
+    @PostMapping("/2fa/disable")
+    public ResponseEntity<Map<String, String>> disable2Fa(
+            @CookieValue(name = "access_token", required = false) String accessToken,
+            @RequestBody TwoFaDisableRequest request) {
+
+        authService.disable2Fa(accessToken, request.getPassword());
+
+        return ResponseEntity.ok(Map.of("message", "2FA disabled successfully"));
+    }
 }

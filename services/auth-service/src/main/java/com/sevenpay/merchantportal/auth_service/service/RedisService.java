@@ -127,6 +127,7 @@ public class RedisService {
     public UUID consumePreAuthToken(String token) {
         String key = "preauth:" + token;
         String userId = redisTemplate.opsForValue().get(key);
+        redisTemplate.delete(key);
 
         if (userId == null) return null;
         try {

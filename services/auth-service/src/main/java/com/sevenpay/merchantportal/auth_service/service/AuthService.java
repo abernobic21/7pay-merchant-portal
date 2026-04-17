@@ -257,6 +257,25 @@ public class AuthService {
         return buildFullAuthResult(user);
     }
 
+    @Transactional
+    public void disable2Fa(String accessToken, String password) {
+        UUID userId = validateJwtToken(accessToken).getUserId();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new InvalidCredentialsException();
+        }
+
+        if (!userTwoFaRepository.existsByUserId(userId)) {
+            throw new NotFoundException("2FA not enabled");
+        }
+
+        backupCodeRepository.deleteByUserId(userId);
+        userTwoFaRepository.deleteByUserId(userId);
+    }
+
     private PasswordReset validateResetToken(String rawToken) {
         String hashedIncoming = TokenUtil.hashToken(rawToken);
         PasswordReset record = passwordResetRepository.findByResetToken(hashedIncoming)
