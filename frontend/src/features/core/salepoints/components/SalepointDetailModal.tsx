@@ -74,7 +74,7 @@ export const SalepointDetailModal = ({ mid, onClose }: Props) => {
         </div>
       ))}
 
-      <button onClick={onClose}>{t("common:cancel")}</button>
+      <button onClick={onClose}>{t("actions.close")}</button>
     </dialog>
   );
 };

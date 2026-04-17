@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useChangePassword } from "../hooks/useChangePassword";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 interface ChangePasswordModalProps {
   onClose: () => void;
@@ -54,15 +54,13 @@ export const ChangePasswordModal = ({ onClose }: ChangePasswordModalProps) => {
         />
 
         {validationError && <p>{validationError}</p>}
-        {error && (
-          <p>{getApiErrorMessage(error) ?? t("errors.changePassword")}</p>
-        )}
+        {error && <p>{getApiError(error, "change-password")}</p>}
 
         <button type="button" onClick={onClose}>
           {t("common:cancel")}
         </button>
         <button type="submit" disabled={isPending}>
-          {isPending ? "..." : t("profile.changePassword")}
+          {isPending ? t("common.loadig") : t("profile.changePassword")}
         </button>
       </form>
     </dialog>

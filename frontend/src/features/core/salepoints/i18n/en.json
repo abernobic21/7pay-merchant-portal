@@ -1,22 +1,50 @@
 {
   "title": "Salepoints",
-  "loading": "Loading salepoints...",
-  "error": "Error loading salepoints",
+  "loading": "Loading...",
+  "error": "An error occurred.",
+
+  "filters": {
+    "merchantOib": "Merchant OIB"
+  },
 
   "fields": {
     "name": "Name",
     "mid": "MID",
+    "merchantOib": "Merchant OIB",
     "status": "Status",
     "actions": "Actions"
   },
 
   "actions": {
-    "details": "Details"
+    "details": "Details",
+    "close": "Close"
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
   },
 
   "status": {
     "active": "Active",
-    "blocked": "Blocked"
+    "deactivated": "Deactivated",
+    "hold": "On hold"
+  },
+
+  "transactionType": {
+    "sale": "Sale",
+    "sale_with_installments": "Sale with installments",
+    "refund": "Refund",
+    "storno": "Storno",
+    "technical_reversal": "Technical Reversal"
+  },
+  "cardBrand": {
+    "mastercard": "MasterCard",
+    "visa": "VISA",
+    "amex": "AMEX",
+    "maestro": "Maestro",
+    "diners": "Diners",
+    "discover": "Discover"
   },
 
   "details": {

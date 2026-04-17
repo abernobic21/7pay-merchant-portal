@@ -38,6 +38,7 @@ export const UsersTable = ({
             <th>{t("table.lastName")}</th>
             <th>{t("table.email")}</th>
             <th>{t("table.phone")}</th>
+            <th>{t("table.merchantId")}</th>
             <th>{t("table.role")}</th>
             <th>{t("table.accessLevel")}</th>
             <th>{t("table.status")}</th>
@@ -53,6 +54,7 @@ export const UsersTable = ({
               <td>{user.lastName}</td>
               <td>{user.email}</td>
               <td>{user.phone}</td>
+              <td>{user.merchantId ?? "-"}</td>
               <td>{t(`role.${user.role}`)}</td>
               <td>{t(`accessLevel.${user.accessLevel}`)}</td>
               <td>

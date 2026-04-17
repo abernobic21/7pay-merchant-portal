@@ -9,6 +9,7 @@
     "role": "Role",
     "accessLevel": "Access level",
     "status": "Status",
+    "merchantId": "Merchant OIB",
     "createdAt": "Created at",
     "firstLoginFlag": "First login",
     "actions": "Actions"
@@ -70,6 +71,7 @@
     "success": "Password changed successfully"
   },
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "loading": "Loading..."
   }
 }

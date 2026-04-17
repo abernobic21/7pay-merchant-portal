@@ -7,6 +7,7 @@ import { CreateUserModal } from "./CreateUserModal";
 import { EditUserModal } from "./EditUserModal";
 import { DeleteUserModal } from "./DeleteUserModal";
 import { StatusModal } from "./UserStatusModal";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const UsersPage = () => {
   const { t } = useTranslation("users");
@@ -25,7 +26,7 @@ export const UsersPage = () => {
     size: 10,
   });
 
-  const { data, isLoading, isError } = useUsers(filters);
+  const { data, isLoading, isError, error } = useUsers(filters);
 
   const handlePageChange = (page: number) => {
     setFilters((prev) => ({ ...prev, page }));
@@ -45,7 +46,7 @@ export const UsersPage = () => {
 
   const closeModal = () => setModal(null);
 
-  if (isError) return <p>{t("errors.fetch")}</p>;
+  if (isError) return <p>{getApiError(error, "users")}</p>;
 
   return (
     <div>
@@ -94,7 +95,7 @@ export const UsersPage = () => {
       </div>
 
       {isLoading ? (
-        <p>Loading...</p>
+        <p>{t("common.loadig")}</p>
       ) : (
         <>
           <UsersTable

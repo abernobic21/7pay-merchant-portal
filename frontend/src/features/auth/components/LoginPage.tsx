@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 import { ROUTES } from "@/router/routes";
 import { AuthForm } from "./AuthForm";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const LoginPage = () => {
   const { t } = useTranslation("auth");
@@ -42,7 +42,7 @@ export const LoginPage = () => {
         placeholder={t("login.password")}
         required
       />
-      {error && <p>{getApiErrorMessage(error) ?? t("common.error")}</p>}
+      {error && <p>{getApiError(error, "login")}</p>}
     </AuthForm>
   );
 };

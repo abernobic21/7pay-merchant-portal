@@ -11,6 +11,8 @@ import usersEn from "@/features/users/i18n/en.json";
 import usersHr from "@/features/users/i18n/hr.json";
 import commonEn from "@/shared/i18n/en/common.json";
 import commonHr from "@/shared/i18n/hr/common.json";
+import errorEn from "@/shared/i18n/en/errors.json";
+import errorHr from "@/shared/i18n/hr/errors.json";
 import dashboardEn from "@/features/core/dashboard/i18n/en.json";
 import dashboardHr from "@/features/core/dashboard/i18n/hr.json";
 import terminalsEn from "@/features/core/terminals/i18n/en.json";
@@ -24,6 +26,7 @@ i18n.use(initReactI18next).init({
   resources: {
     en: {
       common: commonEn,
+      errors: errorEn,
       auth: authEn,
       users: usersEn,
       dashboard: dashboardEn,
@@ -34,6 +37,7 @@ i18n.use(initReactI18next).init({
     },
     hr: {
       common: commonHr,
+      errors: errorHr,
       auth: authHr,
       users: usersHr,
       dashboard: dashboardHr,

@@ -6,5 +6,14 @@
   "yes": "Yes",
   "no": "No",
   "logout": "Logout",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "nav": {
+    "dashboard": "Dashboard",
+    "merchants": "Merchants",
+    "salepoints": "Salepoints",
+    "terminals": "Terminals",
+    "transactions": "Transactions",
+    "users": "Users",
+    "profile": "Profile"
+  }
 }

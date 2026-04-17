@@ -1,0 +1,33 @@
+{
+  "unknown": "An unexpected error occurred.",
+  "networkError": "Unable to reach the server. Check your internet connection.",
+  "sessionExpired": "Your session has expired. Please log in again.",
+
+  "400": "The request contained invalid data.",
+  "401": "Your session has expired. Please log in again.",
+  "403": "You don't have permission to perform this action.",
+  "404": "The requested resource was not found.",
+  "409": "A conflict occurred with the current state.",
+  "500": "Something went wrong on our end. Please try again.",
+  "503": "The service is temporarily unavailable. Please try again later.",
+
+  "login": {
+    "401": "Incorrect email or password.",
+    "403": "Your account has been deactivated.",
+    "423": "Your account is locked. Please try again later."
+  },
+  "reset-password": {
+    "400": "The reset link is invalid or has expired."
+  },
+  "set-password": {
+    "400": "The setup link is invalid or has expired.",
+    "403": "A password has already been set for this account."
+  },
+  "users": {
+    "404": "User not found.",
+    "409": "A user with this email already exists."
+  },
+  "change-password": {
+    "401": "Incorrect current password."
+  }
+}

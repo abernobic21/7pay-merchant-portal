@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
 import type { User, UpdateStatusPayload } from "../types/User";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 interface UserStatusModalProps {
   user: User;
@@ -33,7 +33,7 @@ export const StatusModal = ({ user, onClose }: UserStatusModalProps) => {
         <option value="active">{t("status.active")}</option>
         <option value="deactivated">{t("status.deactivated")}</option>
       </select>
-      {error && <p>{getApiErrorMessage(error) ?? t("errors.status")}</p>}
+      {error && <p>{getApiError(error)}</p>}
       <button type="button" onClick={onClose}>
         {t("common:cancel")}
       </button>

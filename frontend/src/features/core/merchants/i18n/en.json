@@ -1,29 +1,34 @@
 {
   "title": "Merchants",
-  "loading": "Loading merchants...",
-  "error": "Error loading merchants",
+  "loading": "Loading...",
+  "error": "An error occurred.",
 
   "fields": {
     "shortName": "Short Name",
     "fullName": "Full Name",
     "oib": "OIB",
-    "city": "City",
     "status": "Status",
-    "address": "Address",
     "actions": "Actions"
   },
 
-  "actions": {
-    "details": "Details"
-  },
-
   "filters": {
-    "all": "All"
+    "all": "All statuses"
   },
 
   "status": {
     "active": "Active",
-    "blocked": "Blocked"
+    "deactivated": "Deactivated",
+    "hold": "On hold"
+  },
+
+  "actions": {
+    "details": "Details",
+    "close": "Close"
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
   },
 
   "details": {

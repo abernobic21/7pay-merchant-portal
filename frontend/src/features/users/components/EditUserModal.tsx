@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 import type { User, UpdateUserPayload } from "../types/User";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 interface EditUserModalProps {
   user: User;
@@ -74,13 +74,13 @@ export const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
           placeholder="Merchant ID"
         />
 
-        {error && <p>{getApiErrorMessage(error) ?? t("errors.update")}</p>}
+        {error && <p>{getApiError(error)}</p>}
 
         <button type="button" onClick={onClose}>
           {t("common:cancel")}
         </button>
         <button type="submit" disabled={isPending}>
-          {isPending ? "..." : t("actions.edit")}
+          {isPending ? t("common.loadig") : t("actions.edit")}
         </button>
       </form>
     </dialog>

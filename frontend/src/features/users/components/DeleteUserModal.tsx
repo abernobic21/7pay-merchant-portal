@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useDeleteUser } from "../hooks/useDeleteUser";
 import type { User } from "../types/User";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 interface DeleteUserModalProps {
   user: User;
@@ -24,13 +24,13 @@ export const DeleteUserModal = ({ user, onClose }: DeleteUserModalProps) => {
         {user.firstName} {user.lastName}
       </p>
 
-      {error && <p>{getApiErrorMessage(error) ?? t("errors.delete")}</p>}
+      {error && <p>{getApiError(error)}</p>}
 
       <button type="button" onClick={onClose}>
         {t("common:cancel")}
       </button>
       <button onClick={handleDelete} disabled={isPending}>
-        {isPending ? "..." : t("actions.delete")}
+        {isPending ? t("common.loadig") : t("actions.delete")}
       </button>
     </dialog>
   );

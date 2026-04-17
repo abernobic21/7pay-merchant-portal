@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthForm } from "./AuthForm";
 import { useSetPassword } from "../hooks/useSetPassword";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
 import { ROUTES } from "@/router/routes";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const SetPasswordPage = () => {
   const { t } = useTranslation("auth");
@@ -58,7 +58,7 @@ export const SetPasswordPage = () => {
         required
       />
       {validationError && <p>{validationError}</p>}
-      {error && <p>{getApiErrorMessage(error)}</p>}
+      {error && <p>{getApiError(error, "set-password")}</p>}
     </AuthForm>
   );
 };

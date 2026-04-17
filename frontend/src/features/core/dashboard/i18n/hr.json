@@ -1,5 +1,6 @@
 {
   "title": "Nadzorna ploča",
+  "loading": "Učitavanje...",
   "lastUpdated": "Zadnje ažuriranje",
   "stats": {
     "totalRevenue": "Ukupni prihod",
@@ -9,9 +10,12 @@
   "filters": {
     "timeFrom": "Od",
     "timeTo": "Do",
-    "mid": "mid",
-    "tid": "tid",
-    "apply": "Primijeni"
+    "mid": "MID",
+    "tid": "TID",
+    "apply": "Primijeni",
+    "rangeError": {
+      "toBeforeFrom": "Datum kraja mora biti nakon datuma početka."
+    }
   },
   "charts": {
     "revenueByCardBrand": "Prihod po vrsti kartice",
@@ -20,8 +24,5 @@
     "acquirerHost": "Acquirer",
     "revenue": "Prihod",
     "count": "Broj"
-  },
-  "errors": {
-    "fetch": "Greška pri učitavanju podataka"
   }
 }

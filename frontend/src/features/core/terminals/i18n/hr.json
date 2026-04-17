@@ -1,7 +1,7 @@
 {
   "title": "Terminali",
-  "loading": "Učitavanje terminala...",
-  "error": "Greška pri učitavanju terminala",
+  "loading": "Učitavanje...",
+  "error": "Greška pri učitavanju.",
 
   "fields": {
     "tid": "TID",
@@ -13,8 +13,6 @@
   },
 
   "filters": {
-    "all": "Svi",
-    "status": "Status",
     "merchantOib": "OIB trgovca",
     "mid": "MID"
   },
@@ -34,24 +32,35 @@
   },
 
   "details": {
-    "title": "Detalji terminala",
     "terminalType": "Tip terminala",
     "status": "Status",
     "midReference": "MID",
     "phoneNumber": "Telefon",
     "emailContact": "Email",
     "currency": "Valuta",
-    "merchantCategoryCode": "MCC",
     "authenticationMode": "Način autentikacije",
-    "softPosId": "SoftPOS ID",
-    "softPosStatus": "SoftPOS status",
     "tipEnabled": "Napojnica omogućena",
-
     "acquirers": "Acquireri",
     "acquirerHost": "Acquirer host",
     "acquirerTid": "Acquirer TID",
     "transactionTypes": "Tipovi transakcija",
     "cardBrands": "Kartični brandovi"
+  },
+
+  "transactionType": {
+    "sale": "Prodaja",
+    "sale_with_installments": "Prodaja na rate",
+    "refund": "Povrat",
+    "storno": "Storno",
+    "technical_reversal": "Tehnički reversal"
+  },
+  "cardBrand": {
+    "mastercard": "MasterCard",
+    "visa": "VISA",
+    "amex": "AMEX",
+    "maestro": "Maestro",
+    "diners": "Diners",
+    "discover": "Discover"
   },
 
   "pagination": {

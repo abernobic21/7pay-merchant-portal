@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import type { DashboardFilters } from "../types/Dashboard";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 const getDefaultFilters = (): DashboardFilters => {
   const now = new Date();
@@ -25,16 +25,31 @@ export const DashboardPage = () => {
 
   const { data, isLoading, isError, error } = useDashboardStats(appliedFilters);
 
-  const handleApply = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setAppliedFilters(draftFilters);
-  };
+  const [rangeError, setRangeError] = useState<string | null>(null);
 
   const handleChange = (field: keyof DashboardFilters, value: string) => {
-    setDraftFilters((prev) => ({
-      ...prev,
-      [field]: value || undefined,
-    }));
+    setDraftFilters((prev) => {
+      const updated = { ...prev, [field]: value || undefined };
+
+      const from = field === "timeFrom" ? value : prev.timeFrom;
+      const to = field === "timeUntil" ? value : prev.timeUntil;
+
+      if (from && to) {
+        setRangeError(
+          new Date(to) <= new Date(from)
+            ? t("filters.rangeError.toBeforeFrom")
+            : null,
+        );
+      }
+
+      return updated;
+    });
+  };
+
+  const handleApply = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (rangeError) return;
+    setAppliedFilters(draftFilters);
   };
 
   return (
@@ -47,7 +62,6 @@ export const DashboardPage = () => {
           </p>
         )}
       </div>
-
       {/* filters */}
       <form onSubmit={handleApply}>
         <input
@@ -62,6 +76,7 @@ export const DashboardPage = () => {
           onChange={(e) => handleChange("timeUntil", e.target.value)}
           required
         />
+
         <input
           type="text"
           placeholder={t("filters.mid")}
@@ -74,12 +89,14 @@ export const DashboardPage = () => {
           value={draftFilters.tid ?? ""}
           onChange={(e) => handleChange("tid", e.target.value)}
         />
-        <button type="submit">{t("filters.apply")}</button>
+        {rangeError && <p>{rangeError}</p>}
+
+        <button type="submit" disabled={!!rangeError}>
+          {t("filters.apply")}
+        </button>
       </form>
-
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>{getApiErrorMessage(error)}</p>}
-
+      {isLoading && <p>{t("loading")}</p>}{" "}
+      {isError && <p>{getApiError(error)}</p>}
       {data && (
         <>
           {/* stat cards */}

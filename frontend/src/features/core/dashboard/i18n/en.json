@@ -1,17 +1,21 @@
 {
   "title": "Dashboard",
+  "loading": "Loading...",
   "lastUpdated": "Last updated",
   "stats": {
     "totalRevenue": "Total Revenue",
     "totalTransactions": "Total Transactions",
-    "avgTransactionValue": "Avg Transaction Value"
+    "avgTransactionValue": "Avgerage Transaction Value"
   },
   "filters": {
     "timeFrom": "From",
-    "timeTo": "To",
-    "mid": "mid",
-    "tid": "tid",
-    "apply": "Apply"
+    "timeUntil": "To",
+    "mid": "MID",
+    "tid": "TID",
+    "apply": "Apply",
+    "rangeError": {
+      "toBeforeFrom": "End date must be after start date."
+    }
   },
   "charts": {
     "revenueByCardBrand": "Revenue by Card Brand",
@@ -20,8 +24,5 @@
     "acquirerHost": "Acquirer",
     "revenue": "Revenue",
     "count": "Count"
-  },
-  "errors": {
-    "fetch": "Failed to load dashboard data"
   }
 }

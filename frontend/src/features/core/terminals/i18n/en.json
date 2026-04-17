@@ -1,7 +1,7 @@
 {
   "title": "Terminals",
-  "loading": "Loading terminals...",
-  "error": "Error loading terminals",
+  "loading": "Loading...",
+  "error": "An error occurred.",
 
   "fields": {
     "tid": "TID",
@@ -13,8 +13,6 @@
   },
 
   "filters": {
-    "all": "All",
-    "status": "Status",
     "merchantOib": "Merchant OIB",
     "mid": "MID"
   },
@@ -34,24 +32,35 @@
   },
 
   "details": {
-    "title": "Terminal Details",
     "terminalType": "Terminal Type",
     "status": "Status",
     "midReference": "MID",
     "phoneNumber": "Phone",
     "emailContact": "Email",
     "currency": "Currency",
-    "merchantCategoryCode": "MCC",
     "authenticationMode": "Authentication Mode",
-    "softPosId": "SoftPOS ID",
-    "softPosStatus": "SoftPOS Status",
     "tipEnabled": "Tip Enabled",
-
     "acquirers": "Acquirers",
     "acquirerHost": "Acquirer Host",
     "acquirerTid": "Acquirer TID",
     "transactionTypes": "Transaction Types",
     "cardBrands": "Card Brands"
+  },
+
+  "transactionType": {
+    "sale": "Sale",
+    "sale_with_installments": "Sale with installments",
+    "refund": "Refund",
+    "storno": "Storno",
+    "technical_reversal": "Technical Reversal"
+  },
+  "cardBrand": {
+    "mastercard": "MasterCard",
+    "visa": "VISA",
+    "amex": "AMEX",
+    "maestro": "Maestro",
+    "diners": "Diners",
+    "discover": "Discover"
   },
 
   "pagination": {

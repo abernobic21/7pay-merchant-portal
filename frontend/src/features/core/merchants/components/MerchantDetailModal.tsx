@@ -58,7 +58,7 @@ export const MerchantDetailModal = ({ oib, onClose }: Props) => {
         ))}
       </ul>
 
-      <button onClick={onClose}>{t("common:cancel")}</button>
+      <button onClick={onClose}>{t("actions.close")}</button>
     </dialog>
   );
 };

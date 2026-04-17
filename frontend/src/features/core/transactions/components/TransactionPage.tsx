@@ -4,6 +4,7 @@ import { useTransactions } from "../hooks/useTransactions";
 import { TransactionTable } from "./TransactionTable";
 import { TransactionDetailModal } from "./TransactionDetailModal";
 import type { TransactionFilters } from "../types/Transaction";
+import { getApiError } from "@/shared/utils/getApiError";
 
 const toISO = (d: Date) => d.toISOString().slice(0, 16);
 
@@ -19,7 +20,7 @@ export const TransactionsPage = () => {
 
   const [merchantOib, setMerchantOib] = useState("");
   const [timeFrom, setTimeFrom] = useState(defaultFrom());
-  const [timeTo, setTimeTo] = useState(defaultTo());
+  const [timeUntil, setTimeUntil] = useState(defaultTo());
   const [rangeError, setRangeError] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -32,7 +33,10 @@ export const TransactionsPage = () => {
 
   const canSearch = !!filters.merchantOib && !rangeError;
 
-  const { data, isLoading, isError } = useTransactions(filters, canSearch);
+  const { data, isLoading, isError, error } = useTransactions(
+    filters,
+    canSearch,
+  );
 
   const [selectedTransactionId, setSelectedTransactionId] = useState<
     string | null
@@ -53,11 +57,11 @@ export const TransactionsPage = () => {
 
   const handleTimeFrom = (value: string) => {
     setTimeFrom(value);
-    validateAndSetRange(value, timeTo);
+    validateAndSetRange(value, timeUntil);
   };
 
-  const handleTimeTo = (value: string) => {
-    setTimeTo(value);
+  const handleTimeUntil = (value: string) => {
+    setTimeUntil(value);
     validateAndSetRange(timeFrom, value);
   };
 
@@ -67,7 +71,7 @@ export const TransactionsPage = () => {
       ...prev,
       merchantOib,
       timeFrom,
-      timeTo,
+      timeUntil: timeUntil,
       page: 0,
     }));
   };
@@ -84,7 +88,7 @@ export const TransactionsPage = () => {
     setFilters((prev) => ({ ...prev, page }));
   };
 
-  if (isError) return <p>{t("error")}</p>;
+  if (isError) return <p>{getApiError(error)}</p>;
 
   return (
     <div>
@@ -106,8 +110,8 @@ export const TransactionsPage = () => {
 
         <input
           type="datetime-local"
-          value={timeTo}
-          onChange={(e) => handleTimeTo(e.target.value)}
+          value={timeUntil}
+          onChange={(e) => handleTimeUntil(e.target.value)}
         />
 
         {rangeError && <p>{rangeError}</p>}

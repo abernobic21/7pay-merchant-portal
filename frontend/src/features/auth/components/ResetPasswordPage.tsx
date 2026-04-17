@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthForm } from "./AuthForm";
 import { useResetPassword } from "../hooks/useResetPassword";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
 import { ROUTES } from "@/router/routes";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const ResetPasswordPage = () => {
   const { t } = useTranslation("auth");
@@ -58,7 +58,7 @@ export const ResetPasswordPage = () => {
         required
       />
       {validationError && <p>{validationError}</p>}
-      {error && <p>{getApiErrorMessage(error)}</p>}
+      {error && <p>{getApiError(error, "reset-password")}</p>}
     </AuthForm>
   );
 };

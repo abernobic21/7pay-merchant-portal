@@ -12,7 +12,6 @@
     "newPassword": "Nova lozinka",
     "confirmPassword": "Potvrdi lozinku",
     "submit": "Postavi lozinku",
-    "invalidLink": "Ova poveznica je nevažeća ili je istekla",
     "passwordMismatch": "Lozinke se ne podudaraju"
   },
   "forgotPassword": {
@@ -29,12 +28,6 @@
     "newPassword": "Nova lozinka",
     "confirmPassword": "Potvrdi lozinku",
     "submit": "Resetiraj lozinku",
-    "invalidLink": "Ova poveznica je nevažeća ili je istekla",
     "passwordMismatch": "Lozinke se ne podudaraju"
-  },
-  "errors": {
-    "invalidCredentials": "Pogrešan email ili lozinka",
-    "accountLocked": "Račun je zaključan. Pokušajte za 15 minuta",
-    "accountDeactivated": "Vaš račun je deaktiviran"
   }
 }

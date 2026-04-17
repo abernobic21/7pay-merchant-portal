@@ -7,6 +7,7 @@
     "email": "Email",
     "phone": "Telefon",
     "role": "Uloga",
+    "merchantId": "OIB trgovca",
     "accessLevel": "Razina pristupa",
     "status": "Status",
     "createdAt": "Datum kreiranja",
@@ -70,6 +71,7 @@
     "success": "Lozinka uspješno promijenjena"
   },
   "common": {
-    "cancel": "Odustani"
+    "cancel": "Odustani",
+    "loading": "Učitavanje..."
   }
 }

@@ -1,20 +1,18 @@
 {
   "title": "Prodajna mjesta",
-  "loading": "Učitavanje prodajnih mjesta...",
-  "error": "Greška pri učitavanju prodajnih mjesta",
+  "loading": "Učitavanje...",
+  "error": "Greška pri učitavanju.",
+
+  "filters": {
+    "merchantOib": "OIB trgovca"
+  },
 
   "fields": {
     "name": "Naziv",
     "mid": "MID",
     "merchantOib": "OIB trgovca",
     "status": "Status",
-    "address": "Adresa",
     "actions": "Akcije"
-  },
-
-  "filters": {
-    "all": "Svi",
-    "status": "Status"
   },
 
   "actions": {
@@ -22,19 +20,44 @@
     "close": "Zatvori"
   },
 
+  "pagination": {
+    "previous": "Prethodno",
+    "next": "Sljedeće"
+  },
+
   "status": {
     "active": "Aktivan",
     "inactive": "Neaktivan",
-    "blocked": "Blokiran"
+    "blocked": "Na čekanju"
+  },
+
+  "transactionType": {
+    "sale": "Prodaja",
+    "sale_with_installments": "Prodaja na rate",
+    "refund": "Povrat",
+    "storno": "Storno",
+    "technical_reversal": "Tehnički reversal"
+  },
+  "cardBrand": {
+    "mastercard": "MasterCard",
+    "visa": "VISA",
+    "amex": "AMEX",
+    "maestro": "Maestro",
+    "diners": "Diners",
+    "discover": "Discover"
   },
 
   "details": {
     "title": "Detalji prodajnog mjesta",
+    "name": "Naziv",
+    "mid": "MID",
+    "status": "Status",
+    "merchantOib": "OIB trgovca",
     "address": "Adresa",
-    "acquirers": "Acquireri",
-    "acquirerHost": "Acquirer host",
+    "acquirers": "Acquirers",
+    "acquirerHost": "Acquirer Host",
     "acquirerMid": "Acquirer MID",
-    "transactionTypes": "Tipovi transakcija",
-    "cardBrands": "Kartični brandovi"
+    "transactionTypes": "Vrste transakcija",
+    "cardBrands": "Kartični brendovi"
   }
 }

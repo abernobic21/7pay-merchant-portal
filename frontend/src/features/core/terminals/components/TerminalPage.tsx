@@ -4,6 +4,7 @@ import { useTerminals } from "../hooks/useTerminals";
 import { TerminalTable } from "./TerminalTable";
 import { TerminalDetailModal } from "./TerminalDetailModal";
 import type { TerminalFilters } from "../types/Terminal";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const TerminalsPage = () => {
   const { t } = useTranslation("terminals");
@@ -15,7 +16,7 @@ export const TerminalsPage = () => {
 
   const [selectedTid, setSelectedTid] = useState<string | null>(null);
 
-  const { data, isLoading, isError } = useTerminals(filters);
+  const { data, isLoading, isError, error } = useTerminals(filters);
 
   const handlePageChange = (page: number) => {
     setFilters((p) => ({ ...p, page }));
@@ -29,7 +30,7 @@ export const TerminalsPage = () => {
     }));
   };
 
-  if (isError) return <p>{t("error")}</p>;
+  if (isError) return <p>{getApiError(error)}</p>;
 
   return (
     <div>

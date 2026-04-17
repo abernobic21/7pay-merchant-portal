@@ -1,0 +1,33 @@
+{
+  "unknown": "Došlo je do neočekivane greške.",
+  "networkError": "Nije moguće spojiti se na poslužitelj. Provjerite internetsku vezu.",
+  "sessionExpired": "Vaša sesija je istekla. Molimo prijavite se ponovno.",
+
+  "400": "Zahtjev sadrži neispravne podatke.",
+  "401": "Vaša sesija je istekla. Molimo prijavite se ponovno.",
+  "403": "Nemate ovlasti za izvođenje ove radnje.",
+  "404": "Traženi resurs nije pronađen.",
+  "409": "Došlo je do konflikta s trenutnim stanjem.",
+  "500": "Došlo je do greške na našoj strani. Molimo pokušajte ponovno.",
+  "503": "Usluga je privremeno nedostupna. Molimo pokušajte kasnije.",
+
+  "login": {
+    "401": "Neispravni email ili lozinka.",
+    "403": "Vaš račun je deaktiviran.",
+    "423": "Vaš račun je zaključan. Pokušajte ponovno kasnije."
+  },
+  "reset-password": {
+    "400": "Token je nevažeći ili je istekao."
+  },
+  "set-password": {
+    "400": "Token je nevažeći ili je istekao.",
+    "403": "Lozinka je već postavljena."
+  },
+  "users": {
+    "404": "Korisnik nije pronađen.",
+    "409": "Korisnik s ovim emailom već postoji."
+  },
+  "change-password": {
+    "401": "Neispravna trenutna lozinka."
+  }
+}

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useCreateUser } from "../hooks/useCreateUser";
 import type { CreateUserPayload } from "../types/User";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
+import { getApiError } from "@/shared/utils/getApiError";
 
 interface CreateUserModalProps {
   onClose: () => void;
@@ -42,6 +42,7 @@ export const CreateUserModal = ({ onClose }: CreateUserModalProps) => {
           required
         />
         <input name="phone" placeholder={t("table.phone")} required />
+        <input name="merchantId" placeholder={t("table.merchantId")} />
 
         <select name="role" required>
           <option value="admin">{t("role.admin")}</option>
@@ -55,13 +56,13 @@ export const CreateUserModal = ({ onClose }: CreateUserModalProps) => {
 
         <input name="merchantId" placeholder="Merchant ID" />
 
-        {error && <p>{getApiErrorMessage(error) ?? t("errors.create")}</p>}
+        {error && <p>{getApiError(error)}</p>}
 
         <button type="button" onClick={onClose}>
           {t("common:cancel")}
         </button>
         <button type="submit" disabled={isPending}>
-          {isPending ? "..." : t("actions.create")}
+          {isPending ? t("common.loadig") : t("actions.create")}{" "}
         </button>
       </form>
     </dialog>

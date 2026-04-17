@@ -2,8 +2,8 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { AuthForm } from "./AuthForm";
 import { useForgotPassword } from "../hooks/useForgotPassword";
-import { getApiErrorMessage } from "@/shared/utils/getApiErrorResponse";
 import { ROUTES } from "@/router/routes";
+import { getApiError } from "@/shared/utils/getApiError";
 
 export const ForgotPasswordPage = () => {
   const { t } = useTranslation("auth");
@@ -39,7 +39,7 @@ export const ForgotPasswordPage = () => {
         placeholder={t("forgotPassword.email")}
         required
       />
-      {error && <p>{getApiErrorMessage(error)}</p>}
+      {error && <p>{getApiError(error)}</p>}
     </AuthForm>
   );
 };
