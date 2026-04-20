@@ -17,5 +17,6 @@ public class UserProfileDto {
     private AccessLevel accessLevel;
     private String merchantId;
     private Status status;
+    private boolean twoFaEnabled;
 }
 

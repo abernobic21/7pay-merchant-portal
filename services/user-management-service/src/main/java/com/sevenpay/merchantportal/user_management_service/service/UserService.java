@@ -10,6 +10,7 @@ import com.sevenpay.merchantportal.user_management_service.model.entity.User;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Role;
 import com.sevenpay.merchantportal.user_management_service.model.enums.Status;
 import com.sevenpay.merchantportal.user_management_service.repository.UserRepository;
+import com.sevenpay.merchantportal.user_management_service.repository.UserTwoFaRepository;
 import com.sevenpay.merchantportal.user_management_service.util.UserMapper;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserTwoFaRepository userTwoFaRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ApiResponse<UserDto> getUsers(Pageable pageable, Status status, Role role){
@@ -100,8 +102,9 @@ public class UserService {
 
     public UserProfileDto getUserProfile(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        boolean twoFaEnabled = userTwoFaRepository.existsByUserId(id);
 
-        return UserMapper.toUserProfileDto(user);
+        return UserMapper.toUserProfileDto(user, twoFaEnabled);
     }
 
     public void updatePassword(UUID id, UpdatePasswordRequest request) {

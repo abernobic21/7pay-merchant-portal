@@ -23,7 +23,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserProfileDto toUserProfileDto(User user) {
+    public static UserProfileDto toUserProfileDto(User user, boolean twoFaEnabled) {
         return UserProfileDto.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -33,6 +33,7 @@ public class UserMapper {
                 .accessLevel(user.getAccessLevel())
                 .merchantId(user.getMerchantId())
                 .status(user.getStatus())
+                .twoFaEnabled(twoFaEnabled)
                 .build();
     }
 }
