@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import type { DashboardFilters } from "../types/Dashboard";
 import { getApiError } from "@/shared/utils/getApiError";
+import { RevenueBarChart } from "./RevenueBarChart";
+import { RevenuePieChart } from "./RevenuePieChart";
 
 const getDefaultFilters = (): DashboardFilters => {
   const now = new Date();
@@ -159,6 +161,27 @@ export const DashboardPage = () => {
                 ))}
               </tbody>
             </table>
+
+            <RevenueBarChart
+              data={data.revenueByCardBrand}
+              categoryKey="cardBrand"
+            />
+            <RevenueBarChart
+              data={data.revenueByAcquirer}
+              categoryKey="acquirerHost"
+            />
+
+            <h2>{t("charts.revenueByCardBrand")}</h2>
+            <RevenuePieChart
+              data={data.revenueByCardBrand}
+              categoryKey="cardBrand"
+            />
+
+            <h2>{t("charts.revenueByAcquirer")}</h2>
+            <RevenuePieChart
+              data={data.revenueByAcquirer}
+              categoryKey="acquirerHost"
+            />
           </div>
         </>
       )}
