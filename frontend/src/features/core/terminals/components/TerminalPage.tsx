@@ -5,6 +5,7 @@ import { TerminalTable } from "./TerminalTable";
 import { TerminalDetailModal } from "./TerminalDetailModal";
 import type { TerminalFilters } from "../types/Terminal";
 import { getApiError } from "@/shared/utils/getApiError";
+import { PageSizeSelect } from "@/shared/components/PageSizeSelect";
 
 export const TerminalsPage = () => {
   const { t } = useTranslation("terminals");
@@ -38,6 +39,10 @@ export const TerminalsPage = () => {
     setFilters((p) => ({ ...p, page }));
   };
 
+  const handleSizeChange = (size: number) => {
+    setFilters((prev) => ({ ...prev, page: 0, size }));
+  };
+
   if (isError) return <p>{getApiError(error)}</p>;
 
   return (
@@ -55,6 +60,9 @@ export const TerminalsPage = () => {
           value={mid}
           onChange={(e) => setMid(e.target.value)}
         />
+
+        <PageSizeSelect value={filters.size} onChange={handleSizeChange} />
+
         <button onClick={handleSearch}>{t("actions.search")}</button>
       </div>
 

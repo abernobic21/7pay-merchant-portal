@@ -35,7 +35,7 @@ export const MerchantTable = ({
               field="shortName"
               currentSort={currentSort}
               onSort={onSort}
-            />{" "}
+            />
             <th>{t("fields.fullName")}</th>
             <th>{t("fields.oib")}</th>
             <th>{t("fields.status")}</th>

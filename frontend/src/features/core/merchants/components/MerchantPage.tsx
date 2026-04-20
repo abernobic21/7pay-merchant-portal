@@ -5,6 +5,7 @@ import type { MerchantFilters, MerchantStatus } from "../types/Merchant";
 import { MerchantDetailModal } from "./MerchantDetailModal";
 import { MerchantTable } from "./MerchantTable";
 import { getApiError } from "@/shared/utils/getApiError";
+import { PageSizeSelect } from "@/shared/components/PageSizeSelect";
 
 export const MerchantsPage = () => {
   const { t } = useTranslation("merchants");
@@ -30,6 +31,10 @@ export const MerchantsPage = () => {
     setFilters((p) => ({ ...p, page: 0, sort }));
   };
 
+  const handleSizeChange = (size: number) => {
+    setFilters((prev) => ({ ...prev, page: 0, size }));
+  };
+
   if (isError) return <p>{getApiError(error)}</p>;
 
   return (
@@ -47,6 +52,8 @@ export const MerchantsPage = () => {
         <option value="deactivated">{t("status.deactivated")}</option>
         <option value="hold">{t("status.hold")}</option>
       </select>
+
+      <PageSizeSelect value={filters.size} onChange={handleSizeChange} />
 
       {isLoading ? (
         <p>{t("loading")}</p>

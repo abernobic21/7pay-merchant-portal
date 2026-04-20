@@ -64,7 +64,7 @@ export const UsersTable = ({
               field="createdAt"
               currentSort={currentSort}
               onSort={onSort}
-            />{" "}
+            />
             <th>{t("table.firstLoginFlag")}</th>
             <th>{t("table.actions")}</th>
           </tr>

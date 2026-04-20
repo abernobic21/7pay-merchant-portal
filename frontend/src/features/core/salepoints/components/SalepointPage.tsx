@@ -5,6 +5,7 @@ import { useSalepoints } from "../hooks/useSalepoints";
 import type { SalepointFilters } from "../types/Salepoint";
 import { SalepointDetailModal } from "./SalepointDetailModal";
 import { SalepointTable } from "./SalepointTable";
+import { PageSizeSelect } from "@/shared/components/PageSizeSelect";
 
 export const SalepointsPage = () => {
   const { t } = useTranslation("salepoints");
@@ -35,6 +36,10 @@ export const SalepointsPage = () => {
     setFilters((prev) => ({ ...prev, page: 0, sort }));
   };
 
+  const handleSizeChange = (size: number) => {
+    setFilters((prev) => ({ ...prev, page: 0, size }));
+  };
+
   if (isError) return <p>{getApiError(error, "salepoints")}</p>;
 
   return (
@@ -47,6 +52,9 @@ export const SalepointsPage = () => {
           value={merchantOib}
           onChange={(e) => setMerchantOib(e.target.value)}
         />
+
+        <PageSizeSelect value={filters.size} onChange={handleSizeChange} />
+
         <button onClick={handleSearch} disabled={!merchantOib}>
           {t("actions.search")}
         </button>

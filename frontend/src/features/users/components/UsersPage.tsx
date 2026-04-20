@@ -8,6 +8,7 @@ import { EditUserModal } from "./EditUserModal";
 import { DeleteUserModal } from "./DeleteUserModal";
 import { StatusModal } from "./UserStatusModal";
 import { getApiError } from "@/shared/utils/getApiError";
+import { PageSizeSelect } from "@/shared/components/PageSizeSelect";
 
 export const UsersPage = () => {
   const { t } = useTranslation("users");
@@ -88,14 +89,7 @@ export const UsersPage = () => {
           <option value="user">{t("role.user")}</option>
         </select>
 
-        <select
-          value={filters.size}
-          onChange={(e) => handleSizeChange(Number(e.target.value))}
-        >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-        </select>
+        <PageSizeSelect value={filters.size} onChange={handleSizeChange} />
       </div>
 
       {isLoading ? (

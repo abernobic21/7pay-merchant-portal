@@ -35,7 +35,7 @@ export const TerminalTable = ({
               field="tid"
               currentSort={currentSort}
               onSort={onSort}
-            />{" "}
+            />
             <th>{t("fields.terminalType")}</th>
             <th>{t("fields.status")}</th>
             <th>{t("fields.midReference")}</th>

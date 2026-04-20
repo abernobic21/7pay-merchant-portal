@@ -37,7 +37,7 @@ export const TransactionTable = ({
               field="amount"
               currentSort={currentSort}
               onSort={onSort}
-            />{" "}
+            />
             <th>{t("fields.currency")}</th>
             <th>{t("fields.authorizationState")}</th>
             <th>{t("fields.cardBrand")}</th>
@@ -46,7 +46,7 @@ export const TransactionTable = ({
               field="timestamp"
               currentSort={currentSort}
               onSort={onSort}
-            />{" "}
+            />
             <th>{t("fields.actions")}</th>
           </tr>
         </thead>

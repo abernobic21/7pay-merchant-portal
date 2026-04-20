@@ -6,6 +6,7 @@ import { TransactionDetailModal } from "./TransactionDetailModal";
 import type { TransactionFilters } from "../types/Transaction";
 import { getApiError } from "@/shared/utils/getApiError";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { PageSizeSelect } from "@/shared/components/PageSizeSelect";
 
 const toISO = (d: Date) => d.toISOString().slice(0, 16);
 
@@ -96,6 +97,10 @@ export const TransactionsPage = () => {
     setFilters((prev) => ({ ...prev, page: 0, sort }));
   };
 
+  const handleSizeChange = (size: number) => {
+    setFilters((prev) => ({ ...prev, page: 0, size }));
+  };
+
   if (isError) return <p>{getApiError(error)}</p>;
 
   return (
@@ -121,6 +126,8 @@ export const TransactionsPage = () => {
           value={timeUntil}
           onChange={(e) => handleTimeUntil(e.target.value)}
         />
+
+        <PageSizeSelect value={filters.size} onChange={handleSizeChange} />
 
         {rangeError && <p>{rangeError}</p>}
 
