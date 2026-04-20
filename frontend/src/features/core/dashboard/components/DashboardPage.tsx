@@ -8,6 +8,7 @@ import { RevenuePieChart } from "./RevenuePieChart";
 
 const getDefaultFilters = (): DashboardFilters => {
   const now = new Date();
+  now.setSeconds(0, 0);
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(now.getDate() - 7);
 
@@ -18,7 +19,7 @@ const getDefaultFilters = (): DashboardFilters => {
 };
 
 export const DashboardPage = () => {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "transacitons"]);
 
   const [appliedFilters, setAppliedFilters] =
     useState<DashboardFilters>(getDefaultFilters);
@@ -131,7 +132,7 @@ export const DashboardPage = () => {
               <tbody>
                 {data.revenueByCardBrand.map((item) => (
                   <tr key={item.cardBrand}>
-                    <td>{item.cardBrand}</td>
+                    <td>{t(`transactions:cardBrands.${item.cardBrand}`)}</td>
                     <td>{item.revenue}</td>
                     <td>{item.count}</td>
                   </tr>
@@ -165,6 +166,7 @@ export const DashboardPage = () => {
             <RevenueBarChart
               data={data.revenueByCardBrand}
               categoryKey="cardBrand"
+              formatCategory={(value) => t(`transactions:cardBrands.${value}`)}
             />
             <RevenueBarChart
               data={data.revenueByAcquirer}
@@ -175,6 +177,7 @@ export const DashboardPage = () => {
             <RevenuePieChart
               data={data.revenueByCardBrand}
               categoryKey="cardBrand"
+              formatCategory={(value) => t(`transactions:cardBrands.${value}`)}
             />
 
             <h2>{t("charts.revenueByAcquirer")}</h2>

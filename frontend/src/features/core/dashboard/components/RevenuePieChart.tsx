@@ -5,7 +5,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Sector,
 } from "recharts";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 
 const COLORS = [
   "#6366f1",
@@ -25,13 +27,17 @@ const RevenueTooltip = ({ active, payload }: PieTooltipProps) => {
   if (!active || !payload?.length) return null;
   const entry = payload[0];
   return (
-    <div>
-      <p style={{ fontWeight: 500 }}>{entry.name}</p>
+    <div className="tooltip">
+      <p>{entry.name}</p>
       <p>${entry.value.toFixed(2)}</p>
-      <p style={{ color: "#6b7280" }}>{entry.payload.percentage}%</p>
+      <p>{entry.payload.percentage}%</p>
     </div>
   );
 };
+
+const renderActiveShape = (props: PieSectorDataItem) => (
+  <Sector {...props} outerRadius={(props.outerRadius ?? 110) + 10} />
+);
 
 type PieEntry = {
   name: string;
@@ -46,14 +52,18 @@ type LegendEntry = {
 export const RevenuePieChart = <T extends { revenue: number }>({
   data,
   categoryKey,
+  formatCategory,
 }: {
   data: T[];
   categoryKey: keyof T & string;
+  formatCategory?: (value: string) => string;
 }) => {
   const total = data.reduce((sum, item) => sum + item.revenue, 0);
 
   const enriched: PieEntry[] = data.map((item) => ({
-    name: String(item[categoryKey]),
+    name: formatCategory
+      ? formatCategory(String(item[categoryKey]))
+      : String(item[categoryKey]),
     value: item.revenue,
     percentage: ((item.revenue / total) * 100).toFixed(1),
   }));
@@ -69,12 +79,17 @@ export const RevenuePieChart = <T extends { revenue: number }>({
           innerRadius={55}
           dataKey="value"
           paddingAngle={2}
+          activeShape={renderActiveShape}
         >
           {enriched.map((_, index) => (
             <Cell key={index} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip content={<RevenueTooltip />} />
+        <Tooltip
+          content={<RevenueTooltip />}
+          position={{ x: 10, y: 10 }}
+          isAnimationActive={false}
+        />
         <Legend
           formatter={(value, entry) =>
             `${value} — ${(entry as unknown as LegendEntry).payload.percentage}%`

@@ -23,6 +23,6 @@
     "cardBrand": "Vrsta kartice",
     "acquirerHost": "Acquirer",
     "revenue": "Prihod",
-    "count": "Broj"
+    "count": "Broj transakcija"
   }
 }
