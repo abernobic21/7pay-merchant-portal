@@ -5,6 +5,7 @@ import { TransactionTable } from "./TransactionTable";
 import { TransactionDetailModal } from "./TransactionDetailModal";
 import type { TransactionFilters } from "../types/Transaction";
 import { getApiError } from "@/shared/utils/getApiError";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 const toISO = (d: Date) => d.toISOString().slice(0, 16);
 
@@ -18,7 +19,10 @@ const defaultFrom = () => {
 export const TransactionsPage = () => {
   const { t } = useTranslation("transactions");
 
-  const [merchantOib, setMerchantOib] = useState("");
+  const { user } = useAuth();
+  const defaultMerchantOib = user?.merchantId ?? "";
+
+  const [merchantOib, setMerchantOib] = useState(defaultMerchantOib);
   const [timeFrom, setTimeFrom] = useState(defaultFrom());
   const [timeUntil, setTimeUntil] = useState(defaultTo());
   const [rangeError, setRangeError] = useState<string | null>(null);
@@ -86,6 +90,10 @@ export const TransactionsPage = () => {
 
   const handlePageChange = (page: number) => {
     setFilters((prev) => ({ ...prev, page }));
+  };
+
+  const handleSortChange = (sort: string) => {
+    setFilters((prev) => ({ ...prev, page: 0, sort }));
   };
 
   if (isError) return <p>{getApiError(error)}</p>;
@@ -202,8 +210,10 @@ export const TransactionsPage = () => {
           transactions={data.content ?? []}
           currentPage={filters.page}
           totalPages={data.page.totalPages ?? 0}
+          currentSort={filters.sort}
           onPageChange={handlePageChange}
           onSelect={setSelectedTransactionId}
+          onSort={handleSortChange}
         />
       ) : null}
 

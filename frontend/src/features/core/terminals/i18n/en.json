@@ -19,7 +19,8 @@
 
   "actions": {
     "details": "Details",
-    "close": "Close"
+    "close": "Close",
+    "search": "Search"
   },
 
   "status": {

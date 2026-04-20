@@ -44,6 +44,10 @@ export const UsersPage = () => {
     setFilters((prev) => ({ ...prev, page: 0, role }));
   };
 
+  const handleSortChange = (sort: string) => {
+    setFilters((prev) => ({ ...prev, page: 0, sort }));
+  };
+
   const closeModal = () => setModal(null);
 
   if (isError) return <p>{getApiError(error, "users")}</p>;
@@ -104,9 +108,11 @@ export const UsersPage = () => {
             currentPage={filters.page ?? 0}
             totalPages={data?.page.totalPages ?? 0}
             totalElements={data?.page.totalElements ?? 0}
+            currentSort={filters.sort}
             onEdit={(user) => setModal({ type: "edit", user })}
             onDelete={(user) => setModal({ type: "delete", user })}
             onStatus={(user) => setModal({ type: "status", user })}
+            onSort={handleSortChange}
           />
         </>
       )}

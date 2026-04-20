@@ -1,21 +1,26 @@
 import { useTranslation } from "react-i18next";
 import type { Transaction } from "../types/Transaction";
 import { getPages } from "@/shared/components/getPages";
+import { SortableHeader } from "@/shared/components/SortableHeader";
 
 interface Props {
   transactions: Transaction[];
   currentPage: number;
   totalPages: number;
+  currentSort?: string;
   onPageChange: (page: number) => void;
   onSelect: (transactionId: string) => void;
+  onSort: (sort: string) => void;
 }
 
 export const TransactionTable = ({
   transactions,
   currentPage,
   totalPages,
+  currentSort,
   onPageChange,
   onSelect,
+  onSort,
 }: Props) => {
   const { t } = useTranslation("transactions");
   const pages = getPages(currentPage, totalPages);
@@ -27,11 +32,21 @@ export const TransactionTable = ({
           <tr>
             <th>{t("fields.transactionId")}</th>
             <th>{t("fields.transactionType")}</th>
-            <th>{t("fields.amount")}</th>
+            <SortableHeader
+              label={t("fields.amount")}
+              field="amount"
+              currentSort={currentSort}
+              onSort={onSort}
+            />{" "}
             <th>{t("fields.currency")}</th>
             <th>{t("fields.authorizationState")}</th>
             <th>{t("fields.cardBrand")}</th>
-            <th>{t("fields.timestamp")}</th>
+            <SortableHeader
+              label={t("fields.timestamp")}
+              field="timestamp"
+              currentSort={currentSort}
+              onSort={onSort}
+            />{" "}
             <th>{t("fields.actions")}</th>
           </tr>
         </thead>

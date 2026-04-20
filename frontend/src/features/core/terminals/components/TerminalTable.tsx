@@ -1,21 +1,26 @@
 import { useTranslation } from "react-i18next";
 import type { Terminal } from "../types/Terminal";
 import { getPages } from "@/shared/components/getPages";
+import { SortableHeader } from "@/shared/components/SortableHeader";
 
 interface Props {
   terminals: Terminal[];
   currentPage: number;
   totalPages: number;
+  currentSort?: string;
   onPageChange: (page: number) => void;
   onSelect: (tid: string) => void;
+  onSort: (sort: string) => void;
 }
 
 export const TerminalTable = ({
   terminals,
   currentPage,
   totalPages,
+  currentSort,
   onPageChange,
   onSelect,
+  onSort,
 }: Props) => {
   const { t } = useTranslation("terminals");
   const pages = getPages(currentPage, totalPages);
@@ -25,7 +30,12 @@ export const TerminalTable = ({
       <table>
         <thead>
           <tr>
-            <th>{t("fields.tid")}</th>
+            <SortableHeader
+              label={t("fields.tid")}
+              field="tid"
+              currentSort={currentSort}
+              onSort={onSort}
+            />{" "}
             <th>{t("fields.terminalType")}</th>
             <th>{t("fields.status")}</th>
             <th>{t("fields.midReference")}</th>

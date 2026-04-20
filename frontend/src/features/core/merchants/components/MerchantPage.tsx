@@ -26,6 +26,10 @@ export const MerchantsPage = () => {
     setFilters((p) => ({ ...p, page: 0, status }));
   };
 
+  const handleSortChange = (sort: string) => {
+    setFilters((p) => ({ ...p, page: 0, sort }));
+  };
+
   if (isError) return <p>{getApiError(error)}</p>;
 
   return (
@@ -51,8 +55,10 @@ export const MerchantsPage = () => {
           merchants={data?.content ?? []}
           currentPage={filters.page}
           totalPages={data?.page.totalPages ?? 0}
+          currentSort={filters.sort}
           onPageChange={handlePageChange}
           onSelect={(oib) => setSelectedOib(oib)}
+          onSort={handleSortChange}
         />
       )}
 

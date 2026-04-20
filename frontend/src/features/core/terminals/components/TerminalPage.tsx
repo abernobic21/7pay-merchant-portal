@@ -18,16 +18,24 @@ export const TerminalsPage = () => {
 
   const { data, isLoading, isError, error } = useTerminals(filters);
 
-  const handlePageChange = (page: number) => {
-    setFilters((p) => ({ ...p, page }));
-  };
+  const [merchantOib, setMerchantOib] = useState("");
+  const [mid, setMid] = useState("");
 
-  const handleChange = (field: keyof TerminalFilters, value: string) => {
+  const handleSearch = () => {
     setFilters((p) => ({
       ...p,
       page: 0,
-      [field]: value || undefined,
+      merchantOib: merchantOib || undefined,
+      mid: mid || undefined,
     }));
+  };
+
+  const handleSortChange = (sort: string) => {
+    setFilters((p) => ({ ...p, page: 0, sort }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setFilters((p) => ({ ...p, page }));
   };
 
   if (isError) return <p>{getApiError(error)}</p>;
@@ -39,15 +47,15 @@ export const TerminalsPage = () => {
       <div>
         <input
           placeholder={t("filters.merchantOib")}
-          value={filters.merchantOib ?? ""}
-          onChange={(e) => handleChange("merchantOib", e.target.value)}
+          value={merchantOib}
+          onChange={(e) => setMerchantOib(e.target.value)}
         />
-
         <input
           placeholder={t("filters.mid")}
-          value={filters.mid ?? ""}
-          onChange={(e) => handleChange("mid", e.target.value)}
+          value={mid}
+          onChange={(e) => setMid(e.target.value)}
         />
+        <button onClick={handleSearch}>{t("actions.search")}</button>
       </div>
 
       {isLoading ? (
@@ -57,8 +65,10 @@ export const TerminalsPage = () => {
           terminals={data?.content ?? []}
           currentPage={filters.page}
           totalPages={data?.page.totalPages ?? 0}
+          currentSort={filters.sort}
           onPageChange={handlePageChange}
           onSelect={setSelectedTid}
+          onSort={handleSortChange}
         />
       )}
 

@@ -1,21 +1,26 @@
 import { useTranslation } from "react-i18next";
 import type { Salepoint } from "../types/Salepoint";
 import { getPages } from "@/shared/components/getPages";
+import { SortableHeader } from "@/shared/components/SortableHeader";
 
 interface Props {
   salepoints: Salepoint[];
   currentPage: number;
   totalPages: number;
+  currentSort?: string;
   onPageChange: (page: number) => void;
   onSelect: (mid: string) => void;
+  onSort: (sort: string) => void;
 }
 
 export const SalepointTable = ({
   salepoints,
   currentPage,
   totalPages,
+  currentSort,
   onPageChange,
   onSelect,
+  onSort,
 }: Props) => {
   const { t } = useTranslation("salepoints");
   const pages = getPages(currentPage, totalPages);
@@ -26,7 +31,12 @@ export const SalepointTable = ({
         <thead>
           <tr>
             <th>{t("fields.name")}</th>
-            <th>{t("fields.mid")}</th>
+            <SortableHeader
+              label={t("fields.mid")}
+              field="mid"
+              currentSort={currentSort}
+              onSort={onSort}
+            />
             <th>{t("fields.merchantOib")}</th>
             <th>{t("fields.status")}</th>
             <th>{t("fields.actions")}</th>

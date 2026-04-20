@@ -1,21 +1,26 @@
 import { useTranslation } from "react-i18next";
 import type { Merchant } from "../types/Merchant";
 import { getPages } from "@/shared/components/getPages";
+import { SortableHeader } from "@/shared/components/SortableHeader";
 
 interface Props {
   merchants: Merchant[];
   currentPage: number;
+  currentSort?: string;
   totalPages: number;
   onPageChange: (page: number) => void;
   onSelect: (oib: string) => void;
+  onSort: (sort: string) => void;
 }
 
 export const MerchantTable = ({
   merchants,
   currentPage,
+  currentSort,
   totalPages,
   onPageChange,
   onSelect,
+  onSort,
 }: Props) => {
   const { t } = useTranslation("merchants");
   const pages = getPages(currentPage, totalPages);
@@ -25,7 +30,12 @@ export const MerchantTable = ({
       <table>
         <thead>
           <tr>
-            <th>{t("fields.shortName")}</th>
+            <SortableHeader
+              label={t("fields.shortName")}
+              field="shortName"
+              currentSort={currentSort}
+              onSort={onSort}
+            />{" "}
             <th>{t("fields.fullName")}</th>
             <th>{t("fields.oib")}</th>
             <th>{t("fields.status")}</th>

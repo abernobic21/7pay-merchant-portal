@@ -18,8 +18,21 @@ export const SalepointsPage = () => {
 
   const { data, isLoading, isError, error } = useSalepoints(filters);
 
-  const handleChange = (field: keyof SalepointFilters, value: string) => {
-    setFilters((p) => ({ ...p, page: 0, [field]: value || undefined }));
+  const [merchantOib, setMerchantOib] = useState("");
+
+  const handleSearch = () => {
+    setFilters((p) => ({
+      ...p,
+      page: 0,
+      merchantOib: merchantOib || undefined,
+    }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setFilters((p) => ({ ...p, page }));
+  };
+  const handleSortChange = (sort: string) => {
+    setFilters((prev) => ({ ...prev, page: 0, sort }));
   };
 
   if (isError) return <p>{getApiError(error, "salepoints")}</p>;
@@ -31,9 +44,12 @@ export const SalepointsPage = () => {
       <div>
         <input
           placeholder={t("filters.merchantOib")}
-          value={filters.merchantOib ?? ""}
-          onChange={(e) => handleChange("merchantOib", e.target.value)}
+          value={merchantOib}
+          onChange={(e) => setMerchantOib(e.target.value)}
         />
+        <button onClick={handleSearch} disabled={!merchantOib}>
+          {t("actions.search")}
+        </button>
       </div>
 
       {isLoading ? (
@@ -43,8 +59,10 @@ export const SalepointsPage = () => {
           salepoints={data?.content ?? []}
           currentPage={filters.page}
           totalPages={data?.page.totalPages ?? 0}
-          onPageChange={(page) => setFilters((p) => ({ ...p, page }))}
+          currentSort={filters.sort}
+          onPageChange={handlePageChange}
           onSelect={setSelectedMid}
+          onSort={handleSortChange}
         />
       )}
 

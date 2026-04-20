@@ -19,7 +19,8 @@
 
   "actions": {
     "details": "Detalji",
-    "close": "Zatvori"
+    "close": "Zatvori",
+    "search": "Pretraži"
   },
 
   "status": {
