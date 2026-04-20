@@ -221,7 +221,7 @@ public class AuthService {
 
     @Transactional
     public AuthResult validateTwoFa(@Valid TwoFaValidationRequest request) {
-        User user = consumePreAuthToken(request.getPreAuthToken());
+        User user = getPreAuthToken(request.getPreAuthToken());
 
         UserTwoFa twoFa = userTwoFaRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ForbiddenException("2FA not enabled"));
@@ -236,13 +236,14 @@ public class AuthService {
         }
 
         redisService.markTotpUsed(user.getId(), request.getCode());
+        redisService.deletePreAuthToken(request.getPreAuthToken());
 
         return buildFullAuthResult(user);
     }
 
     @Transactional
     public AuthResult validateTwoFaBackupCode(TwoFaBackupRequest request) {
-        User user = consumePreAuthToken(request.getPreAuthToken());
+        User user = getPreAuthToken(request.getPreAuthToken());
 
         List<BackupCode> unusedCodes = backupCodeRepository.findByUserIdAndUsedAtIsNull(user.getId());
 
@@ -253,6 +254,8 @@ public class AuthService {
 
         matched.setUsedAt(Instant.now());
         backupCodeRepository.save(matched);
+
+        redisService.deletePreAuthToken(request.getPreAuthToken());
 
         return buildFullAuthResult(user);
     }
@@ -337,8 +340,8 @@ public class AuthService {
                 .build();
     }
 
-    private User consumePreAuthToken(String token) {
-        UUID userId = redisService.consumePreAuthToken(token);
+    private User getPreAuthToken(String token) {
+        UUID userId = redisService.getPreAuthToken(token);
         if (userId == null) {
             throw new InvalidPreAuthTokenException();
         }

@@ -124,10 +124,9 @@ public class RedisService {
         redisTemplate.opsForValue().set(key, String.valueOf(userId), Duration.ofMinutes(minutes) );
     }
 
-    public UUID consumePreAuthToken(String token) {
+    public UUID getPreAuthToken(String token) {
         String key = "preauth:" + token;
         String userId = redisTemplate.opsForValue().get(key);
-        redisTemplate.delete(key);
 
         if (userId == null) return null;
         try {
@@ -135,6 +134,11 @@ public class RedisService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void deletePreAuthToken(String token) {
+        String key = "preauth:" + token;
+        redisTemplate.delete(key);
     }
 
     public boolean isTotpUsed(UUID userId, String code) {
