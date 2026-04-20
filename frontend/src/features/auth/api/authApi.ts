@@ -8,6 +8,31 @@ export interface LoginRequest {
 export interface LoginResponse {
   expiresIn: number;
   firstLogin: boolean;
+  requires2fa?: boolean;
+  preAuthToken?: string;
+}
+export interface TwoFaValidateRequest {
+  preAuthToken: string;
+  code: string;
+}
+
+export interface TwoFaValidateBackupRequest {
+  preAuthToken: string;
+  backupCode: string;
+}
+
+export interface TwoFaSetupResponse {
+  secret: string;
+  qrCodeUrl: string;
+  backupCodes: string[];
+}
+
+export interface TwoFaVerifySetupRequest {
+  code: string;
+}
+
+export interface TwoFaDisableRequest {
+  password: string;
 }
 
 export interface SetPasswordRequest {
@@ -39,3 +64,24 @@ export const forgotPassword = (payload: ForgotPasswordRequest) =>
 
 export const resetPassword = (payload: ResetPasswordRequest) =>
   apiClient.post("auth/reset-password", payload);
+
+export const twoFaValidate = (payload: TwoFaValidateRequest) =>
+  apiClient
+    .post<LoginResponse>("/auth/2fa/validate", payload)
+    .then(({ data }) => data);
+
+export const twoFaValidateBackup = (payload: TwoFaValidateBackupRequest) =>
+  apiClient
+    .post<LoginResponse>("/auth/2fa/validate-backup", payload)
+    .then(({ data }) => data);
+
+export const twoFaSetup = () =>
+  apiClient
+    .post<TwoFaSetupResponse>("/auth/2fa/setup")
+    .then(({ data }) => data);
+
+export const twoFaVerifySetup = (payload: TwoFaVerifySetupRequest) =>
+  apiClient.post("/auth/2fa/verify-setup", payload);
+
+export const twoFaDisable = (payload: TwoFaDisableRequest) =>
+  apiClient.post("/auth/2fa/disable", payload);

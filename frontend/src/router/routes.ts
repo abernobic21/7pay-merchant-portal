@@ -4,6 +4,7 @@ export const ROUTES = {
   SET_PASSWORD: "/set-password",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
+  TWO_FA: "/two-factor-authorization",
 
   // protected
   USERS: "/users",

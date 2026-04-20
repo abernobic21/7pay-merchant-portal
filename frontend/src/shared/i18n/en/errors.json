@@ -29,5 +29,17 @@
   },
   "change-password": {
     "401": "Incorrect current password."
+  },
+  "twoFa": {
+    "400": "Invalid or expired code. Please try again.",
+    "401": "Invalid code.",
+    "409": "Two-factor authentication is already enabled.",
+    "404": "Two-factor authentication is not enabled.",
+    "backup": {
+      "401": "Invalid or already used backup code."
+    },
+    "disable": {
+      "401": "Incorrect current password."
+    }
   }
 }

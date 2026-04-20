@@ -29,5 +29,14 @@
     "confirmPassword": "Potvrdi lozinku",
     "submit": "Resetiraj lozinku",
     "passwordMismatch": "Lozinke se ne podudaraju"
+  },
+  "twoFa": {
+    "title": "Dvofaktorska autentifikacija",
+    "backupTitle": "Koristi rezervni kod",
+    "submit": "Potvrdi",
+    "codePlaceholder": "6-znamenkasti kod",
+    "backupPlaceholder": "Rezervni kod",
+    "useBackup": "Koristi rezervni kod",
+    "useTotp": "Koristi aplikaciju za autentifikaciju"
   }
 }

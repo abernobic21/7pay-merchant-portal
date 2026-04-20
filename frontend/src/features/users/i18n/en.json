@@ -70,6 +70,26 @@
     "passwordMismatch": "Passwords do not match",
     "success": "Password changed successfully"
   },
+  "twoFa": {
+    "sectionTitle": "Two-factor authentication",
+    "enabled": "Two-factor authentication is enabled on your account.",
+    "disabled": "Two-factor authentication is not enabled.",
+    "setup": "Set up 2FA",
+    "disable": "Disable 2FA",
+    "setupTitle": "Set up two-factor authentication",
+    "disableTitle": "Disable two-factor authentication",
+    "disableWarning": "This will remove 2FA from your account. You will only need your password to log in.",
+    "disableConfirm": "Disable",
+    "passwordPlaceholder": "Enter your password",
+    "scanQr": "Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)",
+    "manualSecret": "Can't scan? Enter this code manually:",
+    "codePlaceholder": "Enter the 6-digit code from your app",
+    "verify": "Verify and enable",
+    "saveBackupCodes": "Save these backup codes somewhere safe. Each can only be used once. You will not be able to see them again.",
+    "done": "I've saved my codes",
+    "loading": "Setting up...",
+    "setupError": "Failed to load setup. Please try again."
+  },
   "common": {
     "cancel": "Cancel",
     "loading": "Loading..."

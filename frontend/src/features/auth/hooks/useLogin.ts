@@ -12,10 +12,15 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: login,
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      if (data.requires2fa && data.preAuthToken) {
+        navigate(ROUTES.TWO_FA, { state: { preAuthToken: data.preAuthToken } });
+        return;
+      }
+
       try {
-        const { data } = await apiClient.get<UserProfile>("users/me");
-        setUser(data);
+        const { data: profile } = await apiClient.get<UserProfile>("/users/me");
+        setUser(profile);
         navigate(ROUTES.DASHBOARD);
       } catch {
         navigate(ROUTES.DASHBOARD);

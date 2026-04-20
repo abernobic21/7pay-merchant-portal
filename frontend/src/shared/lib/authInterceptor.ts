@@ -5,6 +5,8 @@ const PUBLIC_ENDPOINTS = [
   "auth/refresh",
   "auth/set-password",
   "auth/reset-password",
+  "auth/2fa/validate",
+  "auth/2fa/validate-backup",
 ];
 
 const isPublicEndpoint = (url?: string) =>

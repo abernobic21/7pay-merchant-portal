@@ -21,6 +21,7 @@ export interface UserProfile {
   accessLevel: "merchant" | "branch";
   merchantId: string | null;
   status: "active" | "deactivated";
+  twoFaEnabled: boolean;
 }
 
 export interface CreateUserPayload {

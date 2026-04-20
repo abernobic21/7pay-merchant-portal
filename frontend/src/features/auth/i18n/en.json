@@ -29,5 +29,14 @@
     "confirmPassword": "Confirm password",
     "submit": "Reset password",
     "passwordMismatch": "Passwords do not match"
+  },
+  "twoFa": {
+    "title": "Two-factor authentication",
+    "backupTitle": "Use backup code",
+    "submit": "Verify",
+    "codePlaceholder": "6-digit code",
+    "backupPlaceholder": "Backup code",
+    "useBackup": "Use a backup code instead",
+    "useTotp": "Use authenticator app instead"
   }
 }

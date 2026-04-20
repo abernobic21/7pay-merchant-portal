@@ -15,6 +15,7 @@ import { ProfilePage } from "@/features/users/components/ProfilePage";
 import { DashboardPage } from "@/features/core/dashboard/components/DashboardPage";
 import { TerminalsPage } from "@/features/core/terminals/components/TerminalPage";
 import { TransactionsPage } from "@/features/core/transactions/components/TransactionPage";
+import { TwoFaPage } from "@/features/auth/components/TwoFaPage";
 
 export const router = createBrowserRouter([
   // public
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.SET_PASSWORD, element: <SetPasswordPage /> },
       { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
       { path: ROUTES.RESET_PASSWORD, element: <ResetPasswordPage /> },
+      { path: ROUTES.TWO_FA, element: <TwoFaPage /> },
     ],
   },
   // protected

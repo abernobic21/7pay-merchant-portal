@@ -29,5 +29,17 @@
   },
   "change-password": {
     "401": "Neispravna trenutna lozinka."
+  },
+  "twoFa": {
+    "400": "Nevažeći ili istekli kod. Pokušajte ponovo.",
+    "401": "Nevažeći kod.",
+    "409": "Dvofaktorska autentifikacija je već aktivna.",
+    "404": "Dvofaktorska autentifikacija nije aktivirana.",
+    "backup": {
+      "401": "Nevažeći ili već iskorišteni rezervni kod."
+    },
+    "disable": {
+      "401": "Neispravna lozinka."
+    }
   }
 }

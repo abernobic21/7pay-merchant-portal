@@ -70,6 +70,26 @@
     "passwordMismatch": "Lozinke se ne podudaraju",
     "success": "Lozinka uspješno promijenjena"
   },
+  "twoFa": {
+    "sectionTitle": "Dvofaktorska autentifikacija",
+    "enabled": "Dvofaktorska autentifikacija je aktivna na vašem računu.",
+    "disabled": "Dvofaktorska autentifikacija nije aktivirana.",
+    "setup": "Postavi 2FA",
+    "disable": "Deaktiviraj 2FA",
+    "setupTitle": "Postavljanje dvofaktorske autentifikacije",
+    "disableTitle": "Deaktiviranje dvofaktorske autentifikacije",
+    "disableWarning": "Ovo će ukloniti 2FA s vašeg računa. Za prijavu će biti dovoljna samo lozinka.",
+    "disableConfirm": "Deaktiviraj",
+    "passwordPlaceholder": "Unesite svoju lozinku",
+    "scanQr": "Skenirajte ovaj QR kod aplikacijom za autentifikaciju (Google Authenticator, Authy i sl.)",
+    "manualSecret": "Ne možete skenirati? Unesite ovaj kod ručno:",
+    "codePlaceholder": "Unesite 6-znamenkasti kod iz aplikacije",
+    "verify": "Potvrdi i aktiviraj",
+    "saveBackupCodes": "Spremite ove rezervne kodove na sigurno mjesto. Svaki se može iskoristiti samo jednom. Nećete ih moći ponovno vidjeti.",
+    "done": "Spremio/la sam kodove",
+    "loading": "Postavljanje...",
+    "setupError": "Greška pri učitavanju. Pokušajte ponovo."
+  },
   "common": {
     "cancel": "Odustani",
     "loading": "Učitavanje..."
