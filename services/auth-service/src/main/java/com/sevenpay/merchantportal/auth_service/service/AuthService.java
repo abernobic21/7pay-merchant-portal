@@ -13,6 +13,7 @@ import com.sevenpay.merchantportal.auth_service.repository.BackupCodeRepository;
 import com.sevenpay.merchantportal.auth_service.repository.PasswordResetRepository;
 import com.sevenpay.merchantportal.auth_service.repository.UserRepository;
 import com.sevenpay.merchantportal.auth_service.repository.UserTwoFaRepository;
+import com.sevenpay.merchantportal.auth_service.util.EncryptionUtil;
 import com.sevenpay.merchantportal.auth_service.util.JwtUtil;
 import com.sevenpay.merchantportal.auth_service.util.TokenUtil;
 import com.sevenpay.merchantportal.auth_service.util.TwoFaUtil;
@@ -42,6 +43,7 @@ public class AuthService {
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
     private final TwoFaUtil twoFaUtil;
+    private final EncryptionUtil encryptionUtil;
 
     @Value("${jwt.access-expiry}")
     private long accessExpiry;
@@ -201,7 +203,7 @@ public class AuthService {
 
         UserTwoFa userTwoFa = new UserTwoFa();
         userTwoFa.setUser(user);
-        userTwoFa.setSecret(secret);
+        userTwoFa.setSecret(encryptionUtil.encrypt(secret));
         userTwoFaRepository.save(userTwoFa);
 
         List<BackupCode> backupCodes = hashedBackupCodes.stream()
@@ -231,7 +233,9 @@ public class AuthService {
             throw new Invalid2FaCodeException();
         }
 
-        if (!twoFaUtil.verifyCode(twoFa.getSecret(), request.getCode())) {
+        String decryptedSecret = encryptionUtil.decrypt(twoFa.getSecret());
+
+        if (!twoFaUtil.verifyCode(decryptedSecret, request.getCode())) {
             throw new Invalid2FaCodeException();
         }
 
