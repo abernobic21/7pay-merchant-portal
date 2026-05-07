@@ -1,24 +1,31 @@
 package com.sevenpay.merchantportal.report_service.util.report;
 
+import com.sevenpay.merchantportal.report_service.model.common.TransactionReportRow;
+import com.sevenpay.merchantportal.report_service.model.enums.ReportFormat;
+import com.sevenpay.merchantportal.report_service.util.mapper.TransactionReportMapper;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Component
-public class CsvReportBuilder implements ReportBuilder{
+public class CsvReportBuilder implements TransactionReportBuilder {
     @Override
-    public byte[] build(String[][] data, String[] headers) {
+    public byte[] build(List<TransactionReportRow> data, String[] headers) {
         try {
+
+            String[][] stringData = TransactionReportMapper.toStringArray(data);
+
             StringWriter sw = new StringWriter();
             BufferedWriter writer = new BufferedWriter(sw);
 
             writer.write(toCsvRow(headers));
             writer.newLine();
 
-            for (String[] row : data) {
+            for (String[] row : stringData) {
                 writer.write(toCsvRow(row));
                 writer.newLine();
             }
@@ -48,6 +55,8 @@ public class CsvReportBuilder implements ReportBuilder{
         return field;
     }
 
-    @Override public String getContentType()   { return "text/csv"; }
-    @Override public String getFileExtension() { return "csv"; }
+    @Override
+    public ReportFormat getFormat() {
+        return ReportFormat.CSV;
+    }
 }

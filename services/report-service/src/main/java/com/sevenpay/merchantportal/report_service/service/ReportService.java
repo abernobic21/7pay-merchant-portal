@@ -7,11 +7,11 @@ import com.sevenpay.merchantportal.report_service.model.dto.external.RawSalepoin
 import com.sevenpay.merchantportal.report_service.model.dto.external.RawTransactionDetailDto;
 import com.sevenpay.merchantportal.report_service.model.dto.request.ReportRequest;
 import com.sevenpay.merchantportal.report_service.util.mapper.TransactionReportMapper;
-import com.sevenpay.merchantportal.report_service.util.report.CsvReportBuilder;
+import com.sevenpay.merchantportal.report_service.util.report.TransactionReportBuilder;
+import com.sevenpay.merchantportal.report_service.util.report.TransactionReportBuilderRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -20,19 +20,20 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
-    private final CsvReportBuilder csvReportBuilder;
+    private final TransactionReportBuilderRegistry reportBuilderRegistry;
 
     private final MerchantService merchantService;
     private final SalepointService salepointService;
     private final TransactionService transactionService;
     private final TransactionReportMapper transactionReportMapper;
 
-    private static final String[] TRANSACTION_HEADERS = {"merchantOib", "merchantName", "mid", "salepointName", "address", "tid",
+    private static final String[] TRANSACTION_HEADERS = {
+            "period", "merchantOib", "merchantName", "mid", "salepointName", "address", "tid",
             "transactionId", "timestamp", "transactionType", "amount",
             "currency", "authorizationState", "cardBrand", "panMasked",
             "authNumber", "rrn", "responseCode"};
 
-public ReportResult generateReport(ReportRequest request) {
+    public ReportResult generateReport(ReportRequest request) {
         validateDateRange(request);
 
         byte[] content = switch (request.getReportType()) {
@@ -42,6 +43,7 @@ public ReportResult generateReport(ReportRequest request) {
 
         String contentType = switch (request.getFormat()) {
             case CSV -> "text/csv";
+            case JSON -> "text/json";
             default -> throw new UnsupportedOperationException();
         };
 
@@ -52,13 +54,13 @@ public ReportResult generateReport(ReportRequest request) {
 
         List<TransactionReportRow> data = getTransactionReportData(request);
 
-        String[][] stringifiedData = transactionReportMapper.toStringArray(data);
-        return csvReportBuilder.build(stringifiedData, TRANSACTION_HEADERS);
+        TransactionReportBuilder builder = reportBuilderRegistry.get(request.getFormat());
+        return builder.build(data, TRANSACTION_HEADERS);
     }
 
     private List<TransactionReportRow> getTransactionReportData(ReportRequest request) {
-        List<String> oibs = request.getMerchantOib();
-        List<String> mids = request.getMid();
+        List<String> oibs = request.getMerchantOibs();
+        List<String> mids = request.getMids();
 
         CompletableFuture<Map<String, RawMerchantDetailDto>> merchantsFuture =
                 CompletableFuture.supplyAsync(() -> merchantService.getMerchants(oibs));
@@ -74,7 +76,8 @@ public ReportResult generateReport(ReportRequest request) {
         return transactionReportMapper.mapToRows(
                 transactionsFuture.join(),
                 merchantsFuture.join(),
-                salepointsFuture.join()
+                salepointsFuture.join(),
+                request.getPeriodType()
         );
     }
 
@@ -91,19 +94,16 @@ public ReportResult generateReport(ReportRequest request) {
             case SUMMARY -> "summary";
         };
 
-        DateTimeFormatter formatter = switch (request.getPeriodType()) {
-            case DAILY -> DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            case WEEKLY,
-                 MONTHLY -> DateTimeFormatter.ofPattern("yyyy-MM");
-        };
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStart = formatter.format(request.getTimeFrom());
+        String dateEnd = formatter.format(request.getTimeFrom());
 
-        String datePart = formatter.format(request.getTimeFrom().atZone(ZoneOffset.UTC));
-        return "report_" + type + "_" + datePart + "." + extension;
+        return "report_" + type + "_" + dateStart + "_" + dateEnd + "_" + request.getPeriodType() + "." + extension;
     }
 
     private void validateDateRange(ReportRequest request) {
         if (!request.getTimeFrom().isBefore(request.getTimeUntil())) {
-            throw new IllegalArgumentException("timeFrom must be before timeUntil");
+            throw new IllegalArgumentException("Time from must be before time until");
         }
     }
 }

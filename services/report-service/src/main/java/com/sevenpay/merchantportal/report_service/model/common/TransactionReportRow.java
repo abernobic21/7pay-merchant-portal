@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class TransactionReportRow {
+    private String period;
     private String merchantOib;
     private String merchantName;
     private String mid;

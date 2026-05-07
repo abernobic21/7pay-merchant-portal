@@ -20,10 +20,10 @@ import java.util.List;
 public class ReportRequest {
     @NotNull
     @NotEmpty
-    private List<String> merchantOib;
+    private List<String> merchantOibs;
     @NotNull
     @NotEmpty
-    private List<String> mid;
+    private List<String> mids;
     @NotNull
     private PeriodType periodType;
     @NotNull
