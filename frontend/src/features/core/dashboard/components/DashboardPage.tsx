@@ -9,15 +9,21 @@ import { RevenuePieChart } from "./RevenuePieChart";
 const getDefaultFilters = (): DashboardFilters => {
   const now = new Date();
   now.setSeconds(0, 0);
-  const sevenDaysAgo = new Date();
+  now.setMinutes(0, 0);
+
+  const sevenDaysAgo = new Date(now);
   sevenDaysAgo.setDate(now.getDate() - 7);
 
+  const toLocal = (date: Date) => {
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+  };
+
   return {
-    timeFrom: sevenDaysAgo.toISOString().slice(0, 16),
-    timeUntil: now.toISOString().slice(0, 16),
+    timeFrom: toLocal(sevenDaysAgo),
+    timeUntil: toLocal(now),
   };
 };
-
 export const DashboardPage = () => {
   const { t } = useTranslation(["dashboard", "transacitons"]);
 
@@ -61,7 +67,10 @@ export const DashboardPage = () => {
         <h1>{t("title")}</h1>
         {data?.cachedAt && (
           <p>
-            {t("lastUpdated")}: {new Date(data.cachedAt).toLocaleTimeString()}
+            {t("lastUpdated")}:{" "}
+            {new Date(
+              data.cachedAt.replace(" ", "T") + "Z",
+            ).toLocaleTimeString()}
           </p>
         )}
       </div>
