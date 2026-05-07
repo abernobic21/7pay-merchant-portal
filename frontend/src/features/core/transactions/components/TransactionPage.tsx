@@ -8,13 +8,16 @@ import { getApiError } from "@/shared/utils/getApiError";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { PageSizeSelect } from "@/shared/components/PageSizeSelect";
 
-const toISO = (d: Date) => d.toISOString().slice(0, 16);
+const toLocalISO = (d: Date) => {
+  const offset = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - offset).toISOString().slice(0, 16);
+};
 
-const defaultTo = () => toISO(new Date());
+const defaultTo = () => toLocalISO(new Date());
 const defaultFrom = () => {
   const d = new Date();
   d.setDate(d.getDate() - 7);
-  return toISO(d);
+  return toLocalISO(d);
 };
 
 export const TransactionsPage = () => {
