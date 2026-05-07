@@ -2,15 +2,14 @@ package com.sevenpay.merchantportal.report_service.controller;
 
 import com.sevenpay.merchantportal.report_service.model.common.ReportResult;
 import com.sevenpay.merchantportal.report_service.model.dto.request.ReportRequest;
+import com.sevenpay.merchantportal.report_service.model.dto.response.JwtTokenValidationResponse;
 import com.sevenpay.merchantportal.report_service.service.ReportService;
+import com.sevenpay.merchantportal.report_service.util.AuthGuard;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,9 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController {
 
     private final ReportService reportService;
+    private final AuthGuard authGuard;
 
     @PostMapping("/generate")
-    public ResponseEntity<byte[]> generate(@Valid @RequestBody ReportRequest request) {
+    public ResponseEntity<byte[]> generate(
+            @CookieValue(name = "access_token", required = false) String accessToken,
+            @Valid @RequestBody ReportRequest request) {
+
+        JwtTokenValidationResponse accessTokenData = authGuard.authenticate(accessToken);
+
         ReportResult result = reportService.generateReport(request);
 
         return ResponseEntity.ok()
