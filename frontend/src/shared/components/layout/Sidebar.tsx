@@ -20,6 +20,7 @@ export const Sidebar = () => {
       <NavLink to={ROUTES.SALEPOINTS}>{t("nav.salepoints")}</NavLink>
       <NavLink to={ROUTES.TERMINALS}>{t("nav.terminals")}</NavLink>
       <NavLink to={ROUTES.TRANSACTIONS}>{t("nav.transactions")}</NavLink>
+      <NavLink to={ROUTES.REPORTS}>{t("nav.reports")}</NavLink>
 
       {user?.role === "admin" && (
         <NavLink to={ROUTES.USERS}>{t("nav.users")}</NavLink>

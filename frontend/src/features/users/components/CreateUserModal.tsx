@@ -54,15 +54,13 @@ export const CreateUserModal = ({ onClose }: CreateUserModalProps) => {
           <option value="branch">{t("accessLevel.branch")}</option>
         </select>
 
-        <input name="merchantId" placeholder="Merchant ID" />
-
         {error && <p>{getApiError(error)}</p>}
 
         <button type="button" onClick={onClose}>
           {t("common:cancel")}
         </button>
         <button type="submit" disabled={isPending}>
-          {isPending ? t("common.loadig") : t("actions.create")}{" "}
+          {isPending ? t("common.loading") : t("actions.create")}{" "}
         </button>
       </form>
     </dialog>

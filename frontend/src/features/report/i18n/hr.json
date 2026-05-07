@@ -1,0 +1,30 @@
+{
+  "title": "Izvještaji",
+  "filters": {
+    "merchantOib": "OIB trgovca",
+    "mid": "MID",
+    "selectMerchantOib": "Odaberi OIB merchantа",
+    "selectAllOibs": "Odaberi sve OIB-ove",
+    "selectAllMids": "Odaberi sve MID-ove",
+    "selectMid": "Odaberi MID",
+    "noMids": "Nema dostupnih MID-ova",
+    "noMidsForOib": "Nema MID-ova za odabrani OIB",
+    "periodType": "Vrsta perioda",
+    "timeFrom": "Od",
+    "timeUntil": "Do",
+    "rangeError": {
+      "toBeforeFrom": "Datum završetka mora biti nakon datuma početka"
+    }
+  },
+  "periodTypes": {
+    "daily": "Dnevni",
+    "weekly": "Tjedni",
+    "monthly": "Mjesečni"
+  },
+  "actions": {
+    "generate": "Generiraj izvještaj",
+    "generating": "Generiranje...",
+    "view": "Pregledaj izvještaj",
+    "download": "Preuzmi izvještaj "
+  }
+}

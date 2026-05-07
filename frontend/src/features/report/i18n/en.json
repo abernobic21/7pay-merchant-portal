@@ -1,0 +1,30 @@
+{
+  "title": "Reports",
+  "filters": {
+    "merchantOib": "Merchant OIB",
+    "mid": "MID",
+    "selectMerchantOib": "Select merchant OIB",
+    "selectAllOibs": "Select all OIBs",
+    "selectAllMids": "Select all MIDs",
+    "selectMid": "Select MID",
+    "noMids": "No MIDs available",
+    "noMidsForOib": "No MIDs for selected OIB",
+    "periodType": "Period type",
+    "timeFrom": "From",
+    "timeUntil": "Until",
+    "rangeError": {
+      "toBeforeFrom": "End date must be after start date"
+    }
+  },
+  "periodTypes": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly"
+  },
+  "actions": {
+    "generate": "Generate report",
+    "generating": "Generating...",
+    "view": "View report",
+    "download": "Download report "
+  }
+}

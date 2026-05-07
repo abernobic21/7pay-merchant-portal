@@ -16,6 +16,7 @@ import { DashboardPage } from "@/features/core/dashboard/components/DashboardPag
 import { TerminalsPage } from "@/features/core/terminals/components/TerminalPage";
 import { TransactionsPage } from "@/features/core/transactions/components/TransactionPage";
 import { TwoFaPage } from "@/features/auth/components/TwoFaPage";
+import { ReportsPage } from "@/features/report/components/ReportsPage";
 
 export const router = createBrowserRouter([
   // public
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.SALEPOINTS, element: <SalepointsPage /> },
           { path: ROUTES.TERMINALS, element: <TerminalsPage /> },
           { path: ROUTES.TRANSACTIONS, element: <TransactionsPage /> },
+          { path: ROUTES.REPORTS, element: <ReportsPage /> },
           { path: ROUTES.PROFILE, element: <ProfilePage /> },
 
           //ADMIN ONLY

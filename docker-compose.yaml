@@ -47,6 +47,8 @@ services:
 
   report-service:
     build: ./services/report-service
+    env_file:
+      - ./services/report-service/.env
     #ports:
     #  - "8084:8084"
 

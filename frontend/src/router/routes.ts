@@ -14,4 +14,5 @@ export const ROUTES = {
   TERMINALS: "/terminals",
   TRANSACTIONS: "/transactions",
   PROFILE: "/profile",
+  REPORTS: "/reports",
 } as const;
