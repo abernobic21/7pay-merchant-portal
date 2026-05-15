@@ -1,6 +1,7 @@
 package com.sevenpay.merchantportal.report_service.model.dto.response;
 
 import com.sevenpay.merchantportal.report_service.model.enums.Role;
+import com.sevenpay.merchantportal.report_service.model.enums.AccessLevel;
 import lombok.*;
 
 import java.util.UUID;
